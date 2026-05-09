@@ -1,36 +1,26 @@
 import NiceModal from '@ebay/nice-modal-react'
-import { ActionIcon, Avatar, Box, Button, Divider, Flex, Paper, ScrollArea, Space, Stack, Text } from '@mantine/core'
-import type { CopilotDetail, ImageSource, Session } from '@shared/types'
-import { IconChevronLeft, IconChevronRight, IconMessageCircle2Filled, IconX } from '@tabler/icons-react'
-import { createFileRoute, useRouterState } from '@tanstack/react-router'
+import { ActionIcon, Avatar, Box, Button, Flex, Stack, Text } from '@mantine/core'
+import type { ImageSource, Session } from '@shared/types'
+import { IconMessageCircle2Filled, IconX } from '@tabler/icons-react'
+import { createFileRoute } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-adapter'
 import clsx from 'clsx'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
-import { trackJkClickEvent } from '@/analytics/jk'
-import { JK_EVENTS, JK_PAGE_NAMES } from '@/analytics/jk-events'
 import { MessageLayoutSelector } from '@/components/common/MessageLayoutPreview'
 import { ScalableIcon } from '@/components/common/ScalableIcon'
 import { ImageInStorage } from '@/components/Image'
 import InputBox, { type InputBoxPayload } from '@/components/InputBox/InputBox'
 import HomepageIcon from '@/components/icons/HomepageIcon'
 import Page from '@/components/layout/Page'
-import { useMyCopilots, useRemoteCopilotsByCursor } from '@/hooks/useCopilots'
-import { useProviders } from '@/hooks/useProviders'
 import { useIsSmallScreen } from '@/hooks/useScreenChange'
 import { navigateToSettings } from '@/modals/Settings'
-import { openLinkWithAuth } from '@/packages/openLinkWithAuth'
-import * as remote from '@/packages/remote'
-import { router } from '@/router'
-import { useAuthInfoStore } from '@/stores/authInfoStore'
 import { createSession as createSessionStore } from '@/stores/chatStore'
 import { submitNewUserMessage, switchCurrentSession } from '@/stores/sessionActions'
 import { initEmptyChatSession } from '@/stores/sessionHelpers'
-import { useLanguage, useSettingsStore } from '@/stores/settingsStore'
+import { useSettingsStore } from '@/stores/settingsStore'
 import { useUIStore } from '@/stores/uiStore'
-import { getHomeWelcomeCardMode } from '@/utils/homeWelcomeCard'
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -53,7 +43,6 @@ function Index() {
   const newSessionState = useUIStore((s) => s.newSessionState)
   const setNewSessionState = useUIStore((s) => s.setNewSessionState)
   const addSessionKnowledgeBase = useUIStore((s) => s.addSessionKnowledgeBase)
-  const showCopilotsInNewSession = useUIStore((s) => s.showCopilotsInNewSession)
   const widthFull = useUIStore((s) => s.widthFull)
   const sessionWebBrowsingMap = useUIStore((s) => s.sessionWebBrowsingMap)
   const setSessionWebBrowsing = useUIStore((s) => s.setSessionWebBrowsing)
@@ -62,17 +51,7 @@ function Index() {
     id: 'new',
     ...initEmptyChatSession(),
   })
-  const [pendingWelcomeAction, setPendingWelcomeAction] = useState<'claim-free-plan' | 'view-more-plans' | null>(null)
-  const pendingWelcomeActionRef = useRef(false)
-
-  const { providers } = useProviders()
-  const language = useLanguage()
-  const hasLicense = useSettingsStore((s) => Boolean(s.licenseKey))
-  const isLoggedIn = useAuthInfoStore((s) => Boolean(s.accessToken && s.refreshToken))
-  const welcomeCardMode = useMemo(
-    () => getHomeWelcomeCardMode({ providerCount: providers.length, isLoggedIn, hasLicense }),
-    [providers.length, isLoggedIn, hasLicense]
-  )
+  const welcomeCardMode = 'none' as const
 
   const selectedModel = useMemo(() => {
     if (session.settings?.provider && session.settings?.modelId) {
@@ -83,73 +62,6 @@ function Index() {
     }
   }, [session.settings?.provider, session.settings?.modelId])
 
-  const { copilots: myCopilots } = useMyCopilots()
-  const { copilots: remoteCopilots } = useRemoteCopilotsByCursor({ limit: 10 })
-  const selectedCopilotId = useMemo(() => session?.copilotId, [session?.copilotId])
-  const selectedCopilot = useMemo(
-    () => myCopilots.find((c) => c.id === selectedCopilotId) || remoteCopilots.find((c) => c.id === selectedCopilotId),
-    [myCopilots, remoteCopilots, selectedCopilotId]
-  )
-  useEffect(() => {
-    setSession((old) => ({
-      ...old,
-      assistantAvatarKey:
-        selectedCopilot?.avatar?.type === 'storage-key' ? selectedCopilot.avatar.storageKey : undefined,
-      picUrl: selectedCopilot?.avatar?.type === 'url' ? selectedCopilot.avatar.url : selectedCopilot?.picUrl,
-      backgroundImage: selectedCopilot?.backgroundImage,
-      name: selectedCopilot?.name || 'Untitled',
-      messages: selectedCopilot
-        ? [
-            {
-              id: uuidv4(),
-              role: 'system',
-              contentParts: [
-                {
-                  type: 'text',
-                  text: selectedCopilot.prompt,
-                },
-              ],
-            },
-          ]
-        : initEmptyChatSession().messages,
-    }))
-  }, [selectedCopilot])
-
-  const routerState = useRouterState()
-  useEffect(() => {
-    const { copilotId, copilot } = routerState.location.search
-    if (copilot) {
-      let c: CopilotDetail | null = null
-      try {
-        c = JSON.parse(copilot) as CopilotDetail
-      } catch (e) {
-        return
-      }
-
-      setSession((old) => ({
-        ...old,
-        copilotId: c.id,
-        assistantAvatarKey: c.avatar?.type === 'storage-key' ? c.avatar.storageKey : undefined,
-        picUrl: c.avatar?.type === 'url' ? c.avatar.url : c.picUrl,
-        backgroundImage: c.backgroundImage,
-        name: c.name || 'Untitled',
-        messages: [
-          {
-            id: uuidv4(),
-            role: 'system',
-            contentParts: [
-              {
-                type: 'text',
-                text: c.prompt,
-              },
-            ],
-          },
-        ],
-      }))
-    } else if (copilotId) {
-      setSession((old) => ({ ...old, copilotId }))
-    }
-  }, [routerState.location.search])
 
   const handleSubmit = useCallback(
     async ({ constructedMessage, needGenerating = true, onUserMessageReady }: InputBoxPayload) => {
@@ -163,12 +75,6 @@ function Index() {
         copilotId: session.copilotId,
         settings: session.settings,
       })
-
-      if (session.copilotId) {
-        void remote
-          .recordCopilotUsage({ id: session.copilotId, action: 'create_session' })
-          .catch((error) => console.warn('[recordCopilotUsage] failed', error))
-      }
 
       // Transfer knowledge base from newSessionState to the actual session
       if (newSessionState.knowledgeBase) {
@@ -290,124 +196,6 @@ function Index() {
           </Stack>
         )}
 
-        {welcomeCardMode !== 'none' && (
-          <Box px="sm">
-            <Paper
-              radius="md"
-              shadow="none"
-              withBorder
-              py="md"
-              px="sm"
-              mb="md"
-              className={widthFull ? 'w-full' : 'w-full max-w-4xl mx-auto'}
-            >
-              <Stack gap="sm">
-                <Stack gap="xxs" align="center">
-                  <Text fw={600} className="text-center">
-                    {t('Welcome to Chatbox!')}
-                  </Text>
-
-                  <Text size="xs" c="chatbox-tertiary" className="text-center">
-                    {welcomeCardMode === 'no-license' ? t('No licenses found') : t('Login to start chatting with AI')}
-                  </Text>
-                </Stack>
-
-                <Flex gap="xs" justify="center" align="center" wrap="wrap">
-                  {welcomeCardMode === 'no-license' ? (
-                    <>
-                      <Button
-                        size="xs"
-                        variant="filled"
-                        h={32}
-                        miw={160}
-                        fw={600}
-                        flex="0 1 auto"
-                        onClick={() => {
-                          if (pendingWelcomeActionRef.current) return
-
-                          pendingWelcomeActionRef.current = true
-                          trackJkClickEvent(JK_EVENTS.FREE_LICENSE_CLAIM_CLICK, {
-                            pageName: JK_PAGE_NAMES.CHAT_PAGE,
-                          })
-                          setPendingWelcomeAction('claim-free-plan')
-                          openLinkWithAuth(
-                            remote.buildChatboxUrl(
-                              `/redirect_app/claim_free_plan/${language}/?utm_source=app&utm_content=provider_cb_login_claim_free`
-                            )
-                          ).finally(() => {
-                            pendingWelcomeActionRef.current = false
-                            setPendingWelcomeAction(null)
-                          })
-                        }}
-                        loading={pendingWelcomeAction === 'claim-free-plan'}
-                        disabled={pendingWelcomeAction !== null}
-                      >
-                        {t('Claim Free Plan')}
-                      </Button>
-                      <Button
-                        size="xs"
-                        variant="subtle"
-                        c="chatbox-tertiary"
-                        h={32}
-                        fw={400}
-                        flex="0 1 auto"
-                        onClick={() => {
-                          if (pendingWelcomeActionRef.current) return
-
-                          pendingWelcomeActionRef.current = true
-                          setPendingWelcomeAction('view-more-plans')
-                          openLinkWithAuth(
-                            remote.buildChatboxUrl(
-                              `/redirect_app/view_more_plans/${language}/?utm_source=app&utm_content=provider_cb_login_more_plans`
-                            )
-                          ).finally(() => {
-                            pendingWelcomeActionRef.current = false
-                            setPendingWelcomeAction(null)
-                          })
-                        }}
-                        loading={pendingWelcomeAction === 'view-more-plans'}
-                        disabled={pendingWelcomeAction !== null}
-                      >
-                        {t('View More Plans')}
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        size="xs"
-                        variant="filled"
-                        h={32}
-                        miw={160}
-                        fw={600}
-                        flex="0 1 auto"
-                        onClick={() => {
-                          trackJkClickEvent(JK_EVENTS.LOGIN_BUTTON_CLICK, {
-                            pageName: JK_PAGE_NAMES.CHAT_PAGE,
-                          })
-                          navigateToSettings('chatbox-ai')
-                        }}
-                      >
-                        {t('Login Chatbox AI')}
-                      </Button>
-                      <Button
-                        size="xs"
-                        variant="subtle"
-                        c="chatbox-tertiary"
-                        h={32}
-                        fw={400}
-                        flex="0 1 auto"
-                        onClick={() => navigateToSettings('provider')}
-                      >
-                        {t('Other options')}
-                      </Button>
-                    </>
-                  )}
-                </Flex>
-              </Stack>
-            </Paper>
-          </Box>
-        )}
-
         <Stack gap="sm">
           {session.copilotId ? (
             <Box px="md">
@@ -441,11 +229,7 @@ function Index() {
                 </Text>
               </Stack>
             </Box>
-          ) : (
-            showCopilotsInNewSession && (
-              <CopilotPicker onSelect={(copilot) => setSession((old) => ({ ...old, copilotId: copilot?.id }))} />
-            )
-          )}
+          ) : null}
 
           <InputBox
             sessionType="chat"
@@ -459,140 +243,6 @@ function Index() {
         </Stack>
       </div>
     </Page>
-  )
-}
-
-const MAX_COPILOTS_TO_SHOW = 10
-
-const CopilotPicker = ({ selectedId, onSelect }: { selectedId?: string; onSelect?(copilot?: CopilotDetail): void }) => {
-  const { t } = useTranslation()
-  const isSmallScreen = useIsSmallScreen()
-  const widthFull = useUIStore((s) => s.widthFull)
-  const { copilots: myCopilots } = useMyCopilots()
-  const { copilots: remoteCopilots } = useRemoteCopilotsByCursor()
-
-  const copilots = useMemo(
-    () =>
-      myCopilots.length >= MAX_COPILOTS_TO_SHOW
-        ? myCopilots
-        : [
-            ...myCopilots,
-            ...(myCopilots.length && remoteCopilots.length ? [undefined] : []),
-            ...remoteCopilots
-              .filter((c) => !myCopilots.map((mc) => mc.id).includes(c.id))
-              .slice(0, MAX_COPILOTS_TO_SHOW - myCopilots.length - 1),
-          ],
-    [myCopilots, remoteCopilots]
-  )
-
-  const showMoreButton = useMemo(
-    () => copilots.length < myCopilots.length + remoteCopilots.length,
-    [copilots.length, myCopilots.length, remoteCopilots.length]
-  )
-
-  const viewportRef = useRef<HTMLDivElement>(null)
-  const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 })
-
-  if (!copilots.length) {
-    return null
-  }
-
-  return (
-    <Box px="md">
-      <Stack gap="xs" className={widthFull ? 'w-full' : 'w-full max-w-4xl mx-auto'}>
-        <Flex align="center" justify="space-between">
-          <Text size="xxs" c="chatbox-tertiary">
-            {t('My Copilots').toUpperCase()}
-          </Text>
-
-          {!isSmallScreen && (
-            <Flex align="center" gap="sm">
-              <ActionIcon
-                variant="transparent"
-                color="chatbox-tertiary"
-                // onClick={() => setPage((p) => Math.max(p - 1, 0))}
-                onClick={() => {
-                  if (viewportRef.current) {
-                    // const scrollWidth = viewportRef.current.scrollWidth
-                    const clientWidth = viewportRef.current.clientWidth
-                    const newScrollPosition = Math.max(scrollPosition.x - clientWidth, 0)
-                    viewportRef.current.scrollTo({ left: newScrollPosition, behavior: 'smooth' })
-                    onScrollPositionChange({ x: newScrollPosition, y: 0 })
-                  }
-                }}
-              >
-                <ScalableIcon icon={IconChevronLeft} />
-              </ActionIcon>
-              <ActionIcon
-                variant="transparent"
-                color="chatbox-tertiary"
-                // onClick={() => setPage((p) => p + 1)}
-                onClick={() => {
-                  if (viewportRef.current) {
-                    const scrollWidth = viewportRef.current.scrollWidth
-                    const clientWidth = viewportRef.current.clientWidth
-                    const newScrollPosition = Math.min(scrollPosition.x + clientWidth, scrollWidth - clientWidth)
-                    viewportRef.current.scrollTo({ left: newScrollPosition, behavior: 'smooth' })
-                    onScrollPositionChange({ x: newScrollPosition, y: 0 })
-                  }
-                }}
-              >
-                <ScalableIcon icon={IconChevronRight} />
-              </ActionIcon>
-            </Flex>
-          )}
-        </Flex>
-
-        <ScrollArea
-          type={isSmallScreen ? 'never' : 'scroll'}
-          mx="-md"
-          scrollbars="x"
-          offsetScrollbars="x"
-          viewportRef={viewportRef}
-          onScrollPositionChange={onScrollPositionChange}
-          className="copilot-picker-scroll-area"
-        >
-          {scrollPosition.x > 8 && !isSmallScreen && (
-            <div className="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-chatbox-background-primary to-transparent"></div>
-          )}
-          {!isSmallScreen && (
-            <div className="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-chatbox-background-primary to-transparent"></div>
-          )}
-          <Flex wrap="nowrap" gap="xs">
-            <Space w="xs" />
-            {copilots.map((copilot) =>
-              copilot ? (
-                <CopilotItem
-                  key={copilot.id}
-                  name={copilot.name}
-                  avatar={copilot.avatar}
-                  picUrl={copilot.picUrl}
-                  selected={selectedId === copilot.id}
-                  onClick={() => {
-                    onSelect?.(copilot)
-                  }}
-                />
-              ) : (
-                <Divider key="divider" orientation="vertical" my="xs" mx="xxs" />
-              )
-            )}
-            {showMoreButton && (
-              <CopilotItem
-                name={t('View All Copilots')}
-                noAvatar={true}
-                selected={false}
-                onClick={() =>
-                  router.navigate({
-                    to: '/copilots',
-                  })
-                }
-              />
-            )}
-            <Space w="xs" />
-          </Flex>
-        </ScrollArea>
-      </Stack>
-    </Box>
   )
 }
 

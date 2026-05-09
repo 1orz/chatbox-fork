@@ -166,26 +166,6 @@ export function RouteComponent() {
       {/* Export Logs */}
       <ExportLogsSection />
 
-      <Divider />
-
-      {/* Error Reporting */}
-      <Stack gap="md">
-        <Stack gap="xxs">
-          <Title order={5}>{t('Error Reporting')}</Title>
-          <Text c="chatbox-tertiary">
-            {t(
-              'Chatbox respects your privacy and only uploads anonymous error data and events when necessary. You can change your preferences at any time in the settings.'
-            )}
-          </Text>
-        </Stack>
-
-        <Checkbox
-          label={t('Enable optional anonymous reporting of crash and event data')}
-          checked={settings.allowReportingAndTracking}
-          onChange={(e) => setSettings({ allowReportingAndTracking: e.target.checked })}
-        />
-      </Stack>
-
       {/* others */}
       {platform.type === 'desktop' && (
         <>
@@ -520,9 +500,8 @@ const ImportExportDataSection = () => {
         )}
         {[
           { label: t('Settings'), value: ExportDataItem.Setting },
-          { label: t('API KEY & License'), value: ExportDataItem.Key },
+          { label: t('API KEY'), value: ExportDataItem.Key },
           { label: t('Chat History'), value: ExportDataItem.Conversations },
-          { label: t('My Copilots'), value: ExportDataItem.Copilot },
         ].map(({ label, value }) => (
           <Checkbox
             key={value}

@@ -11,10 +11,13 @@ import { mcpController } from '@/packages/mcp/controller'
 import type { MCPServerConfig } from '@/packages/mcp/types'
 import { useMcpSettings, useSettingsStore } from '@/stores/settingsStore'
 import { trackEvent } from '@/utils/track'
+import platform from '@/platform'
 import { ConfigModal } from './ConfigModal'
 import type { MCPRegistryEntry } from './registries'
 import ServerRegistrySpotlight from './ServerRegistrySpotlight'
 import { parseServersFromJson } from './utils'
+
+const isMobile = platform.type === 'mobile'
 
 const ServerCard: FC<{
   config: MCPServerConfig
@@ -150,7 +153,7 @@ const CustomServersSection: FC<Props> = (props) => {
           bd="1px dashed var(--chatbox-border-primary)"
           p="sm"
           className="cursor-pointer"
-          onClick={spotlight.open}
+          onClick={() => (isMobile ? triggerAddServer() : spotlight.open())}
         >
           <Flex direction="column" justify="center" align="center" h="100%" gap={4}>
             <ActionIcon variant="filled" size="sm">
@@ -172,7 +175,9 @@ const CustomServersSection: FC<Props> = (props) => {
           )
         })}
       </SimpleGrid>
-      <ServerRegistrySpotlight triggerAddServer={triggerAddServer} triggerImportJson={triggerImportJson} />
+      {!isMobile && (
+        <ServerRegistrySpotlight triggerAddServer={triggerAddServer} triggerImportJson={triggerImportJson} />
+      )}
       <ConfigModal
         mode={modal?.mode}
         config={modal ? modal.config : null}

@@ -118,39 +118,6 @@ async function parseFileWithLocalParser(
 }
 
 /**
- * Parse file using Chatbox AI cloud service
- */
-async function parseFileWithChatboxAI(
-  file: File,
-  uniqKey: string
-): Promise<{ content: string; storageKey: string; tokenCountMap: Record<string, number> }> {
-  const licenseKey = settingActions.getLicenseKey()
-  const uploadedKey = await remote.uploadAndCreateUserFile(licenseKey || '', file)
-
-  // Get uploaded file content
-  const content = (await storage.getBlob(uploadedKey).catch(() => '')) || ''
-
-  // Store content to unique key
-  if (content) {
-    await storage.setBlob(uniqKey, content)
-  }
-
-  // Calculate token counts
-  const tokenCountMap: Record<string, number> = content
-    ? {
-        [TOKEN_CACHE_KEYS.default]: estimateTokens(content),
-        [TOKEN_CACHE_KEYS.deepseek]: estimateTokens(content, { provider: '', modelId: 'deepseek' }),
-      }
-    : {}
-
-  if (content) {
-    await storage.setItem(`${uniqKey}_tokenMap`, tokenCountMap)
-  }
-
-  return { content, storageKey: uniqKey, tokenCountMap }
-}
-
-/**
  * Parse file using MinerU service (Desktop only)
  */
 async function parseFileWithMineruService(
@@ -277,17 +244,6 @@ export async function preprocessFile(
           break
         }
 
-        case 'chatbox-ai': {
-          // Chatbox AI cloud parsing - available on all platforms
-          try {
-            result = await parseFileWithChatboxAI(file, uniqKey)
-          } catch (error) {
-            log.error(`Chatbox AI parsing failed for "${file.name}":`, error)
-            throw new Error('chatbox_ai_parser_failed')
-          }
-          break
-        }
-
         case 'mineru': {
           // MinerU parsing - available on desktop only
           const apiToken = parserConfig.mineru?.apiToken
@@ -398,38 +354,7 @@ export async function preprocessLink(
     }
 
     if (isPro) {
-      // ChatboxAI 方案：使用远程解析
-      const licenseKey = settingActions.getLicenseKey()
-      const parsed = await remote.parseUserLinkPro({ licenseKey: licenseKey || '', url })
-
-      // 获取解析后的内容
-      const content = (await storage.getBlob(parsed.storageKey).catch(() => '')) || ''
-
-      // 将内容存储到唯一键下
-      if (content) {
-        await storage.setBlob(uniqKey, content)
-      }
-
-      // Calculate token counts including preview metadata
-      const tokenizerType = getCurrentTokenizerType()
-      const { lineCount, byteLength, tokenCountMap } = content
-        ? computePreviewMetadata(content, tokenizerType)
-        : { lineCount: undefined, byteLength: undefined, tokenCountMap: {} }
-
-      // Store token map for future use
-      if (content) {
-        await storage.setItem(`${uniqKey}_tokenMap`, tokenCountMap)
-      }
-
-      return {
-        url,
-        title: parsed.title,
-        content,
-        storageKey: uniqKey,
-        tokenCountMap,
-        lineCount,
-        byteLength,
-      }
+      throw new Error('Cloud link parsing is disabled. Local link parsing will be used instead.')
     } else {
       // 本地方案：解析链接内容
       const { key, title } = await localParser.parseUrl(url)

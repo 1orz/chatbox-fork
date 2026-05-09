@@ -1,6 +1,8 @@
+import { resolveEffectiveApiKey } from '@shared/oauth'
 import { getProviderDefinition } from '@shared/providers'
 import type { ModelProvider, ProviderBaseInfo, ProviderModelInfo, ProviderSettings, SessionType } from '@shared/types'
 import { createModelDependencies } from '@/adapters'
+import platform from '@/platform'
 import BaseConfig from './base-config'
 import type { ModelSettingUtil } from './interface'
 
@@ -37,6 +39,7 @@ export default class RegistrySettingUtil extends BaseConfig implements ModelSett
 
     const model: ProviderModelInfo = settings.models?.[0] || definition.defaultSettings?.models?.[0] || { modelId: '' }
     const dependencies = await createModelDependencies()
+    const effectiveApiKey = resolveEffectiveApiKey(settings, platform.type)
 
     const modelInstance = definition.createModel({
       settings: { provider: this.provider, modelId: model.modelId },
@@ -47,8 +50,10 @@ export default class RegistrySettingUtil extends BaseConfig implements ModelSett
       dependencies,
       providerSetting: settings,
       formattedApiHost: settings.apiHost || definition.defaultSettings?.apiHost || '',
+      formattedApiPath: settings.apiPath || definition.defaultSettings?.apiPath || '',
       model,
-    })
+      effectiveApiKey,
+    } as Parameters<typeof definition.createModel>[0])
 
     if ('listModels' in modelInstance && typeof modelInstance.listModels === 'function') {
       return modelInstance.listModels()

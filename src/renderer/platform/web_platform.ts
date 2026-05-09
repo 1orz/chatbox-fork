@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { parseLocale } from '@/i18n/parser'
 import { type ImageGenerationStorage, IndexedDBImageGenerationStorage } from '@/storage/ImageGenerationStorage'
 import { getBrowser, getOS } from '../packages/navigator'
+import { CHATBOX_BUILD_TARGET } from '@/variables'
 import type { Platform, PlatformType } from './interfaces'
 import type { KnowledgeBaseController } from './knowledge-base/interface'
 import { IndexedDBStorage } from './storages'
@@ -13,7 +14,7 @@ import webLogger from './web_logger'
 import { parseTextFileLocally } from './web_platform_utils'
 
 export default class WebPlatform extends IndexedDBStorage implements Platform {
-  public type: PlatformType = 'web'
+  public type: PlatformType = CHATBOX_BUILD_TARGET === 'mobile_app' ? 'mobile' : 'web'
 
   public exporter = new WebExporter()
 
@@ -106,27 +107,10 @@ export default class WebPlatform extends IndexedDBStorage implements Platform {
   }
 
   public async initTracking() {
-    const GAID = 'G-B365F44W6E'
-    try {
-      const conf = await this.getConfig()
-      window.gtag('config', GAID, {
-        app_name: 'chatbox',
-        user_id: conf.uuid,
-        client_id: conf.uuid,
-        app_version: await this.getVersion(),
-        chatbox_platform_type: 'web',
-        chatbox_platform: await this.getPlatform(),
-        app_platform: await this.getPlatform(),
-      })
-    } catch (e) {
-      window.gtag('config', GAID, {
-        app_name: 'chatbox',
-      })
-      throw e
-    }
+    // analytics disabled in this build
   }
-  public trackingEvent(name: string, params: { [key: string]: string }) {
-    window.gtag('event', name, params)
+  public trackingEvent(_name: string, _params: { [key: string]: string }) {
+    // no-op
   }
 
   public async shouldShowAboutDialogWhenStartUp(): Promise<boolean> {

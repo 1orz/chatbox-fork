@@ -188,3 +188,6 @@ storybook-static
 .gstack/
 .worktrees/
 .claude/worktrees/
+
+# Local Android signing key — DO NOT COMMIT
+android/app/release-keystore.jks

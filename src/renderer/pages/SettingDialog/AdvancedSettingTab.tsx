@@ -82,15 +82,6 @@ export default function AdvancedSettingTab(props: Props) {
           <ExportAndImport onCancel={props.onCancel} />
         </AccordionDetails>
       </Accordion>
-      <Accordion>
-        <AccordionSummary aria-controls="panel1a-content">
-          <Typography>{t('Error Reporting')}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <AnalyticsSetting />
-        </AccordionDetails>
-      </Accordion>
-
       {platform.type === 'desktop' && (
         <Box className="mt-2">
           <FormGroup>
@@ -276,9 +267,8 @@ function ExportAndImport(props: { onCancel: () => void }) {
           <FormGroup className="mb-2">
             {[
               { label: t('Settings'), value: ExportDataItem.Setting },
-              { label: t('API KEY & License'), value: ExportDataItem.Key },
+              { label: t('API KEY'), value: ExportDataItem.Key },
               { label: t('Chat History'), value: ExportDataItem.Conversations },
-              { label: t('My Copilots'), value: ExportDataItem.Copilot },
             ].map((item) => (
               <FormControlLabel
                 key={item.value}

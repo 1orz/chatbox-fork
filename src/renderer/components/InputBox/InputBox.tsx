@@ -289,7 +289,16 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
       const modelInfo = (providerInfo?.models || providerInfo?.defaultSettings?.models)?.find(
         (m) => m.modelId === model.modelId
       )
-      return `${modelInfo?.nickname || model.modelId}`
+      const raw = modelInfo?.nickname || model.modelId
+      const providerName = providerInfo?.name
+      if (providerName) {
+        const lowered = raw.toLowerCase()
+        const prefix = providerName.toLowerCase()
+        if (lowered.startsWith(`${prefix} `)) {
+          return raw.substring(providerName.length).trim()
+        }
+      }
+      return raw
     }, [providers, model, t])
 
     // Get model info for context window

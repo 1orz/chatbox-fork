@@ -19,8 +19,11 @@ import { useTranslation } from 'react-i18next'
 import { Modal } from '@/components/layout/Overlay'
 import { MCPServer } from '@/packages/mcp/controller'
 import type { MCPServerConfig } from '@/packages/mcp/types'
+import platform from '@/platform'
 import { trackEvent } from '@/utils/track'
 import { getConfigFromFormValues, getFormValuesFromConfig, type MCPServerConfigFormValues } from './utils'
+
+const isMobile = platform.type === 'mobile'
 
 interface ConnectionTestingResult {
   config: MCPServerConfig
@@ -122,18 +125,20 @@ const ConfigForm: FC<{
     <form ref={formRef} onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
         <TextInput label={t('Name')} data-autofocus required {...form.getInputProps('name')} />
-        <Radio.Group
-          required
-          label={t('Type')}
-          {...form.getInputProps('transport.type')}
-          labelProps={{ fw: 600, mb: 'xs' }}
-        >
-          <Group>
-            <Radio variant="outline" size="sm" value="http" label={t('Remote (http/sse)')} />
-            <Radio variant="outline" size="sm" value="stdio" label={t('Local (stdio)')} />
-          </Group>
-        </Radio.Group>
-        {form.values.transport.type === 'stdio' && (
+        {!isMobile && (
+          <Radio.Group
+            required
+            label={t('Type')}
+            {...form.getInputProps('transport.type')}
+            labelProps={{ fw: 600, mb: 'xs' }}
+          >
+            <Group>
+              <Radio variant="outline" size="sm" value="http" label={t('Remote (http/sse)')} />
+              <Radio variant="outline" size="sm" value="stdio" label={t('Local (stdio)')} />
+            </Group>
+          </Radio.Group>
+        )}
+        {!isMobile && form.values.transport.type === 'stdio' && (
           <>
             <Textarea
               label={t('Command')}

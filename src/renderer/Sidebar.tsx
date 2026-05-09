@@ -6,7 +6,6 @@ import {
   IconHelpCircle,
   IconInfoCircle,
   IconLayoutSidebarLeftCollapse,
-  IconMessageChatbot,
   IconPhotoPlus,
   IconSettingsFilled,
 } from '@tabler/icons-react'
@@ -247,21 +246,6 @@ export default function Sidebar() {
 
           {isSmallScreen ? (
             <Flex gap="md" align="center">
-              <NavLink
-                c="chatbox-secondary"
-                className="rounded"
-                label={t('My Copilots')}
-                leftSection={<ScalableIcon icon={IconMessageChatbot} size={20} />}
-                onClick={() => {
-                  navigate({
-                    to: '/copilots',
-                  })
-                  setShowSidebar(false)
-                }}
-                variant="light"
-                p="xs"
-              />
-
               {!versionHook.isExceeded && (
                 <ActionIcon
                   variant="transparent"
@@ -302,22 +286,6 @@ export default function Sidebar() {
             </Flex>
           ) : (
             <>
-              <NavLink
-                c="chatbox-secondary"
-                className="rounded"
-                label={t('My Copilots')}
-                leftSection={<ScalableIcon icon={IconMessageChatbot} size={20} />}
-                onClick={() => {
-                  navigate({
-                    to: '/copilots',
-                  })
-                  if (isSmallScreen) {
-                    setShowSidebar(false)
-                  }
-                }}
-                variant="light"
-                p="xs"
-              />
               <NavLink
                 c="chatbox-secondary"
                 className="rounded"

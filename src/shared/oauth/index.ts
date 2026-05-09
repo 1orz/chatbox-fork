@@ -58,3 +58,39 @@ export function createBearerOAuthFetch(..._args: unknown[]): undefined {
 export function createOpenAIOAuthFetch(..._args: unknown[]): undefined {
   return undefined
 }
+
+// OAuth flow types (desktop-only feature; mobile builds short-circuit early)
+export interface OAuthResult {
+  success: boolean
+  error?: string
+  credentials?: {
+    accessToken?: string
+    refreshToken?: string
+    expiresAt?: number
+    [key: string]: unknown
+  }
+}
+
+export interface OAuthStartResult {
+  success: boolean
+  error?: string
+  [key: string]: unknown
+}
+
+export interface DeviceFlowStartResult {
+  success: boolean
+  error?: string
+  userCode?: string
+  verificationUri?: string
+  [key: string]: unknown
+}
+
+export const OAuthIpcChannels = {
+  LOGIN: 'oauth:login',
+  CANCEL: 'oauth:cancel',
+  START_LOGIN: 'oauth:start-login',
+  EXCHANGE_CODE: 'oauth:exchange-code',
+  START_DEVICE_FLOW: 'oauth:start-device-flow',
+  WAIT_DEVICE_TOKEN: 'oauth:wait-device-token',
+  REFRESH: 'oauth:refresh',
+} as const

@@ -27,7 +27,9 @@ let currentAbortController: AbortController | null = null
 function getLicenseKey(): string {
   const licenseKey = settingsStore.getState().licenseKey
   if (!licenseKey) {
-    throw new Error('License key is required for image generation')
+    throw new Error(
+      'Image generation requires a configured AI provider. Chatbox cloud image service has been disabled in this build.'
+    )
   }
   return licenseKey
 }

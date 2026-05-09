@@ -62,7 +62,7 @@ export function ProviderList({ providers, onAddProvider, onImportProvider, isImp
           {providers.map((provider) => (
             <Link
               key={provider.id}
-              to={provider.id === 'chatbox-ai' ? `/settings/provider/chatbox-ai` : `/settings/provider/$providerId`}
+              to={`/settings/provider/$providerId`}
               params={{ providerId: provider.id }}
               className={'block no-underline'}
             >
@@ -87,7 +87,14 @@ export function ProviderList({ providers, onAddProvider, onImportProvider, isImp
                     <CustomProviderIcon providerId={provider.id} providerName={provider.name} size={32} />
                   )
                 ) : (
-                  <Image w={32} h={32} src={icons.find((icon) => icon.name === provider.id)?.src} alt={provider.name} />
+                  (() => {
+                    const iconSrc = icons.find((icon) => icon.name === provider.id)?.src
+                    return iconSrc ? (
+                      <Image w={32} h={32} src={iconSrc} alt={provider.name} />
+                    ) : (
+                      <CustomProviderIcon providerId={provider.id} providerName={provider.name} size={32} />
+                    )
+                  })()
                 )}
 
                 <Text

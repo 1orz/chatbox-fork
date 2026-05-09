@@ -37,6 +37,9 @@ export const BuiltinServersSection: FC = () => {
   const mcp = useMcpSettings()
   const isPremium = useAutoValidate()
   const onEnabledChange = useToggleMCPServer()
+  if (BUILTIN_MCP_SERVERS.length === 0) {
+    return null
+  }
   return (
     <>
       <Text size="sm" fw={600} mb={4}>
