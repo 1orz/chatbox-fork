@@ -15,6 +15,10 @@ android {
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
+        ndk {
+            // Ship only 64-bit ARM (covers all modern phones); skip armeabi-v7a/x86/x86_64 to shrink APK
+            abiFilters 'arm64-v8a'
+        }
     }
     signingConfigs {
         release {

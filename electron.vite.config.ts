@@ -111,13 +111,15 @@ export default defineConfig(({ mode }) => {
     main: {
       plugins: [
         ...(isProduction
-          ? [
-              visualizer({
-                filename: 'release/app/dist/main/stats.html',
-                open: false,
-                title: 'Main Process Dependency Analysis',
-              }),
-            ]
+          ? isMobile
+            ? []
+            : [
+                visualizer({
+                  filename: 'release/app/dist/main/stats.html',
+                  open: false,
+                  title: 'Main Process Dependency Analysis',
+                }),
+              ]
           : [externalizeDepsPlugin()]),
         process.env.SENTRY_AUTH_TOKEN
           ? sentryVitePlugin({
@@ -141,7 +143,9 @@ export default defineConfig(({ mode }) => {
         lib: {
           entry: resolve(__dirname, 'src/main/main.ts'),
         },
-        sourcemap: isProduction ? 'hidden' : true,
+        sourcemap: isMobile
+          ? process.env.CHATBOX_MOBILE_SOURCEMAP === 'true'
+          : isProduction ? 'hidden' : true,
         minify: isProduction,
         rollupOptions: {
           external: Object.keys(packageJson.dependencies || {}),
@@ -171,19 +175,23 @@ export default defineConfig(({ mode }) => {
       },
     },
     preload: {
-      plugins: [
-        visualizer({
-          filename: 'release/app/dist/preload/stats.html',
-          open: false,
-          title: 'Preload Process Dependency Analysis',
-        }),
-      ],
+      plugins: isMobile
+        ? []
+        : [
+            visualizer({
+              filename: 'release/app/dist/preload/stats.html',
+              open: false,
+              title: 'Preload Process Dependency Analysis',
+            }),
+          ],
       build: {
         outDir: isProduction ? 'release/app/dist/preload' : undefined,
         lib: {
           entry: resolve(__dirname, 'src/preload/index.ts'),
         },
-        sourcemap: isProduction ? 'hidden' : true,
+        sourcemap: isMobile
+          ? process.env.CHATBOX_MOBILE_SOURCEMAP === 'true'
+          : isProduction ? 'hidden' : true,
         minify: isProduction,
       },
       resolve: {
@@ -214,11 +222,13 @@ export default defineConfig(({ mode }) => {
         isWeb ? injectBaseTag() : undefined,
         injectReleaseDate(),
         isWeb ? replacePlausibleDomain() : undefined,
-        visualizer({
-          filename: 'release/app/dist/renderer/stats.html',
-          open: false,
-          title: 'Renderer Process Dependency Analysis',
-        }),
+        isMobile
+          ? undefined
+          : visualizer({
+              filename: 'release/app/dist/renderer/stats.html',
+              open: false,
+              title: 'Renderer Process Dependency Analysis',
+            }),
         process.env.SENTRY_AUTH_TOKEN
           ? sentryVitePlugin({
               authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -239,8 +249,10 @@ export default defineConfig(({ mode }) => {
       build: {
         outDir: isProduction ? 'release/app/dist/renderer' : undefined,
         target: 'es2020', // Avoid static initialization blocks for browser compatibility
-        sourcemap: isProduction ? 'hidden' : true,
-        minify: isProduction ? 'esbuild' : false, // Use esbuild for faster, less memory-intensive minification
+        sourcemap: isMobile
+          ? process.env.CHATBOX_MOBILE_SOURCEMAP === 'true'
+          : isProduction ? 'hidden' : true,
+        minify: isProduction ? 'esbuild' : false,
         rollupOptions: {
           output: {
             entryFileNames: 'js/[name].[hash].js',

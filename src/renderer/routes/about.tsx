@@ -14,9 +14,6 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import {
   IconChevronRight,
-  IconClipboard,
-  IconFileText,
-  IconHome,
   IconMail,
   IconMessage2,
   IconPencil,
@@ -31,7 +28,6 @@ import BrandWechat from '@/components/icons/BrandWechat'
 import Page from '@/components/layout/Page'
 import { useIsSmallScreen } from '@/hooks/useScreenChange'
 import useVersion from '@/hooks/useVersion'
-import { buildChatboxUrl } from '@/packages/remote'
 import platform from '@/platform'
 import iconPNG from '@/static/icon.png'
 import IMG_WECHAT_QRCODE from '@/static/wechat_qrcode.png'
@@ -58,16 +54,6 @@ function RouteComponent() {
                 <Title order={5} lh={1.5} lineClamp={1} title={`Chatbox v${version.version}`}>
                   Chatbox {/\d/.test(version.version) ? `(v${version.version})` : ''}
                 </Title>
-
-                <Button
-                  size="xs"
-                  variant="default"
-                  radius="xl"
-                  className="flex-shrink-0"
-                  onClick={() => platform.openLink(buildChatboxUrl(`/redirect_app/check_update/${language}`))}
-                >
-                  {t('Check Update')}
-                </Button>
               </Flex>
               <Text>{t('about-slogan')}</Text>
               <Text c="chatbox-tertiary">{t('about-introduction')}</Text>
@@ -99,8 +85,8 @@ function RouteComponent() {
             <ListItem
               icon={<BrandGithub className="w-full h-full" />}
               title={t('Github')}
-              link="https://github.com/chatboxai/chatbox"
-              value="chatbox"
+              link="https://github.com/1orz/chatbox-fork"
+              value="chatbox-fork"
             />
             {/* <ListItem
               icon={<BrandX className="w-full h-full" />}
@@ -119,24 +105,9 @@ function RouteComponent() {
 
           <List>
             <ListItem
-              icon={<IconHome className="w-full h-full" />}
-              title={t('Homepage')}
-              link={buildChatboxUrl(`/redirect_app/homepage/${language}`)}
-            />
-            <ListItem
-              icon={<IconClipboard className="w-full h-full" />}
-              title={t('Survey')}
-              link={_i18n.language === 'zh-Hans' ? 'https://jsj.top/f/fcMYEa' : 'https://jsj.top/f/RUMbvY'}
-            />
-            <ListItem
               icon={<IconPencil className="w-full h-full" />}
               title={t('Feedback')}
-              link={buildChatboxUrl(`/redirect_app/feedback/${language}`)}
-            />
-            <ListItem
-              icon={<IconFileText className="w-full h-full" />}
-              title={t('Changelog')}
-              link={`https://chatboxai.app/${language.split('-')[0] || 'en'}/help-center/changelog`}
+              link={`https://github.com/1orz/chatbox-fork/issues`}
             />
             <ListItem
               icon={<IconMail className="w-full h-full" />}
