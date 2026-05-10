@@ -36,7 +36,7 @@ export default class OpenRouter extends AbstractAISDKModel {
     return createOpenRouter({
       apiKey: this.options.apiKey,
       headers: {
-        'HTTP-Referer': 'https://chatboxai.app',
+        'HTTP-Referer': 'https://github.com/1orz/chatbox-fork',
         'X-Title': 'Chatbox AI',
       },
     })

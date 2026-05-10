@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
 import {
-  type CompactionPoint,
   type Message,
   type MessageRole,
   MessageRoleEnum,
@@ -180,7 +179,7 @@ export function copyThreads(source?: SessionThread[], idMapping?: Map<string, st
 }
 
 // RAG related types
-export type KnowledgeBaseProviderMode = 'chatbox-ai' | 'custom'
+export type KnowledgeBaseProviderMode = 'custom'
 
 export interface KnowledgeBase {
   id: number

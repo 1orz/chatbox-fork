@@ -1,25 +1,15 @@
-import * as Sentry from '@sentry/react'
 import type { SentryAdapter, SentryScope } from '../../shared/utils/sentry_adapter'
 
-/**
- * 渲染进程的 Sentry 适配器实现
- */
+// Renderer-side Sentry adapter: telemetry stripped from this fork.
+// All methods are no-ops; @sentry/react is not initialised anywhere.
 export class RendererSentryAdapter implements SentryAdapter {
-  captureException(error: any): void {
-    Sentry.captureException(error)
-  }
+  captureException(_error: any): void {}
 
   withScope(callback: (scope: SentryScope) => void): void {
-    Sentry.withScope((sentryScope) => {
-      const scope: SentryScope = {
-        setTag(key: string, value: string): void {
-          sentryScope.setTag(key, value)
-        },
-        setExtra(key: string, value: any): void {
-          sentryScope.setExtra(key, value)
-        },
-      }
-      callback(scope)
-    })
+    const scope: SentryScope = {
+      setTag(_key: string, _value: string): void {},
+      setExtra(_key: string, _value: any): void {},
+    }
+    callback(scope)
   }
-} 
+}

@@ -1,6 +1,6 @@
 import { ActionIcon, Box, Code, Collapse, Group, Paper, Stack, Text, UnstyledButton } from '@mantine/core'
 import { ChatboxAIAPIError } from '@shared/models/errors'
-import { type Message, type MessageReasoningPart, type MessageToolCallPart } from '@shared/types'
+import type { Message, MessageReasoningPart, MessageToolCallPart } from '@shared/types'
 import {
   IconBulb,
   IconCheck,

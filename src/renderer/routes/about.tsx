@@ -1,7 +1,5 @@
 import {
-  Anchor,
   Box,
-  Button,
   Container,
   Divider,
   Flex,
@@ -14,7 +12,6 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import {
   IconChevronRight,
-  IconMail,
   IconMessage2,
   IconPencil,
 } from '@tabler/icons-react'
@@ -31,7 +28,6 @@ import useVersion from '@/hooks/useVersion'
 import platform from '@/platform'
 import iconPNG from '@/static/icon.png'
 import IMG_WECHAT_QRCODE from '@/static/wechat_qrcode.png'
-import { useLanguage } from '@/stores/settingsStore'
 
 export const Route = createFileRoute('/about')({
   component: RouteComponent,
@@ -40,7 +36,6 @@ export const Route = createFileRoute('/about')({
 function RouteComponent() {
   const { t, i18n: _i18n } = useTranslation()
   const version = useVersion()
-  const language = useLanguage()
   const isSmallScreen = useIsSmallScreen()
 
   return (
@@ -57,27 +52,6 @@ function RouteComponent() {
               </Flex>
               <Text>{t('about-slogan')}</Text>
               <Text c="chatbox-tertiary">{t('about-introduction')}</Text>
-
-              <Flex gap="sm">
-                <Anchor
-                  size="sm"
-                  href="https://chatboxai.app/privacy"
-                  target="_blank"
-                  underline="hover"
-                  c="chatbox-tertiary"
-                >
-                  {t('Privacy Policy')}
-                </Anchor>
-                <Anchor
-                  size="sm"
-                  href="https://chatboxai.app/terms"
-                  target="_blank"
-                  underline="hover"
-                  c="chatbox-tertiary"
-                >
-                  {t('User Terms')}
-                </Anchor>
-              </Flex>
             </Stack>
           </Flex>
 
@@ -110,15 +84,9 @@ function RouteComponent() {
               link={`https://github.com/1orz/chatbox-fork/issues`}
             />
             <ListItem
-              icon={<IconMail className="w-full h-full" />}
-              title={t('E-mail')}
-              link={`mailto:hi@chatboxai.com`}
-              value="hi@chatboxai.com"
-            />
-            <ListItem
               icon={<IconMessage2 className="w-full h-full" />}
               title={t('FAQs')}
-              link={`https://chatboxai.app/${language.split('-')[0] || 'en'}/help-center/chatbox-ai-service-faqs`}
+              link={`https://github.com/chatboxai/chatbox`}
             />
           </List>
         </Stack>

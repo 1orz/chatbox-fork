@@ -1,8 +1,5 @@
 export class BaseError extends Error {
   public code = 1
-  constructor(message: string) {
-    super(message)
-  }
 }
 
 // 10000 - 19999 为通用网络接口错误
@@ -11,7 +8,7 @@ export class ApiError extends BaseError {
   public code = 10001
   public responseBody: string | undefined
   constructor(message: string, responseBody?: string) {
-    super('API Error: ' + message)
+    super(`API Error: ${message}`)
     this.responseBody = responseBody
   }
 }
@@ -20,7 +17,7 @@ export class NetworkError extends BaseError {
   public code = 10002
   public host: string
   constructor(message: string, host: string) {
-    super('Network Error: ' + message)
+    super(`Network Error: ${message}`)
     this.host = host
   }
 }
@@ -183,13 +180,13 @@ export class ChatboxAIAPIError extends BaseError {
       name: 'system_error',
       code: 20019,
       i18nKey:
-        'An error occurred while processing your request. Please try again later. If this error continues, please send an email to hi@chatboxai.com for support.',
+        'An error occurred while processing your request. Please try again later. If this error continues, please open an issue at https://github.com/1orz/chatbox-fork/issues.',
     },
     unknown: {
       name: 'unknown',
       code: 20020,
       i18nKey:
-        'An unknown error occurred. Please try again later. If this error continues, please send an email to hi@chatboxai.com for support.',
+        'An unknown error occurred. Please try again later. If this error continues, please open an issue at https://github.com/1orz/chatbox-fork/issues.',
     },
     model_not_support_web_browsing: {
       name: 'model_not_support_web_browsing',

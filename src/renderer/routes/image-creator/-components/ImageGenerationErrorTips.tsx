@@ -72,7 +72,7 @@ export function ImageGenerationErrorTips({ record, onRetry, isRetrying }: ImageG
                     }}
                   />
                 ),
-                LinkToHomePage: <LinkTargetBlank href="https://chatboxai.app" />,
+                LinkToHomePage: <LinkTargetBlank href="https://github.com/1orz/chatbox-fork" />,
               }}
             />
           </Text>

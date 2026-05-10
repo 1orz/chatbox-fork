@@ -3,8 +3,7 @@ import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined'
 import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined'
 import { ButtonGroup, IconButton } from '@mui/material'
 import type { Message } from '@shared/types/session'
-import { debounce } from 'lodash'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useIsSmallScreen } from '@/hooks/useScreenChange'
 import { cn } from '@/lib/utils'
@@ -24,8 +23,8 @@ export function isContainRenderableCode(markdown: string): boolean {
     return false
   }
   return (
-    RENDERABLE_CODE_LANGUAGES.some((l) => markdown.includes('```' + l + '\n')) ||
-    RENDERABLE_CODE_LANGUAGES.some((l) => markdown.includes('```' + l.toUpperCase() + '\n'))
+    RENDERABLE_CODE_LANGUAGES.some((l) => markdown.includes(`\`\`\`${l}\n`)) ||
+    RENDERABLE_CODE_LANGUAGES.some((l) => markdown.includes(`\`\`\`${l.toUpperCase()}\n`))
   )
 }
 
@@ -170,39 +169,22 @@ export function ArtifactWithButtons(props: {
 
 export function Artifact(props: { htmlCode: string; reloadSign?: number; className?: string }) {
   const { htmlCode, reloadSign, className } = props
-  const ref = useRef<HTMLIFrameElement>(null)
-  const iframeOrigin = 'https://artifact-preview.chatboxai.app/preview'
 
-  const sendIframeMsg = (type: 'html', code: string) => {
-    if (!ref.current) {
-      return
-    }
-    ref.current.contentWindow?.postMessage({ type, code }, '*')
-  }
-  // 当 reloadSign 改变时，重新加载 iframe 内容
-  useEffect(() => {
-    ;(async () => {
-      sendIframeMsg('html', '')
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      sendIframeMsg('html', htmlCode)
-    })()
-  }, [reloadSign])
-
-  // 当 htmlCode 改变时，防抖地刷新 iframe 内容
-  const updateIframe = debounce(() => {
-    sendIframeMsg('html', htmlCode)
-  }, 300)
-  useEffect(() => {
-    updateIframe()
-    return () => updateIframe.cancel()
-  }, [htmlCode])
-
+  // Renders LLM-generated HTML/CSS/JS entirely on the client via an iframe srcdoc.
+  // The original implementation hosted a remote preview at artifact-preview.chatboxai.app
+  // and pushed code through postMessage; that hosted service has been removed for
+  // the self-hosted fork. The sandbox attribute intentionally omits `allow-same-origin`
+  // so the about:srcdoc document cannot reach this app's DOM, cookies or storage.
+  // `key={reloadSign}` forces React to recreate the iframe element when the user
+  // explicitly clicks Replay/Refresh, which gives us a clean re-execution of any
+  // inline scripts (counters, animations, mermaid, etc.).
   return (
     <iframe
+      key={reloadSign}
+      title="artifact-preview"
       className={cn('w-full', 'border-none', 'h-[400px]', className)}
       sandbox="allow-scripts allow-forms"
-      src={iframeOrigin}
-      ref={ref}
+      srcDoc={htmlCode}
     />
   )
 }
@@ -220,7 +202,7 @@ function generateHtml(markdowns: string[]): string {
   for (const markdown of markdowns) {
     for (let line of markdown.split('\n')) {
       line = line.trimStart()
-      const lang = languages.find((l) => '```' + l === line)
+      const lang = languages.find((l) => `\`\`\`${l}` === line)
       if (lang) {
         currentType = lang
         continue
@@ -236,7 +218,7 @@ function generateHtml(markdowns: string[]): string {
         }
       }
       if (currentType) {
-        currentContent += line + '\n'
+        currentContent += `${line}\n`
       }
     }
   }

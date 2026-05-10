@@ -129,7 +129,7 @@ function renderToolCallHtml(summary: ToolCallSummary): string {
 export function formatChatAsMarkdown(sessionName: string, threads: SessionThread[]) {
   let content = `# ${sessionName}\n\n`
   for (let i = 0; i < threads.length; i++) {
-    let thread = threads[i]
+    const thread = threads[i]
     content += `## ${i + 1}. ${thread.name}\n\n`
     for (const msg of thread.messages) {
       const attachments = getAttachmentNames(msg)
@@ -142,7 +142,7 @@ export function formatChatAsMarkdown(sessionName: string, threads: SessionThread
         }
         const rawText = textBuffer.join('\n')
         const sanitized = rawText.replaceAll(/```\w*/g, '')
-        content += '```\n' + sanitized + '\n```\n\n'
+        content += `\`\`\`\n${sanitized}\n\`\`\`\n\n`
         textBuffer.length = 0
       }
       content += `**${msg.role}**: \n\n`
@@ -175,7 +175,7 @@ export function formatChatAsMarkdown(sessionName: string, threads: SessionThread
         }
         flushTextBuffer()
       } else {
-        content += '```\n' + getMessageText(msg).replaceAll(/```\w*/g, '') + '\n```\n\n'
+        content += `\`\`\`\n${getMessageText(msg).replaceAll(/```\w*/g, '')}\n\`\`\`\n\n`
       }
       if (attachments.length > 0) {
         content += 'Attachments:\n'
@@ -187,20 +187,14 @@ export function formatChatAsMarkdown(sessionName: string, threads: SessionThread
     }
     content += '\n\n'
   }
-  content += '--------------------\n\n'
-  content += `
-<a href="https://chatboxai.app" style="display: flex; align-items: center;">
-<img src='https://chatboxai.app/icon.png' style='width: 40px; height: 40px; padding-right: 6px'>
-<b style='font-size:30px'>Chatbox AI</b>
-</a>
-`
+  // footer intentionally left blank
   return content
 }
 
 export function formatChatAsTxt(sessionName: string, threads: SessionThread[]) {
   let content = `==================================== [[${sessionName}]] ====================================`
   for (let i = 0; i < threads.length; i++) {
-    let thread = threads[i]
+    const thread = threads[i]
     content += `\n\n------------------------------ [${i + 1}. ${thread.name}] ------------------------------\n\n`
     for (const msg of thread.messages) {
       const attachments = getAttachmentNames(msg)
@@ -257,15 +251,14 @@ export function formatChatAsTxt(sessionName: string, threads: SessionThread[]) {
     }
     content += '\n\n\n\n'
   }
-  content += `========================================================================\n\n`
-  content += `Chatbox AI (https://chatboxai.app)`
+  // footer intentionally left blank
   return content
 }
 
 export async function formatChatAsHtml(sessionName: string, threads: SessionThread[]) {
   let content = '<div class="prose-sm">\n'
   for (let i = 0; i < threads.length; i++) {
-    let thread = threads[i]
+    const thread = threads[i]
     content += `<h2>${i + 1}. ${thread.name}</h2>\n`
     for (const msg of thread.messages) {
       const attachments = getAttachmentNames(msg)
@@ -347,24 +340,15 @@ export async function formatChatAsHtml(sessionName: string, threads: SessionThre
         }
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <link rel="shortcut icon" href="https://chatboxai.app/icon.png">
 </head>
 <body class='bg-slate-100'>
     <div class='mx-auto max-w-5xl shadow-md prose bg-white px-2 py-4'>
         <h1 class='flex flex-row justify-between items-center my-4 h-8'>
             <span>${sessionName}</span>
-            <a href="https://chatboxai.app" target="_blank" >
-                <img src='https://chatboxai.app/icon.png' class="w-12">
-            </a>
         </h1>
         <hr />
         ${content}
-        <hr />
-        <a href="https://chatboxai.app" style="display: flex; align-items: center;" class="text-sky-500" target="_blank">
-            <img src='https://chatboxai.app/icon.png' class="w-12 pr-2">
-            <b style='font-size:30px'>Chatbox AI</b>
-        </a>
-        <p><a a href="https://chatboxai.app" target="_blank">https://chatboxai.app</a></p>
+        <!-- footer intentionally left blank -->
     </div>
 </body>
 </html>

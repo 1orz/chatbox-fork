@@ -24,7 +24,6 @@ import { useIsSmallScreen, useSidebarWidth } from './hooks/useScreenChange'
 import useVersion from './hooks/useVersion'
 import { navigateToSettings } from './modals/Settings'
 import { trackingEvent } from './packages/event'
-import platform from './platform'
 import { featureFlags } from './utils/feature-flags'
 import icon from './static/icon.png'
 import { settingsStore, useLanguage } from './stores/settingsStore'
@@ -152,12 +151,7 @@ export default function Sidebar() {
         {needRoomForMacWindowControls && <Box className="title-bar flex-[0_0_44px]" />}
         <Flex align="center" justify="space-between" px="md" py="sm">
           <Flex align="center" gap="sm">
-            <Flex
-              align="center"
-              gap="sm"
-              onClick={() => platform.openLink('https://chatboxai.app/')}
-              style={{ cursor: 'pointer' }}
-            >
+            <Flex align="center" gap="sm">
               <Image src={icon} w={20} h={20} />
               <Text span c="chatbox-secondary" size="xl" lh={1.2} fw="700">
                 Chatbox

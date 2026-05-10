@@ -1,12 +1,11 @@
 import { CohereClient } from 'cohere-ai'
 import { getModel, getProviderSettings } from '../../shared/models'
-import { getChatboxAPIOrigin } from '../../shared/request/chatboxai_pool'
 import { SessionSettingsSchema } from '../../shared/types'
 import { parseKnowledgeBaseModelString } from '../../shared/utils/knowledge-base-model-parser'
 import { createModelDependencies } from '../adapters'
 import { sentry } from '../adapters/sentry'
 import { cache } from '../cache'
-import { getConfig, getSettings, store } from '../store-node'
+import { getConfig, getSettings } from '../store-node'
 import { getLogger } from '../util'
 import { getDatabase } from './db'
 
@@ -15,7 +14,7 @@ const log = getLogger('knowledge-base:model-providers')
 function getMergedSettings(providerId: string, modelId: string) {
   try {
     const globalSettings = getSettings()
-    const providerEntry = Object.entries(globalSettings.providers ?? {}).find(([key, value]) => key === providerId)
+    const providerEntry = Object.entries(globalSettings.providers ?? {}).find(([key, _value]) => key === providerId)
     if (!providerEntry) {
       const error = new Error(`provider ${providerId} not set`)
       log.error(`[MODEL] Provider not configured: ${providerId}`)
@@ -219,16 +218,9 @@ export async function getRerankProvider(kbId: number) {
         const sessionSettings = getMergedSettings(providerId, modelId)
         const { providerSetting, formattedApiHost } = getProviderSettings(sessionSettings, getSettings())
 
-        let apiHost = formattedApiHost
-        let token = providerSetting.apiKey
-        if (providerId === 'chatbox-ai') {
-          apiHost = getChatboxAPIOrigin()
-          token = store.get('settings.licenseKey')
-        }
-
         const client = new CohereClient({
-          environment: apiHost,
-          token,
+          environment: formattedApiHost,
+          token: providerSetting.apiKey,
         })
         return { client, modelId }
       } catch (error: any) {

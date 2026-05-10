@@ -42,7 +42,7 @@ export default class OpenAI extends AbstractAISDKModel {
       fetch: createFetchWithProxy(this.options.useProxy, this.dependencies),
       headers: this.options.apiHost.includes('openrouter.ai')
         ? {
-            'HTTP-Referer': 'https://chatboxai.app',
+            'HTTP-Referer': 'https://github.com/1orz/chatbox-fork',
             'X-Title': 'Chatbox AI',
           }
         : undefined,
