@@ -25,10 +25,10 @@ export function processLaTeX(content: string): string {
   content = content.replace(/\$(?=\d)/g, '\\$')
 
   // Step 4: Restore LaTeX expressions
-  content = content.replace(/<<LATEX_(\d+)>>/g, (_, index) => latexExpressions[parseInt(index)])
+  content = content.replace(/<<LATEX_(\d+)>>/g, (_, index) => latexExpressions[parseInt(index, 10)])
 
   // Step 5: Restore code blocks
-  content = content.replace(/<<CODE_BLOCK_(\d+)>>/g, (_, index) => codeBlocks[parseInt(index)])
+  content = content.replace(/<<CODE_BLOCK_(\d+)>>/g, (_, index) => codeBlocks[parseInt(index, 10)])
 
   // Step 6: Apply additional escaping functions
   content = escapeBrackets(content)

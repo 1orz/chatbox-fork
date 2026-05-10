@@ -219,7 +219,7 @@ export default class DesktopPlatform implements Platform {
       log.error(`parseFileLocally: unsupported file "${file.name}" (path=${file.path || 'none'})`)
       return { isSupported: false }
     }
-    const key = `parseFile-` + uuidv4()
+    const key = `parseFile-${uuidv4()}`
     await this.setStoreBlob(key, result.text)
     return { key, isSupported: true }
   }

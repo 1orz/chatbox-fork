@@ -1,4 +1,4 @@
-import { Button, Flex, Select, Stack, Text, TextInput } from '@mantine/core'
+import { Button, Stack, Text, TextInput } from '@mantine/core'
 import { ModelProviderType } from '@shared/types'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'

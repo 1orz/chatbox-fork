@@ -34,8 +34,7 @@ export function getLogger(logId: string) {
     error(...args: any[]) {
       this.log('error', ...args)
     },
-    debug(...args: any[]) {
-      console.debug('debug', ...args)
+    debug(..._args: any[]) {
     },
   }
 }

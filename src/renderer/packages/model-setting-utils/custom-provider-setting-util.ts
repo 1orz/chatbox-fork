@@ -30,7 +30,7 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
 
   async getCurrentModelDisplayName(
     model: string,
-    sessionType: SessionType,
+    _sessionType: SessionType,
     providerSettings?: ProviderSettings,
     providerBaseInfo?: ProviderBaseInfo
   ): Promise<string> {
@@ -47,7 +47,6 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
         return 'Custom Gemini'
       case ModelProviderType.OpenAIResponses:
         return 'Custom OpenAI Responses'
-      case ModelProviderType.OpenAI:
       default:
         return 'Custom API'
     }
@@ -59,8 +58,6 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
         return 'claude-3-5-sonnet-20241022'
       case ModelProviderType.Gemini:
         return 'gemini-2.0-flash-exp'
-      case ModelProviderType.OpenAIResponses:
-      case ModelProviderType.OpenAI:
       default:
         return 'gpt-4o-mini'
     }
@@ -109,7 +106,6 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
         )
         return customOpenAIResponses.listModels()
       }
-      case ModelProviderType.OpenAI:
       default: {
         const customOpenAI = new CustomOpenAI(
           {

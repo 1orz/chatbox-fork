@@ -1,4 +1,4 @@
-import { KnowledgeBaseFile } from '@shared/types'
+
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query'
 import platform from '@/platform'
 

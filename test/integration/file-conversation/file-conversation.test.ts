@@ -488,12 +488,6 @@ describe('File Conversation Integration Tests', () => {
     if (!fs.existsSync(TEST_OUTPUT_DIR)) {
       fs.mkdirSync(TEST_OUTPUT_DIR, { recursive: true })
     }
-
-    console.log(`\n${'='.repeat(60)}`)
-    console.log('File Conversation Integration Tests')
-    console.log(`${'='.repeat(60)}`)
-    console.log(`Testing ${TEST_MODELS.length} model(s): ${TEST_MODELS.map((m) => m.modelId).join(', ')}`)
-    console.log(`Test cases: ${TEST_CASES.length}`)
   })
 
   beforeEach(() => {
@@ -541,7 +535,7 @@ describe('File Conversation Integration Tests', () => {
 
     const report: TestReport = {
       timestamp: new Date().toISOString(),
-      licenseKey: LICENSE_KEY.slice(0, 8) + '...' + LICENSE_KEY.slice(-4),
+      licenseKey: `${LICENSE_KEY.slice(0, 8)}...${LICENSE_KEY.slice(-4)}`,
       models: modelResults,
       summary: {
         totalModels: modelResults.length,
@@ -562,14 +556,6 @@ describe('File Conversation Integration Tests', () => {
 
     const htmlPath = path.join(TEST_OUTPUT_DIR, `report-${timestamp}.html`)
     fs.writeFileSync(htmlPath, generateHtmlReport(report))
-
-    console.log(`\n${'='.repeat(60)}`)
-    console.log('Test Report Generated')
-    console.log(`${'='.repeat(60)}`)
-    console.log(`JSON: ${jsonPath}`)
-    console.log(`Markdown: ${mdPath}`)
-    console.log(`HTML: ${htmlPath}`)
-    console.log(`\nSummary: ${totalPassed}/${totalTests} passed (${((totalPassed / totalTests) * 100).toFixed(1)}%)`)
   })
 
   for (const model of TEST_MODELS) {
@@ -598,12 +584,10 @@ describe('File Conversation Integration Tests', () => {
             if (!allResults.has(key)) {
               allResults.set(key, { model, results: [] })
             }
-            allResults.get(key)!.results.push(result)
+            allResults.get(key)?.results.push(result)
 
             if (result.success) {
-              console.log(`    ✓ ${model.modelId}: ${testCase.name} (${result.duration}ms)`)
             } else {
-              console.log(`    ✗ ${model.modelId}: ${testCase.name} - ${result.error}`)
             }
 
             expect(result.success).toBe(true)

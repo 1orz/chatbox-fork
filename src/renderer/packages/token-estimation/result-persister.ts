@@ -1,7 +1,6 @@
 import type { Message, MessageFile, MessageLink, TokenCacheKey, TokenCountMap } from '@shared/types'
 import { getLogger } from '@/lib/utils'
 import * as chatStore from '@/stores/chatStore'
-import queryClient from '@/stores/queryClient'
 import type { AttachmentType, ContentMode, TaskResult, TokenizerType } from './types'
 
 const log = getLogger('token-estimation:persister')

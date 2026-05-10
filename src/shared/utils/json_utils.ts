@@ -6,7 +6,7 @@
 export function parseJsonOrEmpty(json: string): any {
   try {
     return JSON.parse(json)
-  } catch (e) {
+  } catch (_e) {
     return {}
   }
 } 

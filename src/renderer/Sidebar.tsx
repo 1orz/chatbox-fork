@@ -73,6 +73,7 @@ export default function Sidebar() {
 
   const handleCreateNewTask = useCallback(() => {
     taskSessionStore.getState().setCurrentTaskId(null)
+    // @ts-expect-error /task route removed during ChatboxAI strip but referenced behind featureFlags.taskMode
     navigate({ to: '/task' })
     if (isSmallScreen) {
       setShowSidebar(false)
@@ -188,8 +189,10 @@ export default function Sidebar() {
               } else if (val === 'task') {
                 const taskId = taskSessionStore.getState().currentTaskId
                 if (taskId && startupPage === 'session') {
+                  // @ts-expect-error /task/$taskId route removed during ChatboxAI strip
                   navigate({ to: '/task/$taskId', params: { taskId } })
                 } else {
+                  // @ts-expect-error /task route removed during ChatboxAI strip
                   navigate({ to: '/task' })
                 }
               }

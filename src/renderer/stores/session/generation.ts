@@ -497,7 +497,7 @@ export async function genMessageContext(
               fileKey: isTruncated ? file.storageKey : undefined,
             })
 
-            const attachment = prefix + contentToAdd + '\n' + suffix
+            const attachment = `${prefix + contentToAdd}\n${suffix}`
             msg = mergeMessages(msg, createMessage(msg.role, attachment))
           }
         }
@@ -535,7 +535,7 @@ export async function genMessageContext(
               fileKey: isTruncated ? link.storageKey : undefined,
             })
 
-            const attachment = prefix + contentToAdd + '\n' + suffix
+            const attachment = `${prefix + contentToAdd}\n${suffix}`
             msg = mergeMessages(msg, createMessage(msg.role, attachment))
           }
         }

@@ -17,7 +17,7 @@ SafeArea.getStatusBarHeight().then(({ statusBarHeight }) => {
 })
 ;(async () => {
   // when safe-area changed
-  const eventListener = await SafeArea.addListener('safeAreaChanged', (data) => {
+  const _eventListener = await SafeArea.addListener('safeAreaChanged', (data) => {
     const { insets } = data
     for (const [key, value] of Object.entries(insets)) {
       document.documentElement.style.setProperty(`--mobile-safe-area-inset-${key}`, `${value}px`)
@@ -26,7 +26,7 @@ SafeArea.getStatusBarHeight().then(({ statusBarHeight }) => {
   // eventListener.remove();
 })()
 
-Keyboard.addListener('keyboardWillShow', async (info) => {
+Keyboard.addListener('keyboardWillShow', async (_info) => {
   document.documentElement.style.setProperty(`--mobile-safe-area-inset-bottom`, `0px`)
 })
 

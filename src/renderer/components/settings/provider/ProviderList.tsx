@@ -16,7 +16,7 @@ import platform from '@/platform'
 
 // Use Vite's import.meta.glob to dynamically import all PNG files
 // Vite handles import.meta.glob at build time, even though TypeScript doesn't recognize it with commonjs module setting
-// @ts-ignore - import.meta.glob is a Vite feature
+// @ts-expect-error - import.meta.glob is a Vite feature
 const iconsModules = import.meta.glob<{ default: string }>('../../../static/icons/providers/*.png', { eager: true })
 
 const icons: { name: string; src: string }[] = Object.entries(iconsModules).map(([path, module]) => {

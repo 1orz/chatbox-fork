@@ -9,5 +9,5 @@ export function useI18nEffect() {
     ;(async () => {
       i18n.changeLanguage(language)
     })()
-  }, [language])
+  }, [language, i18n.changeLanguage])
 }

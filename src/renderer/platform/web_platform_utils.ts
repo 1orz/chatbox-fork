@@ -14,7 +14,7 @@ export async function parseTextFileLocally(file: File): Promise<{ text: string; 
 
 export async function parseUrlContentFree(url: string) {
   const result = await remote.parseUserLinkFree({ url })
-  const key = `parseUrl-` + uuidv4()
+  const key = `parseUrl-${uuidv4()}`
   await platform.setStoreBlob(key, result.text)
   return { key, title: result.title }
 }

@@ -287,7 +287,7 @@ function buildAttachment(params: AttachmentParams): string {
   }
   suffix += '</ATTACHMENT_FILE>\n'
 
-  return prefix + contentToAdd + '\n' + suffix
+  return `${prefix + contentToAdd}\n${suffix}`
 }
 
 function mergeAttachmentContent(message: Message, attachmentText: string): Message {

@@ -22,7 +22,7 @@ async function initializeKnowledgeBase() {
     log.debug('[KB] Database initialized')
 
     // Start background file processing worker
-    startWorkerLoop()
+    await startWorkerLoop()
     log.debug('[KB] Worker loop started')
 
     const duration = Date.now() - startTime

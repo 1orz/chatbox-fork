@@ -19,7 +19,9 @@ describe('UpdateQueue concurrency', () => {
 
     expect(results).toEqual([{ value: 1 }, { value: 2 }, { value: 3 }])
     expect(seen).toEqual([0, 1, 2])
-    updates.forEach((update) => expect(update).toHaveBeenCalledTimes(1))
+    for (const update of updates) {
+      expect(update).toHaveBeenCalledTimes(1)
+    }
     expect(onChange).toHaveBeenCalledTimes(1)
     expect(onChange).toHaveBeenCalledWith({ value: 3 })
   })

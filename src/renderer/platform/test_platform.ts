@@ -66,7 +66,7 @@ export class InMemoryStorage implements Storage {
 class TestExporter implements Exporter {
   private exports: Map<string, any> = new Map()
 
-  async exportBlob(filename: string, blob: Blob, encoding?: 'utf8' | 'ascii' | 'utf16'): Promise<void> {
+  async exportBlob(filename: string, blob: Blob, _encoding?: 'utf8' | 'ascii' | 'utf16'): Promise<void> {
     const text = await blob.text()
     this.exports.set(filename, text)
   }
@@ -191,23 +191,23 @@ export default class TestPlatform implements Platform {
     return false
   }
 
-  public onSystemThemeChange(callback: () => void): () => void {
+  public onSystemThemeChange(_callback: () => void): () => void {
     return () => {}
   }
 
-  public onWindowShow(callback: () => void): () => void {
+  public onWindowShow(_callback: () => void): () => void {
     return () => {}
   }
 
-  public onWindowFocused(callback: () => void): () => void {
+  public onWindowFocused(_callback: () => void): () => void {
     return () => {}
   }
 
-  public onUpdateDownloaded(callback: () => void): () => void {
+  public onUpdateDownloaded(_callback: () => void): () => void {
     return () => {}
   }
 
-  public async openLink(url: string): Promise<void> {
+  public async openLink(_url: string): Promise<void> {
     // no-op in test
   }
 
@@ -223,11 +223,11 @@ export default class TestPlatform implements Platform {
     return 'en'
   }
 
-  public async ensureShortcutConfig(config: ShortcutSetting): Promise<void> {
+  public async ensureShortcutConfig(_config: ShortcutSetting): Promise<void> {
     // no-op in test
   }
 
-  public async ensureProxyConfig(config: { proxy?: string }): Promise<void> {
+  public async ensureProxyConfig(_config: { proxy?: string }): Promise<void> {
     // no-op in test
   }
 
@@ -257,7 +257,7 @@ export default class TestPlatform implements Platform {
     // no-op in test
   }
 
-  public trackingEvent(name: string, params: { [key: string]: string }): void {
+  public trackingEvent(_name: string, _params: { [key: string]: string }): void {
     // no-op in test
   }
 
@@ -267,8 +267,7 @@ export default class TestPlatform implements Platform {
     return false
   }
 
-  public async appLog(level: string, message: string): Promise<void> {
-    console.log(`[${level}] ${message}`)
+  public async appLog(_level: string, _message: string): Promise<void> {
   }
 
   public async exportLogs(): Promise<string> {
@@ -279,7 +278,7 @@ export default class TestPlatform implements Platform {
     // no-op
   }
 
-  public async ensureAutoLaunch(enable: boolean): Promise<void> {
+  public async ensureAutoLaunch(_enable: boolean): Promise<void> {
     // no-op
   }
 
@@ -299,7 +298,7 @@ export default class TestPlatform implements Platform {
     return false
   }
 
-  public async setFullscreen(enabled: boolean): Promise<void> {
+  public async setFullscreen(_enabled: boolean): Promise<void> {
     // no-op
   }
 
@@ -335,7 +334,7 @@ export default class TestPlatform implements Platform {
     return false
   }
 
-  public onMaximizedChange(callback: (isMaximized: boolean) => void): () => void {
+  public onMaximizedChange(_callback: (isMaximized: boolean) => void): () => void {
     return () => {}
   }
 

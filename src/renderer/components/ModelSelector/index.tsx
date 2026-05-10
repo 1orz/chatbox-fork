@@ -61,7 +61,7 @@ export const ModelSelector = forwardRef<HTMLDivElement, ModelSelectorProps>(
       })
 
       return filtered
-    }, [providers, search, modelFilter, activeTab, isFavoritedModel])
+    }, [providers, search, modelFilter])
 
     const handleOptionSubmit = (val: string) => {
       if (!val) {

@@ -55,7 +55,7 @@ const ServerRegistrySpotlight: FC<{
         })),
       },
     ]
-  }, [props.triggerAddServer])
+  }, [props.triggerAddServer, props.triggerImportJson, t])
   return (
     <Spotlight
       actions={actions}

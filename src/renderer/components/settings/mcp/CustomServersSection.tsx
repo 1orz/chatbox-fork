@@ -135,7 +135,7 @@ const CustomServersSection: FC<Props> = (props) => {
       draft.mcp.servers.push(...servers)
     })
     toast.success(
-      t('{{count}} MCP servers imported', { count: servers.length }) + ': ' + servers.map((s) => s.name).join(', ')
+      `${t('{{count}} MCP servers imported', { count: servers.length })}: ${servers.map((s) => s.name).join(', ')}`
     )
   }
 

@@ -1,11 +1,8 @@
 import type { BrowserWindow } from 'electron'
-import log from 'electron-log/main'
 
 export function handleDeepLink(mainWindow: BrowserWindow, link: string) {
   const normalizedLink = link.replace(/^chatbox-dev:\/\//, 'chatbox://')
   const url = new URL(normalizedLink)
-
-  console.log('🔗 Parsed URL:', { hostname: url.hostname, pathname: url.pathname, params: url.searchParams.toString() })
 
   // handle `chatbox://mcp/install?server=`
   if (url.hostname === 'mcp' && url.pathname === '/install') {

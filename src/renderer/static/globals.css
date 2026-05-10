@@ -215,7 +215,7 @@
 }
 
 .mantine-Spotlight-actionDescription {
-  display: -webkit-box !important;
+  display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   overflow: hidden;
@@ -287,7 +287,7 @@ html[data-need-room-for-windows-controls="true"] .pswp__top-bar {
 }
 
 .scrollbar-custom::-webkit-scrollbar {
-  width: 12px !important;
+  width: 12px;
 }
 
 *::-webkit-scrollbar-corner {

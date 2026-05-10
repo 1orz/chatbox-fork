@@ -442,7 +442,7 @@ function ThinkingBudgetConfig({
       } else {
         setIsCustomMode(false)
         setUserSelectedCustom(false)
-        onConfigChange({ budgetTokens: parseInt(value), enabled: true })
+        onConfigChange({ budgetTokens: parseInt(value, 10), enabled: true })
       }
     },
     [currentBudgetTokens, minValue, PRESET_VALUES, onConfigChange]

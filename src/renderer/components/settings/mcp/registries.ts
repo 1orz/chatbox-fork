@@ -6,7 +6,7 @@ import { fromPairs } from 'lodash'
 
 // Use Vite's import.meta.glob to dynamically import all PNG files
 // Vite handles import.meta.glob at build time, even though TypeScript doesn't recognize it with commonjs module setting
-// @ts-ignore - import.meta.glob is a Vite feature
+// @ts-expect-error - import.meta.glob is a Vite feature
 const logosModules = import.meta.glob<{ default: string }>('../../../static/logos/*.png', { eager: true })
 
 const logos: Record<string, string> = fromPairs(

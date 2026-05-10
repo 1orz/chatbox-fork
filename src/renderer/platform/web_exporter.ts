@@ -2,9 +2,8 @@ import type { Exporter } from './interfaces'
 import * as base64 from '@/packages/base64'
 
 export default class WebExporter implements Exporter {
-  constructor() {}
 
-  async exportBlob(filename: string, blob: Blob, encoding?: 'utf8' | 'ascii' | 'utf16') {
+  async exportBlob(filename: string, blob: Blob, _encoding?: 'utf8' | 'ascii' | 'utf16') {
     var eleLink = document.createElement('a')
     eleLink.download = filename
     eleLink.style.display = 'none'
@@ -33,7 +32,7 @@ export default class WebExporter implements Exporter {
       data = base64Data
     }
     const ext = (type.split('/')[1] || 'png').split('+')[0] // 处理 svg+xml 的情况
-    const filename = basename + '.' + ext
+    const filename = `${basename}.${ext}`
 
     const raw = window.atob(data)
     const rawLength = raw.length

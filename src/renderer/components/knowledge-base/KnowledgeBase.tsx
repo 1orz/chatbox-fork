@@ -258,7 +258,7 @@ const KnowledgeBasePage: React.FC = () => {
       setNewVisionModel(null)
       setNewDocumentParser({ type: 'local' })
       setShowCreate(false)
-      fetchKbList()
+      await fetchKbList()
     } catch (e) {
       toast.error(t('Failed to create knowledge base, Error: {{error}}', { error: e }))
     }

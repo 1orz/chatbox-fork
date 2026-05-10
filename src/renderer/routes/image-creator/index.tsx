@@ -9,7 +9,6 @@ import {
   Stack,
   Text,
   Textarea,
-  Tooltip,
   UnstyledButton,
 } from '@mantine/core'
 import type { ImageGeneration } from '@shared/types'
@@ -386,7 +385,7 @@ function ImageCreatorPage() {
         log.error('Failed to generate image:', error)
       }
     },
-    [selectedProvider, selectedModel, selectedRatio, isCurrentlyGenerating, t]
+    [selectedProvider, selectedModel, isCurrentlyGenerating, t]
   )
 
   const handleUseAsReference = useCallback(async (storageKey: string, sourceRecordId?: string) => {
@@ -492,7 +491,7 @@ function ImageCreatorPage() {
       })
 
     return groups
-  }, [providers])
+  }, [providers, getAvailableImageModels])
 
   // Workaround: DALL-E-3 was removed in new version, fallback to default
   useEffect(() => {

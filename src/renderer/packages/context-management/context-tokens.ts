@@ -165,10 +165,10 @@ export function useContextTokens(options: UseContextTokensOptions): UseContextTo
   const contextMessages = useMemo(() => {
     if (!session) return []
     return getContextMessagesForTokenEstimation(session, { settings })
-  }, [session?.messages, session?.compactionPoints, settings.maxContextMessageCount])
+  }, [session?.messages, session?.compactionPoints, settings.maxContextMessageCount, settings, session])
 
   // 2. tokenizerType must be stable
-  const tokenizerType = useMemo(() => getTokenizerType(model), [model?.provider, model?.modelId])
+  const tokenizerType = useMemo(() => getTokenizerType(model), [model?.provider, model?.modelId, model])
 
   // 3. cacheKey must be stable (NO modelSupportToolUseForFile!)
   const cacheKey = useMemo(() => {
@@ -180,7 +180,7 @@ export function useContextTokens(options: UseContextTokensOptions): UseContextTo
       latestCompactionBoundaryId: getLatestCompactionBoundaryId(session.compactionPoints),
       tokenizerType,
     })
-  }, [sessionId, session?.compactionPoints, settings.maxContextMessageCount, contextMessages, tokenizerType])
+  }, [sessionId, session?.compactionPoints, settings.maxContextMessageCount, contextMessages, tokenizerType, session])
 
   // 4. Call useTokenEstimation
   const tokenResult = useTokenEstimation({

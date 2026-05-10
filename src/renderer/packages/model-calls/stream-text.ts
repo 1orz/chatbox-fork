@@ -99,7 +99,7 @@ async function ocrMessages(messages: Message[]) {
     throw ChatboxAIAPIError.fromCodeName('model_not_support_image_2', 'model_not_support_image_2')
   }
 
-  const ocrProviderName = hasUserOcrModel ? settings.ocrModel!.provider : 'Chatbox AI'
+  const ocrProviderName = (hasUserOcrModel ? settings.ocrModel?.provider : 'Chatbox AI') ?? 'Chatbox AI'
   try {
     let ocrModel: ModelInterface
     const dependencies = await createModelDependencies()
@@ -315,8 +315,6 @@ export async function streamText(
         ...fileToolSet.tools,
       }
     }
-
-    console.debug('tools', tools)
 
     result = await model.chat(coreMessages, {
       sessionId,

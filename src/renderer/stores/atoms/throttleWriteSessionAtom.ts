@@ -28,8 +28,6 @@ class WriteQueue {
   private flushInterval: number = 2000
   private timer: NodeJS.Timeout | null = null
 
-  constructor() {}
-
   private flush() {
     this.timer = null
     const groupedItems = this.queue.reduce(
@@ -81,7 +79,7 @@ export function createSessionAtom(sessionId: string) {
       // init 从 storage 读取
       return get(_createSessionAtom(sessionId))
     },
-    (get, set, update: SetStateAction<Session | null>) => {
+    (_get, set, update: SetStateAction<Session | null>) => {
       writeQueue.push(sessionId, update)
       set(_createSessionAtom(sessionId), update)
     }

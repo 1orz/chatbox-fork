@@ -85,7 +85,6 @@ const ConfigForm: FC<{
       return
     }
     const config = getConfigFromFormValues(form.getValues())
-    console.debug('Testing connection with config', config)
     setTesting(true)
     setTestingResult(null)
     trackEvent('test_mcp_server_connection', { type: config.transport.type })
@@ -116,7 +115,6 @@ const ConfigForm: FC<{
   }
 
   const handleSubmit = (values: typeof form.values) => {
-    console.debug('form onSubmit', values)
     trackEvent('save_mcp_server', { type: values.transport.type, name: values.name })
     return props.onSave(getConfigFromFormValues(values))
   }

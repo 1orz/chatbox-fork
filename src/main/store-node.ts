@@ -1,7 +1,7 @@
 import { app, powerMonitor } from 'electron'
 import Store from 'electron-store'
 import * as fs from 'fs-extra'
-import path from 'path'
+import path from 'node:path'
 import sanitizeFilename from 'sanitize-filename'
 import * as defaults from '../shared/defaults'
 import type { Config, Settings } from '../shared/types'
@@ -212,7 +212,7 @@ export async function clearBackups() {
 function checkConfigValid(filepath: string) {
   try {
     JSON.parse(fs.readFileSync(filepath, 'utf8'))
-  } catch (err) {
+  } catch (_err) {
     return false
   }
   return true

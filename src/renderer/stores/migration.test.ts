@@ -302,7 +302,7 @@ vi.mock('../../shared/defaults', () => ({
 
 vi.mock('../lib/utils', () => ({
   getLogger: () => ({
-    info: (...args: unknown[]) => console.log(...args),
+    info: (..._args: unknown[]) => {},
     error: vi.fn(),
   }),
 }))

@@ -182,14 +182,14 @@ describe('fork actions', () => {
     expect(updateSessionWithMessages).toHaveBeenCalledTimes(1)
     expect(session).toEqual(snapshot)
     expect(updated).toBeDefined()
-    expect(updated!.messages).toEqual([pivot])
+    expect(updated?.messages).toEqual([pivot])
 
-    const fork = updated!.messageForksHash?.[pivot.id]
+    const fork = updated?.messageForksHash?.[pivot.id]
     expect(fork).toBeDefined()
-    expect(fork!.position).toBe(1)
-    expect(fork!.lists).toHaveLength(2)
-    expect(fork!.lists[0].messages).toEqual([trailing])
-    expect(fork!.lists[1].messages).toEqual([])
+    expect(fork?.position).toBe(1)
+    expect(fork?.lists).toHaveLength(2)
+    expect(fork?.lists[0].messages).toEqual([trailing])
+    expect(fork?.lists[1].messages).toEqual([])
   })
 
   test('createNewFork skips update when no trailing messages', async () => {
@@ -250,13 +250,13 @@ describe('fork actions', () => {
 
     expect(session).toEqual(snapshot)
     expect(updated).toBeDefined()
-    expect(updated!.messages).toEqual([pivot, alt])
+    expect(updated?.messages).toEqual([pivot, alt])
 
-    const fork = updated!.messageForksHash?.[pivot.id]
+    const fork = updated?.messageForksHash?.[pivot.id]
     expect(fork).toBeDefined()
-    expect(fork!.position).toBe(1)
-    expect(fork!.lists[0].messages).toEqual([current])
-    expect(fork!.lists[1].messages).toEqual([])
+    expect(fork?.position).toBe(1)
+    expect(fork?.lists[0].messages).toEqual([current])
+    expect(fork?.lists[1].messages).toEqual([])
     expect(snapshot.messageForksHash?.[pivot.id].lists[0].messages).toEqual([])
   })
 
@@ -335,12 +335,12 @@ describe('fork actions', () => {
     await sessionActions.deleteFork(session.id, pivot.id)
 
     expect(session).toEqual(snapshot)
-    expect(updated!.messages).toEqual([pivot, nextBranch])
-    const fork = updated!.messageForksHash?.[pivot.id]
+    expect(updated?.messages).toEqual([pivot, nextBranch])
+    const fork = updated?.messageForksHash?.[pivot.id]
     expect(fork).toBeDefined()
-    expect(fork!.position).toBe(0)
-    expect(fork!.lists).toHaveLength(1)
-    expect(fork!.lists[0].messages).toEqual([])
+    expect(fork?.position).toBe(0)
+    expect(fork?.lists).toHaveLength(1)
+    expect(fork?.lists[0].messages).toEqual([])
   })
 
   test('deleteFork removes entry when no branches remain', async () => {
@@ -369,8 +369,8 @@ describe('fork actions', () => {
     await sessionActions.deleteFork(session.id, pivot.id)
 
     expect(session).toEqual(snapshot)
-    expect(updated!.messages).toEqual([pivot])
-    expect(updated!.messageForksHash).toBeUndefined()
+    expect(updated?.messages).toEqual([pivot])
+    expect(updated?.messageForksHash).toBeUndefined()
   })
 
   test('expandFork appends all stored branches and clears fork data', async () => {
@@ -406,8 +406,8 @@ describe('fork actions', () => {
     await sessionActions.expandFork(session.id, pivot.id)
 
     expect(session).toEqual(snapshot)
-    expect(updated!.messages).toEqual([pivot, current, altA, altB])
-    expect(updated!.messageForksHash).toBeUndefined()
+    expect(updated?.messages).toEqual([pivot, current, altA, altB])
+    expect(updated?.messageForksHash).toBeUndefined()
   })
 
   test('regenerateInNewFork creates a new fork for thread messages', async () => {
@@ -446,10 +446,10 @@ describe('fork actions', () => {
     expect(session).toEqual(snapshot)
 
     expect(updated).toBeDefined()
-    const fork = updated!.messageForksHash?.[pivot.id]
+    const fork = updated?.messageForksHash?.[pivot.id]
     expect(fork).toBeDefined()
-    expect(fork!.lists).toHaveLength(2)
-    expect(fork!.lists[0].messages).toEqual([target])
+    expect(fork?.lists).toHaveLength(2)
+    expect(fork?.lists[0].messages).toEqual([target])
     expect(runGenerateMore).toHaveBeenCalledWith(session.id, pivot.id)
   })
 })

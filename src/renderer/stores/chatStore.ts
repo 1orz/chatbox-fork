@@ -43,7 +43,6 @@ const QueryKeys = {
 
 // list sessions meta
 async function _listSessionsMeta(): Promise<SessionMeta[]> {
-  console.debug('chatStore', 'listSessionsMeta')
   try {
     const sessionMetaList = await storage.getItem<SessionMeta[]>(StorageKey.ChatSessionsList, [])
     // session list showing order: reversed, pinned at top
@@ -89,7 +88,6 @@ export async function updateSessionList(updater: UpdaterFn<SessionMeta[]>) {
 
 // get session
 async function _getSessionById(id: string): Promise<Session | null> {
-  console.debug('chatStore', 'getSessionById', id)
   const storageKey = StorageKeyGenerator.session(id)
   try {
     const session = await storage.getItem<Session | null>(storageKey, null)
@@ -129,7 +127,6 @@ function _setSessionCache(sessionId: string, updated: Session | null) {
 
 // create session
 export async function createSession(newSession: Omit<Session, 'id'>, previousId?: string) {
-  console.debug('chatStore', 'createSession', newSession)
   const { chat: lastUsedChatModel, picture: lastUsedPictureModel } = lastUsedModelStore.getState()
   const session = {
     ...newSession,
@@ -166,7 +163,6 @@ export async function updateSessionWithMessages(sessionId: string, updater: Upda
       () => getSession(sessionId),
       async (session) => {
         if (session) {
-          console.debug('chatStore', 'persist session', sessionId)
           await storage.setItemNow(StorageKeyGenerator.session(sessionId), session)
         }
       }
@@ -231,7 +227,6 @@ export async function updateSessionCache(sessionId: string, updater: Updater<Ses
 }
 
 export async function deleteSession(id: string) {
-  console.debug('chatStore', 'deleteSession', id)
   await storage.removeItem(StorageKeyGenerator.session(id))
   _setSessionCache(id, null)
   await updateSessionList((sessions) => {
@@ -291,7 +286,6 @@ export async function getSessionSettings(sessionId: string) {
 
 // list messages
 export async function listMessages(sessionId?: string | null): Promise<Message[]> {
-  console.debug('chatStore', 'listMessages', sessionId)
   if (!sessionId) {
     return []
   }
@@ -570,7 +564,6 @@ function cleanupEmptyForkBranches(
  * This will clear the current session list and rebuild it from all found sessions
  */
 export async function recoverSessionList() {
-  console.debug('chatStore', 'recoverSessionList')
 
   // Get all storage keys
   const allKeys = await storage.getAllKeys()
@@ -615,12 +608,6 @@ export async function recoverSessionList() {
 
   // Update the query cache, apply additional sorting rules (pinned sessions, etc.)
   queryClient.setQueryData(QueryKeys.ChatSessionsList, sortSessions(recoveredSessionMetas))
-
-  console.debug(
-    'chatStore',
-    'recoverSessionList',
-    `Recovered ${recoveredSessionMetas.length} sessions, ${failedKeys.length} failed`
-  )
 
   return { recovered: recoveredSessionMetas.length, failed: failedKeys.length }
 }

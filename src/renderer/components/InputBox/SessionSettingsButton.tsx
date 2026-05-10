@@ -5,7 +5,7 @@ import { ScalableIcon } from '../common/ScalableIcon'
 import { desktopActionIconProps, mobileActionIconProps } from './actionIconStyles'
 
 interface SessionSettingsButtonProps {
-  onClick?: () => void | boolean | Promise<boolean>
+  onClick?: () => undefined | boolean | Promise<boolean>
   tooltipLabel: string
   disabled?: boolean
   isMobile?: boolean

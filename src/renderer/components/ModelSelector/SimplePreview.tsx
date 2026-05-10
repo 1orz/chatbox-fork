@@ -80,7 +80,6 @@ export function SimplePreview() {
                   selectedProviderId={selectedModel.provider}
                   selectedModelId={selectedModel.model}
                   onSelect={(provider, model) => {
-                    console.log('Selected:', provider, model)
                     setSelectedModel({ provider, model })
                   }}
                 >
@@ -107,8 +106,7 @@ export function SimplePreview() {
                 <ModelSelector
                   showAuto={true}
                   searchPosition="top"
-                  onSelect={(provider, model) => {
-                    console.log('Search Top:', provider, model)
+                  onSelect={(_provider, _model) => {
                   }}
                 >
                   <Button
@@ -135,8 +133,7 @@ export function SimplePreview() {
                 <ModelSelector
                   showAuto={false}
                   searchPosition="bottom"
-                  onSelect={(provider, model) => {
-                    console.log('No Auto:', provider, model)
+                  onSelect={(_provider, _model) => {
                   }}
                 >
                   <Button
@@ -162,8 +159,7 @@ export function SimplePreview() {
                 </Text>
                 <ModelSelector
                   showAuto={true}
-                  onSelect={(provider, model) => {
-                    console.log('Custom:', provider, model)
+                  onSelect={(_provider, _model) => {
                   }}
                 >
                   <Button

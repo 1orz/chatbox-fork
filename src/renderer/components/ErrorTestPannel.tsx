@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 // 组件内部的错误测试工具
 export function ErrorTestPanel() {

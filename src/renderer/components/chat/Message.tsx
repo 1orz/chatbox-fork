@@ -6,7 +6,6 @@ import type { Message, MessagePicture, MessageToolCallPart, SessionType } from '
 import { getMessageText } from '@shared/utils/message'
 import {
   IconArrowDown,
-  IconBug,
   IconCode,
   IconCopy,
   IconDotsVertical,
@@ -45,7 +44,7 @@ import '../../static/Block.css'
 import { generateMore, modifyMessage, regenerateInNewFork, removeMessage } from '@/stores/sessionActions'
 import * as toastActions from '@/stores/toastActions'
 import ActionMenu, { type ActionMenuItemProps } from '../ActionMenu'
-import { isContainRenderableCode, MessageArtifact } from '../Artifact'
+import { isContainRenderableCode, } from '../Artifact'
 import { AssistantAvatar, SystemAvatar, UserAvatar } from '../common/Avatar'
 import { ScalableIcon } from '../common/ScalableIcon'
 import Loading from '../icons/Loading'
@@ -101,7 +100,7 @@ const _Message: FC<Props> = (props) => {
 
   const isBubbleLayout = messageLayout === 'bubble'
 
-  const [previewArtifact, setPreviewArtifact] = useState(autoPreviewArtifacts)
+  const [_previewArtifact, _setPreviewArtifact] = useState(autoPreviewArtifacts)
   const [shouldThrowError, setShouldThrowError] = useState(false)
 
   const contentLength = useMemo(() => {
@@ -170,7 +169,7 @@ const _Message: FC<Props> = (props) => {
   }, [msg, sessionId])
 
   // for testing: manual trigger error
-  const onTriggerError = useCallback(() => {
+  const _onTriggerError = useCallback(() => {
     setShouldThrowError(true)
   }, [])
 
@@ -232,7 +231,7 @@ const _Message: FC<Props> = (props) => {
   }
 
   // 是否需要渲染 Aritfact 组件
-  const needArtifact = useMemo(() => {
+  const _needArtifact = useMemo(() => {
     if (msg.role !== 'assistant') {
       return false
     }

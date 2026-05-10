@@ -14,7 +14,7 @@ export default function TopPSlider(props: Props) {
   useEffect(() => {
     setInput(`${props.topP}`)
   }, [props.topP])
-  const handleChange = (event: Event, newValue: number | number[], activeThumb: number) => {
+  const handleChange = (_event: Event, newValue: number | number[], activeThumb: number) => {
     if (typeof newValue === 'number') {
       props.setTopP(newValue)
     } else {
@@ -28,7 +28,7 @@ export default function TopPSlider(props: Props) {
       return
     }
     let num = parseFloat(value)
-    if (isNaN(num)) {
+    if (Number.isNaN(num)) {
       setInput(`${props.topP}`)
       return
     }

@@ -1,4 +1,4 @@
-import { PROVIDER_ID_MAP, REVERSE_PROVIDER_MAP } from './provider-mapping'
+import { REVERSE_PROVIDER_MAP } from './provider-mapping'
 import type {
   ModelMetadata,
   ModelRegistryData,

@@ -1,7 +1,7 @@
 import type { ModelInterface } from '../models/types'
 import { enrichModelFromRegistry } from '../model-registry/enrich'
 import { mergeSharedOAuthProviderSettings, resolveEffectiveApiKey } from '../oauth'
-import type { Config, ProviderModelInfo, ProviderSettings, SessionSettings, Settings } from '../types'
+import type { Config, ProviderModelInfo, SessionSettings, Settings } from '../types'
 import type { ModelDependencies } from '../types/adapters'
 import './definitions/openai'
 import './definitions/openai-responses'
@@ -58,7 +58,6 @@ export function getBuiltinProviderIds(): string[] {
  * This is a helper function that extracts and formats provider-related settings.
  */
 export function getProviderSettings(setting: SessionSettings, globalSettings: Settings) {
-  console.debug('getProviderSettings', setting.provider, setting.modelId)
   const provider = setting.provider
   if (!provider) {
     throw new Error('Model provider must not be empty.')
@@ -127,7 +126,6 @@ export function getModel(
   config: Config,
   dependencies: ModelDependencies
 ): ModelInterface {
-  console.debug('getModel (registry)', settings.provider, settings.modelId)
 
   const provider = settings.provider
   if (!provider) {

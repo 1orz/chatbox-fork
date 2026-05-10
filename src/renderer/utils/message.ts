@@ -164,10 +164,10 @@ export function sequenceMessages(msgs: Message[]): Message[] {
     // Merge all assistant messages as a quote block if constructing the first user message
     if (isEmptyMessage(next) && isFirstUserMsg && msg.role === 'assistant') {
       const quote =
-        getMessageText(msg)
+        `${getMessageText(msg)
           .split('\n')
           .map((line) => `> ${line}`)
-          .join('\n') + '\n'
+          .join('\n')}\n`
       msg.contentParts = [{ type: 'text', text: quote }]
       next = mergeMessages(next, msg)
       continue

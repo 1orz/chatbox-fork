@@ -11,7 +11,7 @@ export default function LinkTargetBlank(props: {
   const { children, href, className, style } = props
   return (
     <a
-      className={'font-normal cursor-pointer ' + (className ?? '')}
+      className={`font-normal cursor-pointer ${className ?? ''}`}
       style={{
         color: theme.palette.primary.main,
         ...style,

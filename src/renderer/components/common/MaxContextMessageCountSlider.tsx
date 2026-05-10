@@ -70,7 +70,7 @@ export default function MaxContextMessageCountSlider({ value, onChange, classNam
   }, [])
   const handleInputBlur = useCallback(() => {
     if (tempInputValue) {
-      const v = parseInt(tempInputValue)
+      const v = parseInt(tempInputValue, 10)
       if (v >= 0) {
         onChange?.(v)
       }

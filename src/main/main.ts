@@ -13,8 +13,8 @@ import { app, BrowserWindow, globalShortcut, ipcMain, Menu, nativeTheme, session
 import electronDebug from 'electron-debug'
 import log from 'electron-log/main'
 import { autoUpdater } from 'electron-updater'
-import os from 'os'
-import path from 'path'
+import os from 'node:os'
+import path from 'node:path'
 // @ts-expect-error - source-map-support doesn't have type definitions
 import * as sourceMapSupport from 'source-map-support'
 import type { ShortcutSetting } from 'src/shared/types'
@@ -67,8 +67,6 @@ if (process.defaultApp) {
 } else {
   app.setAsDefaultProtocolClient(PROTOCOL_SCHEME)
 }
-
-console.log(`📱 URL Scheme registered: ${PROTOCOL_SCHEME}://`)
 
 // --------- 全局变量 ---------
 
@@ -273,8 +271,8 @@ async function createWindow() {
 
   // Load the local URL for development or the local
   // html file for production
-  if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  if (!app.isPackaged && process.env.ELECTRON_RENDERER_URL) {
+    mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
   } else {
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
@@ -385,7 +383,7 @@ const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
   app.quit()
 } else {
-  app.on('second-instance', async (event, commandLine, workingDirectory) => {
+  app.on('second-instance', async (_event, commandLine, _workingDirectory) => {
     // on windows and linux, the deep link is passed in the command line
     const url = commandLine.find((arg) => arg.startsWith('chatbox://') || arg.startsWith('chatbox-dev://'))
 
@@ -522,35 +520,35 @@ app.on('open-url', async (_event, url) => {
 
 // --------- IPC 监听 ---------
 
-ipcMain.handle('getStoreValue', (event, key) => {
+ipcMain.handle('getStoreValue', (_event, key) => {
   return store.get(key)
 })
-ipcMain.handle('setStoreValue', (event, key, dataJson) => {
+ipcMain.handle('setStoreValue', (_event, key, dataJson) => {
   // 仅在传输层用 JSON 序列化，存储层用原生数据，避免存储层 JSON 损坏后无法自动处理的情况
   const data = JSON.parse(dataJson)
   return store.set(key, data)
 })
-ipcMain.handle('delStoreValue', (event, key) => {
+ipcMain.handle('delStoreValue', (_event, key) => {
   return store.delete(key)
 })
-ipcMain.handle('getAllStoreValues', (event) => {
+ipcMain.handle('getAllStoreValues', (_event) => {
   return JSON.stringify(store.store)
 })
-ipcMain.handle('setAllStoreValues', (event, dataJson) => {
+ipcMain.handle('setAllStoreValues', (_event, dataJson) => {
   const data = JSON.parse(dataJson)
   store.store = { ...store.store, ...data }
 })
 
-ipcMain.handle('getStoreBlob', async (event, key) => {
+ipcMain.handle('getStoreBlob', async (_event, key) => {
   return getStoreBlob(key)
 })
-ipcMain.handle('setStoreBlob', async (event, key, value: string) => {
+ipcMain.handle('setStoreBlob', async (_event, key, value: string) => {
   return setStoreBlob(key, value)
 })
-ipcMain.handle('delStoreBlob', async (event, key) => {
+ipcMain.handle('delStoreBlob', async (_event, key) => {
   return delStoreBlob(key)
 })
-ipcMain.handle('listStoreBlobKeys', async (event) => {
+ipcMain.handle('listStoreBlobKeys', async (_event) => {
   return listStoreBlobKeys()
 })
 
@@ -569,10 +567,10 @@ ipcMain.handle('getHostname', () => {
 ipcMain.handle('getDeviceName', () => {
   if (process.platform === 'darwin') {
     try {
-      const { execSync } = require('child_process')
+      const { execSync } = require('node:child_process')
       const computerName = execSync('scutil --get ComputerName', { encoding: 'utf8' }).trim()
       return computerName || os.hostname()
-    } catch (error) {
+    } catch (_error) {
       return os.hostname()
     }
   } else if (process.platform === 'win32') {
@@ -584,14 +582,14 @@ ipcMain.handle('getDeviceName', () => {
 ipcMain.handle('getLocale', () => {
   try {
     return app.getLocale()
-  } catch (e: any) {
+  } catch (_e: any) {
     return ''
   }
 })
-ipcMain.handle('openLink', (event, link) => {
+ipcMain.handle('openLink', (_event, link) => {
   return shell.openExternal(link)
 })
-ipcMain.handle('ensureShortcutConfig', (event, json) => {
+ipcMain.handle('ensureShortcutConfig', (_event, json) => {
   const config: ShortcutSetting = JSON.parse(json)
   unregisterShortcuts()
   registerShortcuts(config)
@@ -599,7 +597,7 @@ ipcMain.handle('ensureShortcutConfig', (event, json) => {
 
 ipcMain.handle('shouldUseDarkColors', () => nativeTheme.shouldUseDarkColors)
 
-ipcMain.handle('ensureProxy', (event, json) => {
+ipcMain.handle('ensureProxy', (_event, json) => {
   const config: { proxy?: string } = JSON.parse(json)
   proxy.ensure(config.proxy)
 })
@@ -609,22 +607,22 @@ ipcMain.handle('relaunch', () => {
   app.quit()
 })
 
-ipcMain.handle('analysticTrackingEvent', (event, dataJson) => {
+ipcMain.handle('analysticTrackingEvent', (_event, dataJson) => {
   const data = JSON.parse(dataJson)
   analystic.event(data.name, data.params).catch((e) => {
     log.error('analystic_tracking_event', e)
   })
 })
 
-ipcMain.handle('getConfig', (event) => {
+ipcMain.handle('getConfig', (_event) => {
   return getConfig()
 })
 
-ipcMain.handle('getSettings', (event) => {
+ipcMain.handle('getSettings', (_event) => {
   return getSettings()
 })
 
-ipcMain.handle('shouldShowAboutDialogWhenStartUp', (event) => {
+ipcMain.handle('shouldShowAboutDialogWhenStartUp', (_event) => {
   const currentVersion = app.getVersion()
   if (store.get('lastShownAboutDialogVersion', '') === currentVersion) {
     return false
@@ -633,9 +631,9 @@ ipcMain.handle('shouldShowAboutDialogWhenStartUp', (event) => {
   return true
 })
 
-ipcMain.handle('appLog', (event, dataJson) => {
+ipcMain.handle('appLog', (_event, dataJson) => {
   const data: { level: string; message: string } = JSON.parse(dataJson)
-  data.message = 'APP_LOG: ' + data.message
+  data.message = `APP_LOG: ${data.message}`
   switch (data.level) {
     case 'info':
       log.info(data.message)
@@ -650,7 +648,7 @@ ipcMain.handle('appLog', (event, dataJson) => {
 
 ipcMain.handle('exportLogs', async () => {
   try {
-    const fs = await import('fs/promises')
+    const fs = await import('node:fs/promises')
     const logPath = log.transports.file.getFile()?.path
     if (!logPath) {
       return ''
@@ -665,7 +663,7 @@ ipcMain.handle('exportLogs', async () => {
 
 ipcMain.handle('clearLogs', async () => {
   try {
-    const fs = await import('fs/promises')
+    const fs = await import('node:fs/promises')
     const logPath = log.transports.file.getFile()?.path
     if (logPath) {
       await fs.writeFile(logPath, '', 'utf-8')
@@ -675,7 +673,7 @@ ipcMain.handle('clearLogs', async () => {
   }
 })
 
-ipcMain.handle('ensureAutoLaunch', (event, enable: boolean) => {
+ipcMain.handle('ensureAutoLaunch', (_event, enable: boolean) => {
   if (isDebug) {
     log.info('ensureAutoLaunch: skip by debug mode')
     return
@@ -683,7 +681,7 @@ ipcMain.handle('ensureAutoLaunch', (event, enable: boolean) => {
   return autoLauncher.ensure(enable)
 })
 
-ipcMain.handle('parseFileLocally', async (event, dataJSON: string) => {
+ipcMain.handle('parseFileLocally', async (_event, dataJSON: string) => {
   const params: { filePath: string } = JSON.parse(dataJSON)
   try {
     const data = await parseFile(params.filePath)
@@ -694,7 +692,7 @@ ipcMain.handle('parseFileLocally', async (event, dataJSON: string) => {
   }
 })
 
-ipcMain.handle('parseUrl', async (event, url: string) => {
+ipcMain.handle('parseUrl', async (_event, _url: string) => {
   // const result = await readability(url, { maxLength: 1000 })
   // const key = 'parseUrl-' + uuidv4()
   // await setStoreBlob(key, result.text)
@@ -706,7 +704,7 @@ ipcMain.handle('isFullscreen', () => {
   return mainWindow?.isFullScreen() || false
 })
 
-ipcMain.handle('setFullscreen', (event, enable: boolean) => {
+ipcMain.handle('setFullscreen', (_event, enable: boolean) => {
   if (!mainWindow) {
     return
   }
@@ -725,7 +723,7 @@ ipcMain.handle('install-update', () => {
   autoUpdater.quitAndInstall()
 })
 
-ipcMain.handle('switch-theme', (event, theme: 'dark' | 'light') => {
+ipcMain.handle('switch-theme', (_event, theme: 'dark' | 'light') => {
   if (!mainWindow || process.platform !== 'darwin' || typeof mainWindow.setTitleBarOverlay !== 'function') {
     return
   }

@@ -1,6 +1,6 @@
 import { Menu, type MenuItemProps, type MenuProps, Stack, Text, useMantineTheme } from '@mantine/core'
 import { IconCheck, type IconProps } from '@tabler/icons-react'
-import { type FC, type MouseEventHandler, type ReactElement, useEffect, useRef, useState } from 'react'
+import { type FC, type MouseEventHandler, type ReactElement, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Drawer } from 'vaul'
 import { useIsSmallScreen } from '@/hooks/useScreenChange'

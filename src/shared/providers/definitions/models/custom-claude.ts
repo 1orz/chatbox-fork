@@ -85,10 +85,10 @@ export default class CustomClaude extends AbstractAISDKModel {
       },
     })
     const json: Response = await res.json()
-    if (!json['data']) {
+    if (!json.data) {
       throw new ApiError(JSON.stringify(json))
     }
-    return json['data']
+    return json.data
       .filter((item) => item.type === 'model')
       .map((item) => ({
         modelId: item.id,

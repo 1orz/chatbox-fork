@@ -134,9 +134,9 @@ function Root() {
   const language = useLanguage()
   const initialized = useRef(false)
 
-  const setOpenAboutDialog = useUIStore((s) => s.setOpenAboutDialog)
+  const _setOpenAboutDialog = useUIStore((s) => s.setOpenAboutDialog)
 
-  const setRemoteConfig = useSetAtom(atoms.remoteConfigAtom)
+  const _setRemoteConfig = useSetAtom(atoms.remoteConfigAtom)
 
   useEffect(() => {
     if (initialized.current) {
@@ -178,7 +178,7 @@ function Root() {
       }
 
     })()
-  }, [setOpenAboutDialog, setRemoteConfig, location.pathname, isExceeded, versionLoaded])
+  }, [location.pathname, isExceeded, versionLoaded])
 
   const showSidebar = useUIStore((s) => s.showSidebar)
   const sidebarWidth = useSidebarWidth()

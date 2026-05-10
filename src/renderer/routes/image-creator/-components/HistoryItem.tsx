@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Flex, Image, Popover, Skeleton, Stack, Text, Tooltip, UnstyledButton } from '@mantine/core'
+import { ActionIcon, Button, Flex, Image, Popover, Skeleton, Stack, Text, UnstyledButton } from '@mantine/core'
 import type { ImageGeneration } from '@shared/types'
 import { IconPhoto, IconTrash } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'

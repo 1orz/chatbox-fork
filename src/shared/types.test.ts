@@ -77,7 +77,7 @@ describe('copyThreads with compactionPoints', () => {
     const newThread = newThreads[0]
 
     expect(newThread.compactionPoints).toHaveLength(1)
-    const newCp = newThread.compactionPoints![0]
+    const newCp = newThread.compactionPoints?.[0]
 
     const newMessageIds = new Set(newThread.messages.map((m) => m.id))
     expect(newMessageIds.has(newCp.summaryMessageId)).toBe(true)
@@ -107,7 +107,7 @@ describe('copyThreads with compactionPoints', () => {
     }
 
     const newThreads = copyThreads([thread])!
-    const newCp = newThreads[0].compactionPoints![0]
+    const newCp = newThreads[0].compactionPoints?.[0]
 
     expect(newCp.createdAt).toBe(cpCreatedAt)
   })
@@ -169,7 +169,7 @@ describe('copyThreads with compactionPoints', () => {
 
     const newThreads = copyThreads([thread])!
     expect(newThreads[0].compactionPoints).toHaveLength(1)
-    expect(newThreads[0].compactionPoints![0].summaryMessageId).not.toBe(validCp.summaryMessageId)
+    expect(newThreads[0].compactionPoints?.[0].summaryMessageId).not.toBe(validCp.summaryMessageId)
   })
 
   it('should return undefined for undefined source', () => {
@@ -265,7 +265,7 @@ describe('copyThreads with compactionPoints', () => {
 
     const newThreads = copyThreads([thread])!
     expect(newThreads[0].compactionPoints).toHaveLength(1)
-    const newCp = newThreads[0].compactionPoints![0]
+    const newCp = newThreads[0].compactionPoints?.[0]
     expect(newCp.summaryMessageId).toBe(newCp.boundaryMessageId)
   })
 
@@ -331,7 +331,7 @@ describe('copyThreads with compactionPoints', () => {
 
     const newThreads = copyThreads([thread], externalMapping)!
     const newThread = newThreads[0]
-    const newCp = newThread.compactionPoints![0]
+    const newCp = newThread.compactionPoints?.[0]
 
     expect(newCp.boundaryMessageId).toBe(newSessionMsgId)
     const threadMsgMapping = newThread.messages.find((m) => m.role === 'assistant')

@@ -19,7 +19,7 @@ function DevLayout() {
     if (!shouldShowDevTools) {
       navigate({ to: '/' })
     }
-  }, [shouldShowDevTools, navigate])
+  }, [navigate])
 
   // Don't render dev UI in production
   if (!shouldShowDevTools) {

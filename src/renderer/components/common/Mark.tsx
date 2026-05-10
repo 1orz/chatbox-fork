@@ -10,6 +10,6 @@ export default function Mark(props: { children: string | ReactElement; marks: st
     }
     const markInstance = new markjs(ref.current)
     markInstance.mark(marks)
-  }, [children, ref.current, marks])
+  }, [marks])
   return <div ref={ref}>{children}</div>
 }

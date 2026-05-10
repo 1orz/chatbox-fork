@@ -24,11 +24,11 @@ export function normalizeOpenAIApiHostAndPath(
     apiHost = apiHost.slice(0, -1)
   }
   if (apiPath && !apiPath.startsWith('/')) {
-    apiPath = '/' + apiPath
+    apiPath = `/${apiPath}`
   }
   // https 协议
   if (apiHost && !apiHost.startsWith('http://') && !apiHost.startsWith('https://')) {
-    apiHost = 'https://' + apiHost
+    apiHost = `https://${apiHost}`
   }
   // 如果用户在 host 配置了完整的 host+path 接口地址
   // 可以兼容的输入情况有：
@@ -57,7 +57,7 @@ export function normalizeOpenAIApiHostAndPath(
   }
   // 如果只配置 apiHost，且 apiHost 不以 /v1 结尾
   if (!apiHost.endsWith('/v1') && !apiPath) {
-    apiHost = apiHost + '/v1'
+    apiHost = `${apiHost}/v1`
     apiPath = DEFAULT_PATH
   }
   if (!apiPath) {

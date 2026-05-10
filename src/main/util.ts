@@ -1,10 +1,9 @@
 import log from 'electron-log/main'
-import path from 'path'
-import { URL } from 'url'
+import path from 'node:path'
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
-    return process.env['ELECTRON_RENDERER_URL']
+    return process.env.ELECTRON_RENDERER_URL
   }
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`
 }

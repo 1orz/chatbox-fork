@@ -54,7 +54,7 @@ export function ImportProviderModal({ opened, onClose, importedConfig, existingP
   const apiHost = importedConfig?.apiHost || existingProvider?.apiHost || ''
   const apiPath = importedConfig?.apiPath || ''
   const apiKey = importedConfig?.apiKey || ''
-  const providerType =
+  const _providerType =
     (importedConfig && 'type' in importedConfig ? importedConfig.type : undefined) ||
     (existingProvider && 'type' in existingProvider ? existingProvider.type : undefined) ||
     ModelProviderType.OpenAI

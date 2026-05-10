@@ -85,7 +85,7 @@ html[data-theme="dark"] {
   }
   /* 错误消息中的链接强制成蓝色 */
   .message-error-tips a {
-    color: #2563eb !important;
+    color: #2563eb;
   }
 }
 
@@ -137,7 +137,7 @@ html[data-theme="light"] {
   }
   /* 错误消息中的链接强制成蓝色 */
   .message-error-tips a {
-    color: #2563eb !important;
+    color: #2563eb;
   }
 }
 

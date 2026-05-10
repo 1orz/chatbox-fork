@@ -4,7 +4,6 @@ import platform from '@/platform'
 const log = getLogger('base-storage')
 
 export default class BaseStorage {
-  constructor() {}
 
   public getStorageType() {
     return platform.getStorageType()

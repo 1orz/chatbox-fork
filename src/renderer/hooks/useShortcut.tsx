@@ -31,13 +31,13 @@ export default function useShortcut() {
       cancelOnShow()
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isSmallScreen])
+  }, [isSmallScreen, keyboardShortcut])
 
   function keyboardShortcut(e: KeyboardEvent) {
     // 这里不用 e.key 是因为 alt、 option、shift 都会改变 e.key 的值
-    const ctrlOrCmd = e.ctrlKey || e.metaKey
+    const _ctrlOrCmd = e.ctrlKey || e.metaKey
     const shift = e.shiftKey
-    const altOrOption = e.altKey
+    const _altOrOption = e.altKey
 
     const ctrlKey = getOS() === 'Mac' ? e.metaKey : e.ctrlKey
 

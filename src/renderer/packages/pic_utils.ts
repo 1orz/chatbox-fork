@@ -64,7 +64,7 @@ export async function getImageBase64AndResize(file: File) {
 }
 
 export function svgCodeToBase64(svgCode: string) {
-  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgCode)))
+  return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgCode)))}`
 }
 
 export async function svgToPngBase64(svgBase64: string): Promise<string> {

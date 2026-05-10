@@ -17,7 +17,6 @@ import { formatChatAsHtml, formatChatAsMarkdown, formatChatAsTxt } from '@/lib/f
 import { getLogger } from '@/lib/utils'
 import { PREVIEW_LINES } from '@/packages/context-management/attachment-payload'
 import * as localParser from '@/packages/local-parser'
-import * as remote from '@/packages/remote'
 import { estimateTokens, getTokenizerType } from '@/packages/token'
 import platform from '@/platform'
 import storage from '@/storage'
@@ -166,7 +165,7 @@ async function parseFileWithMineruService(
  */
 export async function preprocessFile(
   file: File,
-  settings: SessionSettings
+  _settings: SessionSettings
 ): Promise<{
   file: File
   content: string
@@ -305,7 +304,7 @@ export async function preprocessFile(
  */
 export async function preprocessLink(
   url: string,
-  settings: SessionSettings
+  _settings: SessionSettings
 ): Promise<{
   url: string
   title: string

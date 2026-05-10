@@ -22,7 +22,7 @@ export async function tryOpenAppStoreReviewPage() {
     }
     hasOpenAppStoreReviewPage = true
     await keypairStore.setItem('lastAppStoreReviewTime', now)
-    NiceModal.show('app-store-rating')
+    await NiceModal.show('app-store-rating')
   } catch (e) {
     console.error(e)
     Sentry.captureException(e)

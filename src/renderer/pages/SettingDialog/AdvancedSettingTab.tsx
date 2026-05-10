@@ -89,7 +89,7 @@ export default function AdvancedSettingTab(props: Props) {
               control={<Switch />}
               label={t('Launch at system startup')}
               checked={settingsEdit.autoLaunch}
-              onChange={(e, checked) =>
+              onChange={(_e, checked) =>
                 setSettingsEdit({
                   ...settingsEdit,
                   autoLaunch: checked,
@@ -106,7 +106,7 @@ export default function AdvancedSettingTab(props: Props) {
               control={<Switch />}
               label={t('Automatic updates')}
               checked={settingsEdit.autoUpdate}
-              onChange={(e, checked) =>
+              onChange={(_e, checked) =>
                 setSettingsEdit({
                   ...settingsEdit,
                   autoUpdate: checked,
@@ -118,7 +118,7 @@ export default function AdvancedSettingTab(props: Props) {
                 control={<Switch />}
                 label={t('Beta updates')}
                 checked={settingsEdit.betaUpdate}
-                onChange={(e, checked) =>
+                onChange={(_e, checked) =>
                   setSettingsEdit({
                     ...settingsEdit,
                     betaUpdate: checked,
@@ -176,8 +176,8 @@ function ExportAndImport(props: { onCancel: () => void }) {
       delete data[StorageKey.MyCopilots]
     }
     const date = new Date()
-    data['__exported_items'] = exportItems
-    data['__exported_at'] = date.toISOString()
+    data.__exported_items = exportItems
+    data.__exported_at = date.toISOString()
     const dateStr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
     platform.exporter.exportTextFile(`chatbox-exported-data-${dateStr}.json`, JSON.stringify(data))
   }
@@ -276,7 +276,7 @@ function ExportAndImport(props: { onCancel: () => void }) {
                 control={
                   <Checkbox
                     checked={exportItems.includes(item.value)}
-                    onChange={(e, checked) => {
+                    onChange={(_e, checked) => {
                       if (checked && !exportItems.includes(item.value)) {
                         setExportItems([...exportItems, item.value])
                       } else if (!checked) {

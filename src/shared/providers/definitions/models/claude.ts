@@ -94,7 +94,7 @@ export default class Claude extends AbstractAISDKModel {
       ...this.options.extraHeaders,
     }
     if (this.options.authToken) {
-      headers['Authorization'] = `Bearer ${this.options.authToken}`
+      headers.Authorization = `Bearer ${this.options.authToken}`
     } else if (this.options.claudeApiKey) {
       headers['x-api-key'] = this.options.claudeApiKey
     }
@@ -104,10 +104,10 @@ export default class Claude extends AbstractAISDKModel {
       headers,
     })
     const json: Response = await res.json()
-    if (!json['data']) {
+    if (!json.data) {
       throw new ApiError(JSON.stringify(json))
     }
-    return json['data']
+    return json.data
       .filter((item) => item.type === 'model')
       .map((item) => ({
         modelId: item.id,

@@ -199,10 +199,7 @@ export class FileConversationTestRunner {
   async runTest(testCase: FileConversationTestCase): Promise<TestResult> {
     const startTime = Date.now()
     const toolCalls: TestResult['toolCalls'] = []
-
-    console.log(`\n[Test] Running: ${testCase.name}`)
     if (testCase.description) {
-      console.log(`  Description: ${testCase.description}`)
     }
 
     try {
@@ -211,11 +208,9 @@ export class FileConversationTestRunner {
 
       // 加载测试文件
       this.context.loadFiles(testCase.files)
-      console.log(`  Loaded ${testCase.files.length} file(s)`)
 
       // 创建消息序列（原始消息，不含 ATTACHMENT 标记）
       const rawMessages: Message[] = testCase.messages.map((m) => this.context.createMessage(m))
-      console.log(`  Created ${rawMessages.length} message(s)`)
 
       // 准备模型设置
       const globalSettings = this.buildGlobalSettings()
@@ -234,7 +229,6 @@ export class FileConversationTestRunner {
 
       // 创建模型实例
       const model = getModel(sessionSettings, globalSettings, config, dependencies)
-      console.log(`  Using model: ${model.modelId}`)
 
       // 创建存储适配器，用于 genMessageContext 读取文件内容
       const testPlatform = this.context.platform
@@ -252,9 +246,6 @@ export class FileConversationTestRunner {
         rawMessages,
         modelSupportToolUseForFile,
         storageAdapter
-      )
-      console.log(
-        `  genMessageContext: modelSupportToolUseForFile=${modelSupportToolUseForFile}, messages=${promptMessages.length}`
       )
 
       // 执行对话
@@ -329,10 +320,7 @@ export class FileConversationTestRunner {
           result.error = `Validation failed: ${validationError.message}`
         }
       }
-
-      console.log(`  ✓ Completed in ${duration}ms`)
       if (toolCalls.length > 0) {
-        console.log(`  Tool calls: ${toolCalls.map((t) => t.toolName).join(', ')}`)
       }
 
       return result
@@ -355,9 +343,6 @@ export class FileConversationTestRunner {
    * 运行多个测试用例
    */
   async runTests(testCases: FileConversationTestCase[]): Promise<TestResult[]> {
-    console.log(`\n${'='.repeat(60)}`)
-    console.log(`Running ${testCases.length} file conversation test(s)`)
-    console.log(`${'='.repeat(60)}`)
 
     for (const testCase of testCases) {
       const result = await this.runTest(testCase)
@@ -379,20 +364,10 @@ export class FileConversationTestRunner {
   private printSummary(): void {
     const passed = this.results.filter((r) => r.success).length
     const failed = this.results.length - passed
-    const totalDuration = this.results.reduce((sum, r) => sum + r.duration, 0)
-
-    console.log(`\n${'='.repeat(60)}`)
-    console.log(`Test Summary`)
-    console.log(`${'='.repeat(60)}`)
-    console.log(`Total: ${this.results.length}`)
-    console.log(`Passed: ${passed}`)
-    console.log(`Failed: ${failed}`)
-    console.log(`Duration: ${totalDuration}ms`)
+    const _totalDuration = this.results.reduce((sum, r) => sum + r.duration, 0)
 
     if (failed > 0) {
-      console.log(`\nFailed tests:`)
-      for (const result of this.results.filter((r) => !r.success)) {
-        console.log(`  - ${result.testName}: ${result.error}`)
+      for (const _result of this.results.filter((r) => !r.success)) {
       }
     }
   }
@@ -431,7 +406,6 @@ export class FileConversationTestRunner {
     }
 
     fs.writeFileSync(outputPath, JSON.stringify(exportData, null, 2))
-    console.log(`\nResults exported to: ${outputPath}`)
   }
 
   /**
@@ -483,7 +457,7 @@ export class FileConversationTestRunner {
   /**
    * 恢复原始 platform
    */
-  private async restorePlatform(original: any): Promise<void> {
+  private async restorePlatform(_original: any): Promise<void> {
     // no-op for now
   }
 }
@@ -523,8 +497,6 @@ export async function runConversationTest(options: RunConversationTestOptions): 
   const toolCalls: TestResult['toolCalls'] = []
   const processedToolCallIds = new Set<string>()
 
-  console.log(`\n[Test] ${testName}`)
-
   try {
     // 使用传入的 platform 或创建新的
     const testPlatform = platform || new TestPlatform()
@@ -533,7 +505,6 @@ export async function runConversationTest(options: RunConversationTestOptions): 
     for (const file of files) {
       testPlatform.loadFile(file.storageKey, file.content)
     }
-    console.log(`  Loaded ${files.length} file(s)`)
 
     // 创建原始消息列表
     const rawMessages: Message[] = []
@@ -543,7 +514,6 @@ export async function runConversationTest(options: RunConversationTestOptions): 
       const { createMessage } = await import('../../../src/shared/types')
       const systemMsg = createMessage('system', options.systemPrompt)
       rawMessages.push(systemMsg)
-      console.log(`  Added system prompt (${options.systemPrompt.length} chars)`)
     }
 
     // 创建用户消息（只包含文件引用，不包含 ATTACHMENT 标记）
@@ -580,7 +550,6 @@ export async function runConversationTest(options: RunConversationTestOptions): 
 
     // 创建模型
     const model = getModel(sessionSettings, globalSettings, config, dependencies)
-    console.log(`  Using model: ${model.modelId}`)
 
     // 创建存储适配器，用于 genMessageContext 读取文件内容
     const storageAdapter = {
@@ -598,9 +567,6 @@ export async function runConversationTest(options: RunConversationTestOptions): 
       rawMessages,
       modelSupportToolUseForFile,
       storageAdapter
-    )
-    console.log(
-      `  genMessageContext: modelSupportToolUseForFile=${modelSupportToolUseForFile}, messages=${promptMessages.length}`
     )
 
     // 执行对话
@@ -664,10 +630,7 @@ export async function runConversationTest(options: RunConversationTestOptions): 
         result.error = `Validation failed: ${err.message}`
       }
     }
-
-    console.log(`  ✓ Completed in ${duration}ms`)
     if (toolCalls.length > 0) {
-      console.log(`  Tool calls: ${toolCalls.map((t) => t.toolName).join(', ')}`)
     }
 
     return result

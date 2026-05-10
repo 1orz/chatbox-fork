@@ -155,7 +155,7 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
     },
     ref
   ) => {
-    const modelRegistryVersion = useModelRegistryVersion()
+    const _modelRegistryVersion = useModelRegistryVersion()
 
     const { t } = useTranslation()
     const navigate = useNavigate()
@@ -329,8 +329,7 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
 
           const modelInstance = getModel(settings, globalSettings, configs, dependencies)
           return modelInstance.isSupportToolUse('read-file')
-        } catch (e) {
-          console.debug('useModelToolCapability: failed to check capability', e)
+        } catch (_e) {
           return false
         }
       },
@@ -370,7 +369,7 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
       if (model?.provider && getProviderModelContextWindowSync(model.provider, model.modelId) !== null) return true
       // Fallback: provider-agnostic lookup (same as compaction detector)
       return getModelContextWindowSync(model.modelId) !== null
-    }, [model?.modelId, model?.provider, modelInfo?.contextWindow, modelRegistryVersion])
+    }, [model?.modelId, model?.provider, modelInfo?.contextWindow])
 
     // Use model setting contextWindow if available, otherwise fallback to models.dev data
     const effectiveContextWindow = useMemo(() => {
@@ -382,7 +381,7 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
       // Fallback: provider-agnostic lookup (same as compaction detector)
       if (model?.modelId) return getModelContextWindowSync(model.modelId)
       return null
-    }, [modelInfo?.contextWindow, model?.modelId, model?.provider, modelRegistryVersion])
+    }, [modelInfo?.contextWindow, model?.modelId, model?.provider])
 
     // Calculate token usage percentage
     const tokenPercentage = useMemo(() => {

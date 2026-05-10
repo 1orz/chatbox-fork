@@ -7,14 +7,14 @@ export async function parseTextFile(file: File, options: { maxLength?: number } 
   if (options.maxLength) {
     text = text.trim().slice(0, options.maxLength)
   }
-  const key = `parseFile-` + uuidv4()
+  const key = `parseFile-${uuidv4()}`
   await platform.setStoreBlob(key, text)
   return { key }
 }
 
 export async function parseUrl(url: string) {
   const result = await remote.parseUserLinkFree({ url })
-  const key = `parseUrl-` + uuidv4()
+  const key = `parseUrl-${uuidv4()}`
   await platform.setStoreBlob(key, result.text)
   return { key, title: result.title }
 }

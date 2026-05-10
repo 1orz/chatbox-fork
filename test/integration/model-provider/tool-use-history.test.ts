@@ -23,7 +23,7 @@ function claude() {
   }).languageModel(TEST_MODEL)
 }
 
-const calculatorTool = {
+const _calculatorTool = {
   calculator: {
     description: 'A simple calculator',
     parameters: { type: 'object' as const, properties: { expression: { type: 'string' as const } }, required: ['expression'] },

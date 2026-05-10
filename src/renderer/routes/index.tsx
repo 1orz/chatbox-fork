@@ -84,7 +84,7 @@ function Index() {
       }
 
       // Transfer web browsing setting from "new" session to the actual session
-      const newSessionWebBrowsing = sessionWebBrowsingMap['new']
+      const newSessionWebBrowsing = sessionWebBrowsingMap.new
       if (newSessionWebBrowsing !== undefined) {
         setSessionWebBrowsing(newSession.id, newSessionWebBrowsing)
         clearSessionWebBrowsing('new')

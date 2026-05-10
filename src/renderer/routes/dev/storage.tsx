@@ -7,7 +7,6 @@ import {
   Container,
   Group,
   Loader,
-  Modal,
   Paper,
   ScrollArea,
   Stack,
@@ -333,7 +332,7 @@ function safeStringify(value: unknown): string {
   }
   try {
     return JSON.stringify(value, null, 2)
-  } catch (error) {
+  } catch (_error) {
     return String(value)
   }
 }

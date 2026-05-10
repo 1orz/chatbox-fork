@@ -9,7 +9,7 @@ import platform from '@/platform'
 import storage from '@/storage'
 import { useUIStore } from '@/stores/uiStore'
 
-export default function PictureDialog(props: {}) {
+export default function PictureDialog(_props: {}) {
   const pictureShow = useUIStore((s) => s.pictureShow)
   if (!pictureShow) {
     return null
@@ -176,7 +176,7 @@ function _PictureDialog(props: {
                 height: '100%',
               }}
               wrapperProps={{
-                onClick: (e) => {
+                onClick: (_e) => {
                   onClose()
                 },
               }}

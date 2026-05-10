@@ -210,7 +210,7 @@ export async function migrateOnData(dataStore: MigrateStore, canRelaunch = true)
   }
 }
 
-async function migrate_0_to_1(dataStore: MigrateStore) {
+async function _migrate_0_to_1(dataStore: MigrateStore) {
   const settings = await dataStore.getData(StorageKey.Settings, defaults.settings())
   // 如果历史版本的用户开启了消息的token计数展示，那么也帮他们开启token消耗展示
   if (settings.showTokenCount) {
@@ -221,7 +221,7 @@ async function migrate_0_to_1(dataStore: MigrateStore) {
   }
 }
 
-async function migrate_1_to_2(dataStore: MigrateStore) {
+async function _migrate_1_to_2(_dataStore: MigrateStore) {
   return
 }
 
@@ -245,19 +245,19 @@ async function migrate_2_to_3(dataStore: MigrateStore) {
   }
 }
 
-async function migrate_3_to_4(dataStore: MigrateStore) {
+async function _migrate_3_to_4(_dataStore: MigrateStore) {
   return
 }
 
 // 已经迁移到storage migration
-async function migrate_4_to_5(dataStore: MigrateStore): Promise<boolean> {
+async function _migrate_4_to_5(dataStore: MigrateStore): Promise<boolean> {
   if (platform.type !== 'web') {
     return false
   }
   // 针对网页版，从 store 迁移至 localforage
   // 本质上是从更小的 localStorage 迁移到更大的 IndexedDB，解决容量不够用的问题
   const keys: string[] = []
-  oldStore.each((value, key) => {
+  oldStore.each((_value, key) => {
     keys.push(key)
   })
   if (keys.length === 0) {
@@ -269,21 +269,21 @@ async function migrate_4_to_5(dataStore: MigrateStore): Promise<boolean> {
   return true
 }
 
-async function migrate_5_to_6(dataStore: MigrateStore) {
+async function _migrate_5_to_6(_dataStore: MigrateStore) {
   return
 }
 
 // 针对 mobile 端，从 store 迁移至 sqlite
 // 解决容量不够用的问题
 // 不在需要了
-async function migrate_6_to_7(dataStore: MigrateStore): Promise<boolean> {
+async function _migrate_6_to_7(dataStore: MigrateStore): Promise<boolean> {
   if (platform.type !== 'mobile') {
     return false
   }
   // 针对mobile端，从 store 迁移至 sqllite
   // 解决容量不够用的问题
   const keys: string[] = []
-  oldStore.each((value, key) => {
+  oldStore.each((_value, key) => {
     keys.push(key)
   })
   if (keys.length === 0) {
@@ -315,7 +315,7 @@ async function migrate_7_to_8(dataStore: MigrateStore): Promise<boolean> {
 }
 
 // 修复之前从 7 以下升级，会导致 7_8 不执行的问题，从 chat-sessions 里找到 chat-sessions-list 中不存在的 session，然后迁移
-async function migrate_8_to_9(dataStore: MigrateStore): Promise<boolean> {
+async function _migrate_8_to_9(dataStore: MigrateStore): Promise<boolean> {
   if (platform.type !== 'mobile') {
     return false
   }
@@ -359,7 +359,7 @@ async function migrate_8_to_9(dataStore: MigrateStore): Promise<boolean> {
   return true
 }
 
-function setInitProcess(process: string) {
+function _setInitProcess(process: string) {
   const store = getDefaultStore()
   store.set(migrationProcessAtom, process)
 }
@@ -472,7 +472,7 @@ async function migrate_9_to_10(dataStore: MigrateStore): Promise<boolean> {
         }
       }
       log.info('migrate openai settings done')
-    } catch (e) {
+    } catch (_e) {
       log.info('migrate openai settings failed.')
     }
 
@@ -554,7 +554,7 @@ async function migrate_9_to_10(dataStore: MigrateStore): Promise<boolean> {
     try {
       if (oldCustomProviders) {
         oldCustomProviders.forEach((cp: any) => {
-          const pid = 'custom-provider-' + uuidv4()
+          const pid = `custom-provider-${uuidv4()}`
           customProviders.push({
             id: pid,
             name: cp.name,
@@ -575,7 +575,7 @@ async function migrate_9_to_10(dataStore: MigrateStore): Promise<boolean> {
           log.info(`migrate custom provider [${cp.name}] settings done`)
         })
       }
-    } catch (e) {
+    } catch (_e) {
       log.info('migrate custom provider settings failed.')
     }
 
@@ -586,7 +586,7 @@ async function migrate_9_to_10(dataStore: MigrateStore): Promise<boolean> {
         customProviders,
       } as Settings)
       log.info('migrate settings done')
-    } catch (e) {
+    } catch (_e) {
       log.info('save new settings to store failed.')
     }
   }
@@ -644,7 +644,7 @@ async function migrate_9_to_10(dataStore: MigrateStore): Promise<boolean> {
         sessionMap[StorageKeyGenerator.session(session.id)] = session
       }
       log.info(`migrate session [${i + 1}/${chatSessionList.length}] settings done`)
-    } catch (e) {
+    } catch (_e) {
       log.info(`migrate session [${i + 1}/${chatSessionList.length}] settings failed, ${sessionMeta.name}`)
     }
   }
@@ -652,7 +652,7 @@ async function migrate_9_to_10(dataStore: MigrateStore): Promise<boolean> {
   try {
     await dataStore.setAll(sessionMap)
     log.info('migrate sessions settings done')
-  } catch (e) {
+  } catch (_e) {
     log.info('save sessions settings to store failed.')
   }
 
@@ -680,12 +680,12 @@ async function migrate_10_to_11(dataStore: MigrateStore) {
 }
 
 // 为桌面端和移动端从sqlite和配置文件迁移到IndexedDB占位，防止后面重复使用该版本号
-async function migrate_11_to_12(dataStore: MigrateStore) {
+async function migrate_11_to_12(_dataStore: MigrateStore) {
   return true
 }
 
 // 为移动端从indexedDB迁移到Sqlite占位，防止后面重复使用该版本号
-async function migrate_12_to_13(dataStore: MigrateStore) {
+async function migrate_12_to_13(_dataStore: MigrateStore) {
   return true
 }
 

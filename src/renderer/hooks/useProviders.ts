@@ -57,6 +57,7 @@ export const useProviders = () => {
               model,
             }
           }
+          return null
         })
         .filter((fm) => !!fm),
     [settings.favoritedModels, providers]

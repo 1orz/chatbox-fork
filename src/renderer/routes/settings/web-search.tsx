@@ -36,7 +36,7 @@ export function RouteComponent() {
           body: { query: 'Chatbox' },
         })
         setQueritAvailable(true)
-      } catch (e) {
+      } catch (_e) {
         setQueritAvailable(false)
       } finally {
         setCheckingQuerit(false)
@@ -53,7 +53,7 @@ export function RouteComponent() {
       try {
         await new BochaSearch(extension.webSearch.bochaApiKey).search('Chatbox')
         setBochaAvailable(true)
-      } catch (e) {
+      } catch (_e) {
         setBochaAvailable(false)
       } finally {
         setCheckingBocha(false)
@@ -82,7 +82,7 @@ export function RouteComponent() {
           },
         })
         setTavilyAvaliable(true)
-      } catch (e) {
+      } catch (_e) {
         setTavilyAvaliable(false)
       } finally {
         setCheckingTavily(false)
@@ -352,7 +352,7 @@ export function RouteComponent() {
                       ...extension,
                       webSearch: {
                         ...extension.webSearch,
-                        queritMaxResults: parseInt(e),
+                        queritMaxResults: parseInt(e, 10),
                       },
                     },
                   })

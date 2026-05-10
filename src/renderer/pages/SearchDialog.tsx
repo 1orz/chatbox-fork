@@ -11,7 +11,6 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { useIsSmallScreen } from '@/hooks/useScreenChange'
 import { cn } from '@/lib/utils'
 import { currentSessionIdAtom } from '@/stores/atoms'
-import { useSession } from '@/stores/chatStore'
 import { searchSessions } from '@/stores/sessionHelpers'
 import { useUIStore } from '@/stores/uiStore'
 import * as scrollActions from '../stores/scrollActions'
@@ -19,7 +18,7 @@ import { switchCurrentSession } from '../stores/sessionActions'
 
 type Props = {}
 
-export default function SearchDialog(props: Props) {
+export default function SearchDialog(_props: Props) {
   const isSmallScreen = useIsSmallScreen()
   const open = useUIStore((s) => s.openSearchDialog)
   const setOpen = useUIStore((s) => s.setOpenSearchDialog)
@@ -28,7 +27,7 @@ export default function SearchDialog(props: Props) {
   const [loading, setLoading] = useState<boolean>(false)
   const [searchInput, _setSearchInput] = useState('')
   const [searchResult, setSearchResult] = useState<Session[]>([])
-  const [searchResultMarks, setSearchResultMarks] = useState<string[]>([])
+  const [_searchResultMarks, setSearchResultMarks] = useState<string[]>([])
   const theme = useTheme()
   const { t } = useTranslation()
   const ref = useRef<HTMLInputElement>(null)
@@ -80,7 +79,7 @@ export default function SearchDialog(props: Props) {
       maxWidth={mode === 'search-result' ? 'md' : 'sm'}
     >
       <DialogContent sx={{ padding: '0.5rem' }}>
-        <Command shouldFilter={false} filter={(value, search) => 1}>
+        <Command shouldFilter={false} filter={(_value, _search) => 1}>
           <CommandInput
             ref={ref}
             autoFocus={!isSmallScreen}
@@ -88,7 +87,7 @@ export default function SearchDialog(props: Props) {
             onInput={onSearchInput}
             onKeyDown={onKeyDown}
             className={cn('border-none', 'shadow-none', theme.palette.mode === 'dark' ? 'text-white' : 'text-black')}
-            placeholder={globalOnly ? t('Search conversations') + '...' : t('Type a command or search') + '...'}
+            placeholder={globalOnly ? `${t('Search conversations')}...` : `${t('Type a command or search')}...`}
           />
           {mode === 'command' && !globalOnly && (
             <CommandList>
@@ -212,7 +211,7 @@ export default function SearchDialog(props: Props) {
                           </span>
                           <Message
                             id={message.id}
-                            key={'msg-' + message.id}
+                            key={`msg-${message.id}`}
                             sessionId={result.id}
                             sessionType={result.type || 'chat'}
                             msg={message}

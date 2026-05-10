@@ -7,7 +7,7 @@ import { CHATBOX_BUILD_CHANNEL, CHATBOX_BUILD_PLATFORM } from '@/variables'
 import platform from '../platform'
 
 function getInitialTime() {
-  let initialTime = parseInt(localStorage.getItem('initial-time') || '')
+  let initialTime = parseInt(localStorage.getItem('initial-time') || '', 10)
   if (!initialTime) {
     initialTime = Date.now()
     localStorage.setItem('initial-time', `${initialTime}`)
@@ -36,7 +36,7 @@ export default function useVersion() {
       version &&
       remoteConfig.current_version &&
       compareVersions(version, remoteConfig.current_version) === 1,
-    [version, remoteConfig]
+    [version, remoteConfig, isStoreReviewPlatform]
   )
   const updateCheckTimer = useRef<NodeJS.Timeout>()
   useEffect(() => {

@@ -17,7 +17,6 @@ import type AbstractAISDKModel from '../../../src/shared/models/abstract-ai-sdk'
 import {
   type ModelProvider,
   ModelProviderEnum,
-  type ProviderBaseInfo,
   type ProviderModelInfo,
   type SessionSettings,
   type Settings,

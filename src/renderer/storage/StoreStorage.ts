@@ -35,9 +35,6 @@ export const StorageKeyGenerator = {
 }
 
 export default class StoreStorage extends BaseStorage {
-  constructor() {
-    super()
-  }
   public async getItem<T>(key: string, initialValue: T): Promise<T> {
     const value: T = await super.getItem(key, initialValue)
 

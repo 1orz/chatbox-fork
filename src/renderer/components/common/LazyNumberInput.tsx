@@ -51,7 +51,7 @@ export default function LazyNumberInput({
     if (tempInputValue === '') {
       onChange?.()
     } else if (tempInputValue) {
-      const v = allowDecimal ? parseFloat(tempInputValue) : parseInt(tempInputValue)
+      const v = allowDecimal ? parseFloat(tempInputValue) : parseInt(tempInputValue, 10)
       if (!Number.isNaN(v)) {
         // 检查范围限制
         let newValue = v

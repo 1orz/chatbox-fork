@@ -123,8 +123,8 @@ export function SVGPreview(props: { xmlCode: string; className?: string; generat
     const doc = parser.parseFromString(xmlCode, 'image/svg+xml')
     const svgEl = doc.documentElement
 
-    let width = parseInt(svgEl.getAttribute('width') || '') || 0
-    let height = parseInt(svgEl.getAttribute('height') || '') || 0
+    let width = parseInt(svgEl.getAttribute('width') || '', 10) || 0
+    let height = parseInt(svgEl.getAttribute('height') || '', 10) || 0
     const viewBox = svgEl.getAttribute('viewBox')
     if ((!width || !height) && viewBox) {
       const vb = viewBox.trim().split(/\s+/).map(Number)
@@ -187,7 +187,7 @@ export function SVGPreview(props: { xmlCode: string; className?: string; generat
 
 async function mermaidCodeToSvgCode(source: string, theme: 'light' | 'dark') {
   mermaid.initialize({ theme: theme === 'light' ? 'default' : 'dark' })
-  const id = 'mermaidtmp' + Math.random().toString(36).substring(2, 15)
+  const id = `mermaidtmp${Math.random().toString(36).substring(2, 15)}`
   const result = await mermaid.render(id, source)
   // 考虑到 mermaid 工具内部本身已经使用了 dompurify 进行处理，因此可以先假设它的输出是安全的
   // 经过测试，发现 dompurify.sanitize 有时候会导致最终的 svg 显示不完整

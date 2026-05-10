@@ -199,8 +199,7 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
       onError: (context) => {
         if (isErrorAttempt(context.current)) {
           const { error } = context.current
-          const errorMessage = error instanceof Error ? error.message : String(error)
-          console.debug(`[ai-retry] Error on attempt ${context.attempts.length}:`, errorMessage)
+          const _errorMessage = error instanceof Error ? error.message : String(error)
         }
       },
       onRetry: (context) => {
@@ -212,8 +211,6 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
               ? lastError.error.message
               : String(lastError.error)
             : 'Unknown error'
-
-        console.debug(`[ai-retry] Retrying attempt ${attemptNumber}/${RETRY_CONFIG.MAX_ATTEMPTS}`)
 
         statusQueue.push({
           type: 'retrying',
@@ -383,14 +380,12 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
       if (isError) {
         if ((toolResult.result as unknown) instanceof Error) {
           const error = toolResult.result as Error
-          console.debug('mcp tool execute error', error)
           toolCallPart.result = {
             name: error.name,
             message: error.message,
             stack: error.stack,
           }
         } else {
-          console.debug('mcp tool execute error', toolResult.result)
           toolCallPart.result = toolResult.result ?? {
             message: 'Unknown tool error',
           }
@@ -692,8 +687,7 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
       onError: (context) => {
         if (isErrorAttempt(context.current)) {
           const { error } = context.current
-          const errorMessage = error instanceof Error ? error.message : String(error)
-          console.debug(`[ai-retry] Error on attempt ${context.attempts.length}:`, errorMessage)
+          const _errorMessage = error instanceof Error ? error.message : String(error)
         }
       },
       onRetry: (context) => {
@@ -705,8 +699,6 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
               ? lastError.error.message
               : String(lastError.error)
             : 'Unknown error'
-
-        console.debug(`[ai-retry] Retrying attempt ${attemptNumber}/${RETRY_CONFIG.MAX_ATTEMPTS}`)
 
         options.onStatusChange?.({
           type: 'retrying',

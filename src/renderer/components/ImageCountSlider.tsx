@@ -41,8 +41,8 @@ export default function ImageCountSlider(props: Props) {
           value={props.value.toString()}
           onChange={(event) => {
             const s = event.target.value.trim()
-            const v = parseInt(s)
-            if (isNaN(v)) {
+            const v = parseInt(s, 10)
+            if (Number.isNaN(v)) {
               return
             }
             if (v < 0) {

@@ -6,7 +6,6 @@ import {
   FileButton,
   Flex,
   Radio,
-  Select,
   Stack,
   Switch,
   Text,
@@ -90,7 +89,7 @@ export function RouteComponent() {
           onChange={(val) => {
             if (val) {
               setSettings({
-                theme: parseInt(val),
+                theme: parseInt(val, 10),
               })
             }
           }}
@@ -590,7 +589,7 @@ const ExportLogsSection = () => {
     }
   }
 
-  const handleClearLogs = async () => {
+  const _handleClearLogs = async () => {
     try {
       await platform.clearLogs()
       setExportResult({ success: true })

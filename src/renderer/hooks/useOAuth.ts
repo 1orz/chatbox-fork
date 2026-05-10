@@ -190,7 +190,7 @@ export function useOAuth(
     const refreshIn = Math.max(timeUntilExpiry - 2 * 60 * 1000, 0)
     const timer = setTimeout(refreshToken, refreshIn)
     return () => clearTimeout(timer)
-  }, [isDesktop, isOAuthActive, refreshToken, tokenProviderSettings?.oauth?.expiresAt])
+  }, [isDesktop, isOAuthActive, refreshToken, tokenProviderSettings?.oauth?.expiresAt, tokenProviderSettings])
 
   return {
     isDesktop,

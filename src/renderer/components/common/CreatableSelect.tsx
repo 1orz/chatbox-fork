@@ -21,7 +21,7 @@ export default function CreatableSelect(props: {
   return (
     <Autocomplete
       value={value}
-      onChange={(event, newValue) => {
+      onChange={(_event, newValue) => {
         if (!newValue) {
           return
         }

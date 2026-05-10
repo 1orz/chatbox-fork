@@ -33,7 +33,7 @@ import { RouteComponent as SettingsWebSearchRouteComponent } from '@/routes/sett
 
 export type SettingsModalProps = {}
 
-export const SettingsModal: FC<SettingsModalProps> = (props) => {
+export const SettingsModal: FC<SettingsModalProps> = (_props) => {
   const { t } = useTranslation()
   const location = useLocation()
   const { needRoomForMacWindowControls } = useNeedRoomForWinControls()

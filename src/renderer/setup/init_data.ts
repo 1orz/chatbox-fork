@@ -24,7 +24,7 @@ async function initSessionsIfNeeded() {
 }
 
 async function initPresetSessions() {
-  const lang = await platform.getLocale().catch((e) => 'en')
+  const lang = await platform.getLocale().catch((_e) => 'en')
 
   const defaultSessions = lang.startsWith('zh') ? defaultSessionsForCN : defaultSessionsForEN
 

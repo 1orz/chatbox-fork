@@ -35,7 +35,7 @@ export default class WebPlatform extends IndexedDBStorage implements Platform {
     return 'web'
   }
   public async shouldUseDarkColors(): Promise<boolean> {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches
   }
   public onSystemThemeChange(callback: () => void): () => void {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', callback)
@@ -43,13 +43,13 @@ export default class WebPlatform extends IndexedDBStorage implements Platform {
       window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', callback)
     }
   }
-  public onWindowShow(callback: () => void): () => void {
+  public onWindowShow(_callback: () => void): () => void {
     return () => null
   }
-  public onWindowFocused(callback: () => void): () => void {
+  public onWindowFocused(_callback: () => void): () => void {
     return () => null
   }
-  public onUpdateDownloaded(callback: () => void): () => void {
+  public onUpdateDownloaded(_callback: () => void): () => void {
     return () => null
   }
   public async openLink(url: string): Promise<void> {
@@ -66,10 +66,10 @@ export default class WebPlatform extends IndexedDBStorage implements Platform {
     const lang = window.navigator.language
     return parseLocale(lang)
   }
-  public async ensureShortcutConfig(config: ShortcutSetting): Promise<void> {
+  public async ensureShortcutConfig(_config: ShortcutSetting): Promise<void> {
     return
   }
-  public async ensureProxyConfig(config: { proxy?: string }): Promise<void> {
+  public async ensureProxyConfig(_config: { proxy?: string }): Promise<void> {
     return
   }
   public async relaunch(): Promise<void> {
@@ -129,7 +129,7 @@ export default class WebPlatform extends IndexedDBStorage implements Platform {
     return webLogger.clearLogs()
   }
 
-  public async ensureAutoLaunch(enable: boolean) {
+  public async ensureAutoLaunch(_enable: boolean) {
     return
   }
 
@@ -138,12 +138,12 @@ export default class WebPlatform extends IndexedDBStorage implements Platform {
     if (!result.isSupported) {
       return { isSupported: false }
     }
-    const key = `parseFile-` + uuidv4()
+    const key = `parseFile-${uuidv4()}`
     await this.setStoreBlob(key, result.text)
     return { key, isSupported: true }
   }
 
-  public async parseUrl(url: string): Promise<{ key: string; title: string }> {
+  public async parseUrl(_url: string): Promise<{ key: string; title: string }> {
     throw new Error('Not implemented')
   }
 
@@ -151,7 +151,7 @@ export default class WebPlatform extends IndexedDBStorage implements Platform {
     return true
   }
 
-  public async setFullscreen(enabled: boolean): Promise<void> {
+  public async setFullscreen(_enabled: boolean): Promise<void> {
     return
   }
 

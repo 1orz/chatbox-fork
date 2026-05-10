@@ -1,11 +1,9 @@
 import type { Message, Session } from '@shared/types'
-import { getDefaultStore } from 'jotai'
 import { StorageKeyGenerator } from '@/storage/StoreStorage'
 import { listSessionsMeta } from '@/stores/chatStore'
 import { settingsStore } from '@/stores/settingsStore'
 import platform from '../platform'
 import storage from '../storage'
-import * as atoms from '../stores/atoms'
 
 // 启动时执行消息图片清理
 // 只有网页版本需要清理，桌面版本存在本地、空间足够大无需清理

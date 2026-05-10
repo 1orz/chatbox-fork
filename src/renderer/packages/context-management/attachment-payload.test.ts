@@ -36,7 +36,7 @@ describe('attachment-payload', () => {
       expect(prefix).toContain('<FILE_LINES>150</FILE_LINES>')
       expect(prefix).toContain('<FILE_SIZE>1500 bytes</FILE_SIZE>')
       expect(prefix).toContain('<FILE_CONTENT>')
-      expect(prefix).toBe(prefix.trimEnd() + '\n')
+      expect(prefix).toBe(`${prefix.trimEnd()}\n`)
     })
 
     it('should start with double newline', () => {
@@ -103,7 +103,7 @@ describe('attachment-payload', () => {
 
     it('should end with newline', () => {
       const suffix = buildAttachmentWrapperSuffix({ isTruncated: false })
-      expect(suffix).toBe(suffix.trimEnd() + '\n')
+      expect(suffix).toBe(`${suffix.trimEnd()}\n`)
     })
 
     it('should include tool usage hint in truncated message', () => {

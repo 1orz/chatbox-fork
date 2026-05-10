@@ -9,8 +9,8 @@ export class MockSentryAdapter implements SentryAdapter {
 
   withScope(callback: (scope: SentryScope) => void): void {
     const scope: SentryScope = {
-      setTag: (key: string, value: string) => {},
-      setExtra: (key: string, value: any) => {},
+      setTag: (_key: string, _value: string) => {},
+      setExtra: (_key: string, _value: any) => {},
     }
     callback(scope)
   }

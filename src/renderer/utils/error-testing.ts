@@ -24,12 +24,8 @@ export const errorTestingUtils = {
 
   // Test cannot read properties error
   triggerPropertyError: () => {
-    try {
       const obj: any = null
       return obj.nonExistentProperty.anotherProperty
-    } catch (e) {
-      throw e
-    }
   },
 
   // Test Sentry directly

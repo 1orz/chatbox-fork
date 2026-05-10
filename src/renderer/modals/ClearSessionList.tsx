@@ -11,7 +11,7 @@ const ClearSessionList = NiceModal.create(() => {
   const { t } = useTranslation()
   const [value, setValue] = useState(100)
   const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
-    const int = parseInt(event.target.value || '0')
+    const int = parseInt(event.target.value || '0', 10)
     if (int >= 0) {
       setValue(int)
     }

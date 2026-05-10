@@ -12,7 +12,7 @@ export const LazySlider: FC<LazySliderProps> = ({ value, onChange, ...otherProps
   const handleSliderChangeEnd = useCallback((v: number) => {
     setTempSliderValue(undefined)
     onChange?.(v)
-  }, [])
+  }, [onChange])
 
   return (
     <Slider

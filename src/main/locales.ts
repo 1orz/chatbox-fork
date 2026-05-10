@@ -6,8 +6,7 @@ export default class Locale {
   constructor() {
     try {
       this.locale = app.getLocale()
-    } catch (e) {
-      console.log(e)
+    } catch (_e) {
     }
   }
 

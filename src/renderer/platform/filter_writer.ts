@@ -32,7 +32,7 @@ export abstract class FilterWriter {
         const baseName = pathParts.join('.')
         counter++
         currentPath = `${baseName}_${counter}${ext ? `.${ext}` : ''}`
-      } catch (e) {
+      } catch (_e) {
         // File doesn't exist, we can use this path
         return await Filesystem.writeFile({ ...options, path: currentPath })
       }

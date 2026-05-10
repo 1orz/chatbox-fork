@@ -77,7 +77,7 @@ export class WebLogger {
     try {
       const logs = await localforage.getItem<LogEntry[]>(LOG_STORAGE_KEY)
       return logs || []
-    } catch (error) {
+    } catch (_error) {
       return []
     }
   }
@@ -87,9 +87,6 @@ export class WebLogger {
    */
   public log(level: string, message: string): void {
     const timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')
-
-    // 同时输出到控制台
-    console.log(`APP_LOG: [${level}] ${message}`)
 
     // 添加到缓冲区
     this.logBuffer.push({ timestamp, level: level.toUpperCase(), message })

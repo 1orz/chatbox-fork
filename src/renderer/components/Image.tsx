@@ -60,7 +60,7 @@ export function handleImageInputAndSave(file: File, key: string, updateKey?: (ke
   if (file.type.startsWith('image/')) {
     const reader = new FileReader()
     reader.onload = async (e) => {
-      if (e.target && e.target.result) {
+      if (e.target?.result) {
         const base64 = e.target.result as string
         await storage.setBlob(key, base64)
         if (updateKey) {

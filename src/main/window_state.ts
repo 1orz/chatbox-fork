@@ -73,7 +73,7 @@ function restoreWindowState(state?: IWindowState): [IWindowState, boolean? /* ha
       hasMultipleDisplays = displays.length > 1
 
       state = validateWindowState(state, displays)
-    } catch (err) {
+    } catch (_err) {
       // this.logService.warn(`Unexpected error validating window state: ${err}\n${err.stack}`); // somehow display API can be picky about the state to validate
     }
   }
@@ -191,7 +191,7 @@ function validateWindowState(state: IWindowState, displays: Display[]): IWindowS
   try {
     display = screen.getDisplayMatching({ x: state.x, y: state.y, width: state.width, height: state.height })
     displayWorkingArea = getWorkingArea(display)
-  } catch (error) {
+  } catch (_error) {
     // Electron has weird conditions under which it throws errors
     // e.g. https://github.com/microsoft/vscode/issues/100334 when
     // large numbers are passed in

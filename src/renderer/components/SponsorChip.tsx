@@ -7,10 +7,10 @@ import { currentSessionIdAtom } from '@/stores/atoms'
 import type { SponsorAd } from '../../shared/types'
 import platform from '../platform'
 
-export default function SponsorChip(props: {}) {
-  const currrentSessionId = useAtomValue(currentSessionIdAtom)
+export default function SponsorChip(_props: {}) {
+  const _currrentSessionId = useAtomValue(currentSessionIdAtom)
   const [showSponsorAD, setShowSponsorAD] = useState(true)
-  const [sponsorAD, setSponsorAD] = useState<SponsorAd | null>(null)
+  const [sponsorAD, _setSponsorAD] = useState<SponsorAd | null>(null)
   // useEffect(() => {
   //     ;(async () => {
   //         const ad = await remote.getSponsorAd()

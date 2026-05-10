@@ -5,20 +5,6 @@ import { NODE_ENV } from '@/variables'
 
 function monitorServerStatus() {
   setInterval(() => {
-    console.debug(
-      'MCP Servers:',
-      JSON.stringify(
-        Array.from(mcpController.servers.values()).map(({ config, instance: server }) => {
-          return {
-            id: config.id,
-            name: config.name,
-            status: server.status,
-          }
-        }),
-        null,
-        2
-      )
-    )
   }, 10000)
 }
 

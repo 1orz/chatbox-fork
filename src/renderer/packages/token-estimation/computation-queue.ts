@@ -150,24 +150,24 @@ export class ComputationQueue {
     }
 
     let added = 0
-    let skippedCompleted = 0
-    let skippedRunning = 0
-    let skippedPending = 0
+    let _skippedCompleted = 0
+    let _skippedRunning = 0
+    let _skippedPending = 0
     const now = Date.now()
 
     for (const task of tasks) {
       const id = generateTaskId(task)
 
       if (this.state.completed.has(id)) {
-        skippedCompleted++
+        _skippedCompleted++
         continue
       }
       if (this.state.running.has(id)) {
-        skippedRunning++
+        _skippedRunning++
         continue
       }
       if (this.state.pending.some((t) => t.id === id)) {
-        skippedPending++
+        _skippedPending++
         continue
       }
 
