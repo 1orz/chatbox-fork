@@ -1,6 +1,9 @@
 import { SplashScreen } from '@capacitor/splash-screen'
-import '@mantine/core/styles.css'
-import '@mantine/spotlight/styles.css'
+// Use the layer-wrapped variants so Mantine 9 styles slot into the
+// `@layer mantine` block declared at the top of globals.css (Tailwind 4
+// utilities then win in @layer utilities, per the Mantine docs).
+import '@mantine/core/styles.layer.css'
+import '@mantine/spotlight/styles.layer.css'
 import * as Sentry from '@sentry/react'
 import { RouterProvider } from '@tanstack/react-router'
 import { useAtomValue } from 'jotai'

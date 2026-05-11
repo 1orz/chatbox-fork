@@ -1,3 +1,11 @@
+/* Tailwind 4 no longer auto-loads the legacy JS config and tucks every utility
+ * into @layer utilities. Pull our existing `tailwind.config.js` back in via
+ * the `@config` directive (relative to this file) so chatbox-* colors/spacing
+ * keep resolving, then declare the layer order so Mantine 9 component styles
+ * always lose to Tailwind utilities (the standard recommendation from
+ * https://mantine.dev/styles/css-layers/). */
+@layer mantine, base, components, utilities;
+@config "../../../tailwind.config.js";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
