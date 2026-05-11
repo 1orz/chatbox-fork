@@ -25,7 +25,7 @@ import {
 import { createFileRoute } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CHATBOXAI_DEFAULT_IMAGE_MODEL, ImageModelSelect } from '@/components/ImageModelSelect'
+import { ImageModelSelect } from '@/components/ImageModelSelect'
 import Page from '@/components/layout/Page'
 import { useProviders } from '@/hooks/useProviders'
 import { useIsSmallScreen } from '@/hooks/useScreenChange'
@@ -43,10 +43,8 @@ import {
   useImageGenerationRecord,
 } from '@/stores/imageGenerationStore'
 import { queryClient } from '@/stores/queryClient'
-import { settingsStore } from '@/stores/settingsStore'
 import * as toastActions from '@/stores/toastActions'
 import {
-  CHATBOXAI_IMAGE_MODEL_IDS,
   GEMINI_IMAGE_MODEL_IDS,
   getRatioOptionsForModel,
   HISTORY_PANEL_WIDTH,
@@ -217,7 +215,7 @@ function ImageCreatorPage() {
   const tempUploadKeysRef = useRef<Set<string>>(new Set())
   const [showHistory, setShowHistory] = useState(true)
   const [showMobileHistory, setShowMobileHistory] = useState(false)
-  const [selectedProvider, setSelectedProvider] = useState<string>(ModelProviderEnum.ChatboxAI)
+  const [selectedProvider, setSelectedProvider] = useState<string>('')
   const [selectedModel, setSelectedModel] = useState<string>('')
   const [selectedRatio, setSelectedRatio] = useState<string>('auto')
   const [showModelDrawer, setShowModelDrawer] = useState(false)
@@ -329,8 +327,8 @@ function ImageCreatorPage() {
   const handleSubmit = useCallback(async () => {
     if (!prompt.trim() || isCurrentlyGenerating) return
 
-    if (selectedProvider === ModelProviderEnum.ChatboxAI && !settingsStore.getState().licenseKey) {
-      toastActions.add(t('Please log in to Chatbox AI first'))
+    if (!selectedProvider || !selectedModel) {
+      toastActions.add(t('Please configure an image model first'))
       return
     }
 
@@ -365,8 +363,8 @@ function ImageCreatorPage() {
     async (quickPrompt: string) => {
       if (isCurrentlyGenerating) return
 
-      if (selectedProvider === ModelProviderEnum.ChatboxAI && !settingsStore.getState().licenseKey) {
-        toastActions.add(t('Please log in to Chatbox AI first'))
+      if (!selectedProvider || !selectedModel) {
+        toastActions.add(t('Please configure an image model first'))
         return
       }
 
@@ -448,19 +446,6 @@ function ImageCreatorPage() {
   const imageModelGroups = useMemo(() => {
     const groups: { label: string; providerId: string; models: { modelId: string; displayName: string }[] }[] = []
 
-    const chatboxProvider = providers.find((p) => p.id === ModelProviderEnum.ChatboxAI)
-    const chatboxModels = chatboxProvider
-      ? getAvailableImageModels(
-          chatboxProvider.models || chatboxProvider.defaultSettings?.models || [],
-          CHATBOXAI_IMAGE_MODEL_IDS
-        )
-      : []
-    groups.push({
-      label: 'Chatbox AI',
-      providerId: ModelProviderEnum.ChatboxAI,
-      models: [CHATBOXAI_DEFAULT_IMAGE_MODEL, ...chatboxModels],
-    })
-
     const geminiProvider = providers.find((p) => p.id === ModelProviderEnum.Gemini)
     if (geminiProvider) {
       const providerModels = geminiProvider.models || geminiProvider.defaultSettings?.models || []
@@ -501,21 +486,24 @@ function ImageCreatorPage() {
   }, [selectedModel])
 
   const modelDisplayName = useMemo(() => {
+    if (!selectedProvider || !selectedModel) return ''
     const provider = providers.find((p) => p.id === selectedProvider)
     const providerModels = provider?.models || provider?.defaultSettings?.models || []
     const model = providerModels.find((m) => m.modelId === selectedModel)
-    const modelName =
-      model?.nickname ||
-      IMAGE_MODEL_FALLBACK_NAMES[selectedModel] ||
-      selectedModel ||
-      CHATBOXAI_DEFAULT_IMAGE_MODEL.displayName
-
-    if (selectedProvider === ModelProviderEnum.ChatboxAI) {
-      return modelName
-    }
+    const modelName = model?.nickname || IMAGE_MODEL_FALLBACK_NAMES[selectedModel] || selectedModel
     const providerName = provider?.name || selectedProvider
     return `${providerName} - ${modelName}`
   }, [selectedProvider, selectedModel, providers])
+
+  // Auto-select first available image model once providers load
+  useEffect(() => {
+    if (selectedProvider && selectedModel) return
+    const firstGroup = imageModelGroups.find((g) => g.models.length > 0)
+    if (firstGroup) {
+      setSelectedProvider(firstGroup.providerId)
+      setSelectedModel(firstGroup.models[0].modelId)
+    }
+  }, [imageModelGroups, selectedProvider, selectedModel])
 
   const headerRight = isSmallScreen ? (
     <ActionIcon

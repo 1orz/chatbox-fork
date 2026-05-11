@@ -49,6 +49,8 @@ import('./setup/token_estimation_init')
 // 引入移动端安全区域代码，主要为了解决异形屏幕的问题
 if (CHATBOX_BUILD_TARGET === 'mobile_app' && (CHATBOX_BUILD_PLATFORM === 'ios' || CHATBOX_BUILD_PLATFORM === 'android')) {
   import('./setup/mobile_safe_area')
+  // Keep the native status bar styled to match the resolved app theme
+  import('./setup/status_bar')
 }
 
 // ==========执行初始化==============

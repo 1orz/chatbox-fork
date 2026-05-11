@@ -289,6 +289,7 @@
     "zustand": "^5.0.12"
   },
   "dependencies": {
+    "@capacitor/status-bar": "^8.0.2",
     "@libsql/client": "^0.15.6",
     "@lobehub/icons": "^4.0.2",
     "@mastra/core": "^0.13.2",

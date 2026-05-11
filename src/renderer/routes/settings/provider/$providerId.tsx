@@ -61,7 +61,7 @@ import { getModelSettingUtil } from '@/packages/model-setting-utils'
 import platform from '@/platform'
 import { useLanguage, useProviderSettings, useSettingsStore } from '@/stores/settingsStore'
 import { add as addToast } from '@/stores/toastActions'
-import { type ModelTestState, testModelCapabilities } from '@/utils/model-tester'
+import { type ModelTestState, probeModelAvailability, testModelCapabilities } from '@/utils/model-tester'
 
 export const Route = createFileRoute('/settings/provider/$providerId')({
   component: RouteComponent,
@@ -464,6 +464,70 @@ function ProviderSettings({ providerId }: { providerId: string }) {
             : m
         ),
       })
+    }
+  }
+
+  type ProbeState = { status: 'pending' | 'success' | 'error'; error?: string }
+  const [probeStates, setProbeStates] = useState<Record<string, ProbeState>>({})
+  const [bulkTesting, setBulkTesting] = useState(false)
+
+  const runProbe = async (modelId: string) => {
+    setProbeStates((prev) => ({ ...prev, [modelId]: { status: 'pending' } }))
+    try {
+      const configs = await platform.getConfig()
+      const dependencies = await createModelDependencies()
+      const result = await probeModelAvailability({
+        providerId,
+        modelId,
+        settings,
+        configs,
+        dependencies,
+      })
+      setProbeStates((prev) => ({ ...prev, [modelId]: result }))
+    } catch (e) {
+      setProbeStates((prev) => ({ ...prev, [modelId]: { status: 'error', error: String(e) } }))
+    }
+  }
+
+  const runBulkProbe = async (models: { modelId: string }[]) => {
+    if (!models.length) return
+    setBulkTesting(true)
+    try {
+      const configs = await platform.getConfig()
+      const dependencies = await createModelDependencies()
+      setProbeStates((prev) => ({
+        ...prev,
+        ...Object.fromEntries(models.map((m) => [m.modelId, { status: 'pending' as const }])),
+      }))
+      const concurrency = 6
+      for (let i = 0; i < models.length; i += concurrency) {
+        const chunk = models.slice(i, i + concurrency)
+        const results = await Promise.allSettled(
+          chunk.map((m) =>
+            probeModelAvailability({
+              providerId,
+              modelId: m.modelId,
+              settings,
+              configs,
+              dependencies,
+            })
+          )
+        )
+        setProbeStates((prev) => {
+          const next = { ...prev }
+          results.forEach((r, idx) => {
+            const id = chunk[idx].modelId
+            if (r.status === 'fulfilled') {
+              next[id] = r.value
+            } else {
+              next[id] = { status: 'error', error: String(r.reason) }
+            }
+          })
+          return next
+        })
+      }
+    } finally {
+      setBulkTesting(false)
     }
   }
 
@@ -981,6 +1045,10 @@ function ProviderSettings({ providerId }: { providerId: string }) {
             showSearch={false}
             onEditModel={editModel}
             onDeleteModel={deleteModel}
+            onTestModel={runProbe}
+            testStates={probeStates}
+            onBulkTest={() => runBulkProbe(displayModels)}
+            bulkTesting={bulkTesting}
           />
         </Stack>
 
@@ -1002,6 +1070,10 @@ function ProviderSettings({ providerId }: { providerId: string }) {
             onRemoveModel={(modelId) =>
               setProviderSettings({ models: displayModels.filter((m) => m.modelId !== modelId) })
             }
+            onTestModel={runProbe}
+            testStates={probeStates}
+            onBulkTest={() => runBulkProbe(fetchedModels || [])}
+            bulkTesting={bulkTesting}
           />
         </AdaptiveModal>
 

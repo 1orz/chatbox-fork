@@ -26,6 +26,8 @@ export type TestModelOptions = {
   onStateChange?: (state: ModelTestState) => void
 }
 
+export type ProbeModelOptions = Omit<TestModelOptions, 'onStateChange'>
+
 const TEST_IMAGE_BASE64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg=='
 
@@ -70,6 +72,26 @@ export async function testModelCapabilities(options: TestModelOptions): Promise<
     onStateChange?.({ ...state })
   }
   return state
+}
+
+/**
+ * Lightweight availability probe for a single model. Runs only the basic "Hi"
+ * chat request without vision/tool tests, so it can be used for bulk testing of
+ * many models without overwhelming the provider.
+ */
+export async function probeModelAvailability(options: ProbeModelOptions): Promise<TestResult> {
+  const { providerId, modelId, settings, configs, dependencies } = options
+  try {
+    const modelInstance = getModel({ ...settings, provider: providerId, modelId }, settings, configs, dependencies)
+    await modelInstance.chat([{ role: 'user', content: 'Hi' }], { onResultChange: undefined })
+    return { status: 'success' }
+  } catch (e: unknown) {
+    const error = e as { responseBody?: string; message?: string }
+    return {
+      status: 'error',
+      error: error?.responseBody || error?.message || String(e),
+    }
+  }
 }
 
 async function testBasicRequest(modelInstance: ModelInterface, state: ModelTestState): Promise<ModelTestState> {

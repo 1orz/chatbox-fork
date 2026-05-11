@@ -68,6 +68,7 @@ import {
   useModelRegistryVersion,
 } from '@/packages/model-registry'
 import * as picUtils from '@/packages/pic_utils'
+import { navigateToSettings } from '@/modals/Settings'
 import platform from '@/platform'
 import { StorageKeyGenerator } from '@/storage/StoreStorage'
 import * as atoms from '@/stores/atoms'
@@ -1203,6 +1204,12 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
                         onClick={onClickSessionSettings}
                       >
                         {t('Conversation Settings')}
+                      </Menu.Item>
+                      <Menu.Item
+                        leftSection={<ScalableIcon icon={IconSettings} size={16} />}
+                        onClick={() => navigateToSettings()}
+                      >
+                        {t('System Settings')}
                       </Menu.Item>
                     </Menu.Dropdown>
                   </Menu>

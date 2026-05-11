@@ -1,13 +1,16 @@
 import { ActionIcon, Box, Button, Flex, Image, NavLink, SegmentedControl, Stack, Text, Tooltip } from '@mantine/core'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
+import { Theme } from '@shared/types'
 import {
+  IconBrightnessAuto,
   IconCirclePlus,
   IconCode,
-  IconHelpCircle,
   IconInfoCircle,
   IconLayoutSidebarLeftCollapse,
+  IconMoon,
   IconPhotoPlus,
   IconSettingsFilled,
+  IconSun,
 } from '@tabler/icons-react'
 import { useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
@@ -26,7 +29,7 @@ import { navigateToSettings } from './modals/Settings'
 import { trackingEvent } from './packages/event'
 import { featureFlags } from './utils/feature-flags'
 import icon from './static/icon.png'
-import { settingsStore, useLanguage } from './stores/settingsStore'
+import { settingsStore, useLanguage, useTheme } from './stores/settingsStore'
 import { taskSessionStore } from './stores/taskSessionStore'
 import { useUIStore } from './stores/uiStore'
 import { CHATBOX_BUILD_PLATFORM } from './variables'
@@ -35,6 +38,7 @@ export default function Sidebar() {
   const { t } = useTranslation()
   const versionHook = useVersion()
   const language = useLanguage()
+  const theme = useTheme()
   const navigate = useNavigate()
   const showSidebar = useUIStore((s) => s.showSidebar)
   const setShowSidebar = useUIStore((s) => s.setShowSidebar)
@@ -213,7 +217,20 @@ export default function Sidebar() {
           <SessionList sessionListViewportRef={sessionListViewportRef} />
         )}
 
-        <Stack gap={0} px="xs" pb="xs">
+        <Stack
+          gap={0}
+          px="xs"
+          pb="xs"
+          style={
+            isSmallScreen
+              ? {
+                  paddingBottom: `calc(8px + var(--mobile-safe-area-inset-bottom, 0px))`,
+                  paddingLeft: `calc(8px + var(--mobile-safe-area-inset-left, 0px))`,
+                  paddingRight: `calc(8px + var(--mobile-safe-area-inset-right, 0px))`,
+                }
+              : undefined
+          }
+        >
           <Divider />
           <Stack gap="xs" pt="xs" mb="xs">
             {sidebarMode === 'task' && featureFlags.taskMode ? (
@@ -240,21 +257,53 @@ export default function Sidebar() {
             )}
           </Stack>
 
+          <SegmentedControl
+            value={String(theme)}
+            onChange={(val) => {
+              const next = Number(val) as Theme
+              settingsStore.setState((draft) => {
+                draft.theme = next
+              })
+            }}
+            data={[
+              {
+                value: String(Theme.System),
+                label: (
+                  <Tooltip label={t('Auto')} openDelay={500} withArrow>
+                    <Flex align="center" justify="center">
+                      <ScalableIcon icon={IconBrightnessAuto} size={16} />
+                    </Flex>
+                  </Tooltip>
+                ),
+              },
+              {
+                value: String(Theme.Light),
+                label: (
+                  <Tooltip label={t('Light')} openDelay={500} withArrow>
+                    <Flex align="center" justify="center">
+                      <ScalableIcon icon={IconSun} size={16} />
+                    </Flex>
+                  </Tooltip>
+                ),
+              },
+              {
+                value: String(Theme.Dark),
+                label: (
+                  <Tooltip label={t('Dark')} openDelay={500} withArrow>
+                    <Flex align="center" justify="center">
+                      <ScalableIcon icon={IconMoon} size={16} />
+                    </Flex>
+                  </Tooltip>
+                ),
+              },
+            ]}
+            size="xs"
+            fullWidth
+            mb="xs"
+          />
+
           {isSmallScreen ? (
             <Flex gap="md" align="center">
-              {!versionHook.isExceeded && (
-                <ActionIcon
-                  variant="transparent"
-                  color="chatbox-secondary"
-                  size={24}
-                  onClick={() => {
-                    navigate({ to: '/guide' })
-                    setShowSidebar(false)
-                  }}
-                >
-                  <ScalableIcon icon={IconHelpCircle} size={20} />
-                </ActionIcon>
-              )}
               <ActionIcon
                 variant="transparent"
                 color="chatbox-secondary"
@@ -291,17 +340,6 @@ export default function Sidebar() {
                 variant="light"
                 p="xs"
               />
-              {!versionHook.isExceeded && (
-                <NavLink
-                  c="chatbox-secondary"
-                  className="rounded"
-                  label={t('Help')}
-                  leftSection={<ScalableIcon icon={IconHelpCircle} size={20} />}
-                  onClick={() => navigate({ to: '/guide' })}
-                  variant="light"
-                  p="xs"
-                />
-              )}
               {FORCE_ENABLE_DEV_PAGES && (
                 <NavLink
                   c="chatbox-secondary"
