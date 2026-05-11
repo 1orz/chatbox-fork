@@ -148,7 +148,12 @@ export default defineConfig(({ mode }) => {
           : isProduction ? 'hidden' : true,
         minify: isProduction,
         rollupOptions: {
-          external: Object.keys(packageJson.dependencies || {}),
+          // Externalize every runtime dependency EXCEPT the ESM-only ones we want
+          // rolldown to inline into the CJS main bundle (otherwise `require()` on
+          // ESM-only packages explodes at startup).
+          external: Object.keys(packageJson.dependencies || {}).filter(
+            (d) => !['electron-store', 'electron-debug'].includes(d)
+          ),
           output: {
             entryFileNames: '[name].js',
             inlineDynamicImports: true,
