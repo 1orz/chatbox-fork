@@ -42,8 +42,8 @@ export default function SearchDialog(_props: Props) {
       }, 200) // 延迟200毫秒，等待组件元素挂载完成
     }
   }, [open])
-  const onSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.currentTarget.value
+  const onSearchInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const input = (e.currentTarget as HTMLInputElement).value
     setMode('command')
     _setSearchInput(input)
   }
@@ -196,7 +196,7 @@ export default function SearchDialog(_props: Props) {
                               const success = await scrollActions.scrollToMessage(targetSessionId, targetMessageId)
 
                               if (!success && attempt < maxAttempts) {
-                                tryScroll(attempt + 1, maxAttempts)
+                                await tryScroll(attempt + 1, maxAttempts)
                               }
                             }
 

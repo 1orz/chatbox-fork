@@ -43,6 +43,7 @@ import { ScalableIcon } from '@/components/common/ScalableIcon'
 import SegmentedControl from '@/components/common/SegmentedControl'
 import { useIsSmallScreen } from '@/hooks/useScreenChange'
 import { trackingEvent } from '@/packages/event'
+import storage from '@/storage'
 import { StorageKeyGenerator } from '@/storage/StoreStorage'
 import { updateSession } from '@/stores/chatStore'
 import { getSessionMeta, mergeSettings } from '@/stores/sessionHelpers'
@@ -306,7 +307,6 @@ const SessionSettingsModal = NiceModal.create(
                         key,
                         () =>
                           setEditingData({ ...editingData, backgroundImage: { type: 'storage-key', storageKey: key } }),
-                        (k, v) => storage.setBlob(k, v)
                       )
                     }
                   }}

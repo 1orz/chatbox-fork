@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react'
 import { SegmentedControl as MantineSegmentedControl } from '@mantine/core'
 
-type SegmentedControlProps = Omit<ComponentProps<typeof MantineSegmentedControl>, 'value' | 'onChange' | 'data'> & {
+type SegmentedControlProps = Omit<ComponentProps<typeof MantineSegmentedControl<string>>, 'value' | 'onChange' | 'data'> & {
   value: string
   onChange: (value: string) => void
   data: { label: string; value: string }[]
@@ -9,7 +9,7 @@ type SegmentedControlProps = Omit<ComponentProps<typeof MantineSegmentedControl>
 
 export default function SegmentedControl({ value, onChange, data, ...props }: SegmentedControlProps) {
   return (
-    <MantineSegmentedControl
+    <MantineSegmentedControl<string>
       value={value}
       onChange={onChange}
       data={data}

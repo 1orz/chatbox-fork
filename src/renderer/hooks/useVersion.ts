@@ -38,7 +38,7 @@ export default function useVersion() {
       compareVersions(version, remoteConfig.current_version) === 1,
     [version, remoteConfig, isStoreReviewPlatform]
   )
-  const updateCheckTimer = useRef<NodeJS.Timeout>()
+  const updateCheckTimer = useRef<NodeJS.Timeout | undefined>(undefined)
   useEffect(() => {
     const handler = async () => {
       const version = await platform.getVersion()

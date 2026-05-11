@@ -14,7 +14,7 @@ import { getLogger } from '../util'
 import { shellEnv } from './shell-env.cjs'
 
 async function enhanceEnv(configEnv?: Record<string, string>) {
-  let env = await shellEnv().catch((err) => {
+  let env = await shellEnv().catch((err: unknown) => {
     logger.error('shell-env', err)
     return {}
   })

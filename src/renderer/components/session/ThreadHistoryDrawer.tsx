@@ -67,10 +67,12 @@ export default function ThreadHistoryDrawer({ session }: { session: Session }) {
         paper:
           'bg-none box-border max-w-75vw min-w-[240px] flex flex-col gap-0 pt-[var(--mobile-safe-area-inset-top)] pb-[var(--mobile-safe-area-inset-bottom)]',
       }}
-      SlideProps={language === 'ar' ? { direction: 'right' } : undefined}
-      PaperProps={
-        language === 'ar' ? { sx: { direction: 'rtl', overflowY: 'initial' } } : { sx: { overflowY: 'initial' } }
-      }
+      slotProps={{
+        transition:
+          language === 'ar' ? ({ direction: 'right' } as unknown as { direction: 'right' | 'left' | 'up' | 'down' }) : undefined,
+        paper:
+          language === 'ar' ? { sx: { direction: 'rtl', overflowY: 'initial' } } : { sx: { overflowY: 'initial' } },
+      }}
       disableSwipeToOpen={CHATBOX_BUILD_PLATFORM !== 'ios'} // 只在iOS设备上启用SwipeToOpen
       disableEnforceFocus={true} // 关闭 focus trap，避免在侧边栏打开时弹出的 modal 中 input 无法点击
     >

@@ -16,8 +16,8 @@ export const uiStore = createStore(
         toasts: [] as Toast[],
         quote: '',
         realTheme: localStorage.getItem('initial-theme') === 'dark' ? 'dark' : ('light' as 'light' | 'dark'),
-        messageListElement: null as RefObject<HTMLDivElement> | null,
-        messageScrolling: null as RefObject<VirtuosoHandle> | null,
+        messageListElement: null as RefObject<HTMLDivElement | null> | null,
+        messageScrolling: null as RefObject<VirtuosoHandle | null> | null,
         messageScrollingAtTop: false,
         messageScrollingAtBottom: false,
         showSidebar: platform.type !== 'mobile',
@@ -93,11 +93,11 @@ export const uiStore = createStore(
           set({ widthFull })
         },
 
-        setMessageListElement: (messageListElement: RefObject<HTMLDivElement> | null) => {
+        setMessageListElement: (messageListElement: RefObject<HTMLDivElement | null> | null) => {
           set({ messageListElement })
         },
 
-        setMessageScrolling: (messageScrolling: RefObject<VirtuosoHandle> | null) => {
+        setMessageScrolling: (messageScrolling: RefObject<VirtuosoHandle | null> | null) => {
           set({ messageScrolling })
         },
 

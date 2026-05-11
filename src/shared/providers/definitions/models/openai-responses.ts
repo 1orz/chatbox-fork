@@ -101,10 +101,6 @@ export default class OpenAIResponses extends AbstractAISDKModel {
   }
 
   public listModels() {
-    console.log('[OpenAIResponses.listModels] firing', {
-      apiHost: this.options.apiHost,
-      skipRemoteModelList: this.options.skipRemoteModelList,
-    })
     if (this.options.skipRemoteModelList && this.options.listModelsFallback) {
       return Promise.resolve(this.options.listModelsFallback)
     }

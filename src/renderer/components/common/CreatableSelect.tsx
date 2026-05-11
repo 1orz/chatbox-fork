@@ -48,11 +48,12 @@ export default function CreatableSelect(props: {
         return option
       }}
       renderOption={(props, option) => {
+        const { key: _ignoredKey, ...liProps } = props as { key?: React.Key } & React.HTMLAttributes<HTMLLIElement>
         if (!options.includes(option)) {
           return (
             <li
               key={option}
-              {...props}
+              {...liProps}
               onClick={() => {
                 onUpdateOptions([option, ...options])
               }}
@@ -65,7 +66,7 @@ export default function CreatableSelect(props: {
         return (
           <li
             key={option}
-            {...props}
+            {...liProps}
             className={cn('flex items-center justify-between px-4 py-1', 'hover:bg-gray-400/50 cursor-pointer')}
           >
             <span>{option}</span>

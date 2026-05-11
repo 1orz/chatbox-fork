@@ -444,7 +444,7 @@ const GeneralToolCallUI: FC<{ part: MessageToolCallPart }> = ({ part }) => {
   return (
     <Stack gap={6} mb="xs">
       <ToolCallPill part={part} onClick={() => setExpanded((prev) => !prev)} expanded={expanded} />
-      <Collapse in={expanded}>
+      <Collapse expanded={expanded}>
         <Box
           ml={4}
           pl="sm"
@@ -549,7 +549,7 @@ export const ReasoningContentUI: FC<{
   ) : null
 
   const reasoningCollapse = reasoningContent.length > 0 && (
-    <Collapse in={isExpanded}>
+    <Collapse expanded={isExpanded}>
       <Box
         mt={4}
         pl="sm"
@@ -606,7 +606,7 @@ export const ReasoningContentUI: FC<{
           {copyButton}
         </Group>
       </Box>
-      <Collapse in={isExpanded}>
+      <Collapse expanded={isExpanded}>
         <Box
           ml={4}
           mt={4}

@@ -115,7 +115,7 @@ describe('settingsStore persistence', () => {
 
     await initSettingsStore()
 
-    settingsStore.setState((currentSettings) =>
+    settingsStore.setState((currentSettings: Parameters<typeof mergeProviderSettings>[0]) =>
       mergeProviderSettings(currentSettings, 'openai', {
         apiKey: 'sk-openai',
         apiHost: 'https://api.openai.com',

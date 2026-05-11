@@ -3,7 +3,7 @@ import { Flex, Stack, Text, Title } from '@mantine/core'
 import { SystemProviders } from '@shared/defaults'
 import { IconSelector } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
-import { forwardRef, useMemo } from 'react'
+import { forwardRef, useMemo, type Ref } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScalableIcon } from '@/components/common/ScalableIcon'
 import ModelSelector from '@/components/ModelSelector'
@@ -198,7 +198,7 @@ const ModelSelectContent = forwardRef<
   )
   return (
     <Flex
-      ref={ref}
+      ref={ref as unknown as Ref<HTMLDivElement & HTMLButtonElement>}
       px={12}
       py={6}
       component="button"

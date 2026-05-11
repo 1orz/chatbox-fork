@@ -168,7 +168,7 @@ export function SVGPreview(props: { xmlCode: string; className?: string; generat
     >
       <div className={cn('cursor-pointer my-2', className)}>
         <Item original={svgBase64} thumbnail={svgBase64} width={size.width} height={size.height}>
-          {({ ref, open }) => (
+          {({ ref, open }: { ref: (node: HTMLImageElement | null) => void; open: (e: MouseEvent) => void }) => (
             <img
               className="!w-auto min-w-24"
               ref={ref}
@@ -176,7 +176,7 @@ export function SVGPreview(props: { xmlCode: string; className?: string; generat
               alt="svg preview"
               width={size.width}
               // height={size.height}
-              onClick={open}
+              onClick={(e) => open(e.nativeEvent)}
             />
           )}
         </Item>

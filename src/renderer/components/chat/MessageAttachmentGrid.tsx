@@ -9,6 +9,7 @@ const COLLAPSED_MAX = 4
 interface MessageAttachmentGridProps {
   files?: MessageFile[]
   links?: MessageLink[]
+  align?: 'start' | 'end'
 }
 
 export function MessageAttachmentGrid({ files, links }: MessageAttachmentGridProps) {

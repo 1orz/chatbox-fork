@@ -679,7 +679,7 @@ const KnowledgeBaseDocuments: React.FC<KnowledgeBaseDocumentsProps> = ({ knowled
             </Button>
           </Group>
 
-          <Collapse in={isExpanded}>
+          <Collapse expanded={isExpanded}>
             {/* Drag and Drop Upload Area */}
             {showUploadArea && (
               <Box

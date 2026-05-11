@@ -113,10 +113,22 @@ export class MCPServer extends Emittery<{ status: MCPServerStatus }> {
   }
 }
 
+type StatusCallback = (status: MCPServerStatus) => void
+type StatusEmitteryListener = (event: { readonly name: 'status'; readonly data: MCPServerStatus }) => void
+const _statusListenerWrappers = new WeakMap<StatusCallback, StatusEmitteryListener>()
+function getStatusListener(callback: StatusCallback): StatusEmitteryListener {
+  let wrapped = _statusListenerWrappers.get(callback)
+  if (!wrapped) {
+    wrapped = (event) => callback(event.data)
+    _statusListenerWrappers.set(callback, wrapped)
+  }
+  return wrapped
+}
+
 // 根据用户配置管理MCP服务器的实际运行
 export const mcpController = {
   servers: new Map<string, { instance: MCPServer; config: MCPServerConfig }>(),
-  _statusSubscribers: new Map<string, Set<(status: MCPServerStatus) => void>>(),
+  _statusSubscribers: new Map<string, Set<StatusCallback>>(),
 
   bootstrap(serverConfigs: MCPServerConfig[]) {
     for (const serverConfig of serverConfigs) {
@@ -137,7 +149,7 @@ export const mcpController = {
     const subscribers = this._statusSubscribers.get(serverConfig.id)
     if (subscribers) {
       subscribers.forEach((subscriber) => {
-        server.on('status', subscriber)
+        server.on('status', getStatusListener(subscriber))
       })
     }
 
@@ -174,7 +186,7 @@ export const mcpController = {
     return server?.instance
   },
 
-  subscribeToServerStatus(id: string, callback: (status: MCPServerStatus) => void) {
+  subscribeToServerStatus(id: string, callback: StatusCallback) {
     let subscribers = this._statusSubscribers.get(id)
     if (!subscribers) {
       subscribers = new Set()
@@ -184,12 +196,12 @@ export const mcpController = {
 
     const server = this.getServer(id)
     if (server) {
-      server.on('status', callback)
+      server.on('status', getStatusListener(callback))
       callback(server.status)
     }
 
     return () => {
-      server?.off('status', callback)
+      server?.off('status', getStatusListener(callback))
       subscribers.delete(callback)
     }
   },

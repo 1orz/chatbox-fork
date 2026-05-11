@@ -20,7 +20,6 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
 import * as dateFns from 'date-fns'
-import { concat } from 'lodash'
 import type { UIElementData } from 'photoswipe'
 import type React from 'react'
 import { type FC, forwardRef, type MouseEventHandler, memo, useCallback, useMemo, useRef, useState } from 'react'
@@ -243,10 +242,10 @@ const _Message: FC<Props> = (props) => {
     },
     [sessionId]
   )
-  const onCodeCopy = useCallback(() => {
+  const _onCodeCopy = useCallback(() => {
     trackWithSessionName(JK_EVENTS.COPY_CODE_CLICK)
   }, [trackWithSessionName])
-  const onPreviewWebpage = useCallback(() => {
+  const _onPreviewWebpage = useCallback(() => {
     trackWithSessionName(JK_EVENTS.PREVIEW_WEBPAGE_CLICK)
   }, [trackWithSessionName])
 
@@ -414,8 +413,6 @@ const _Message: FC<Props> = (props) => {
                         enableLaTeXRendering={enableLaTeXRendering}
                         enableMermaidRendering={enableMermaidRendering}
                         generating={msg.generating}
-                        onCodeCopy={onCodeCopy}
-                        onPreviewWebpage={onPreviewWebpage}
                       >
                         {item.text || ''}
                       </Markdown>
@@ -666,7 +663,7 @@ const _Message: FC<Props> = (props) => {
     >
       <Grid container wrap="nowrap" spacing={1.5}>
         {(showAvatar ?? true) && (
-          <Grid item>
+          <Grid>
             <Box className={cn('relative', msg.role !== 'assistant' ? 'mt-1' : 'mt-2')}>
               {
                 {
@@ -693,8 +690,8 @@ const _Message: FC<Props> = (props) => {
             </Box>
           </Grid>
         )}
-        <Grid item xs sm container sx={{ width: '0px', paddingRight: (showAvatar ?? true) ? '15px' : '0px' }}>
-          <Grid item xs>
+        <Grid size="grow" container sx={{ width: '0px', paddingRight: (showAvatar ?? true) ? '15px' : '0px' }}>
+          <Grid size="grow">
             {messageContent}
             {(msg.files || msg.links) && (
               <MessageAttachmentGrid files={msg.files} links={msg.links} align={isUserBubble ? 'end' : 'start'} />
@@ -784,7 +781,13 @@ const PictureGallery = memo(({ pictures, compact }: PictureGalleryProps) => {
             <ImageInStorageGalleryItem key={p.storageKey} storageKey={p.storageKey} height={imageHeight} />
           ) : p.url ? (
             <GalleryItem key={p.url} original={p.url} thumbnail={p.url} width={1024} height={1024}>
-              {({ ref, open }) => (
+              {({
+                ref,
+                open,
+              }: {
+                ref: (node: HTMLImageElement | null) => void
+                open: (e: MouseEvent) => void
+              }) => (
                 <Img
                   src={p.url}
                   h={imageHeight}
@@ -792,7 +795,7 @@ const PictureGallery = memo(({ pictures, compact }: PictureGalleryProps) => {
                   fit="contain"
                   radius="md"
                   ref={ref}
-                  onClick={open}
+                  onClick={(e) => open(e.nativeEvent)}
                   className="cursor-pointer"
                 />
               )}
@@ -829,7 +832,13 @@ const ImageInStorageGalleryItem = ({ storageKey, height }: { storageKey: string;
 
   return pic ? (
     <GalleryItem original={pic.data} thumbnail={pic.data} width={pic.width} height={pic.height}>
-      {({ ref, open }) => (
+      {({
+        ref,
+        open,
+      }: {
+        ref: (node: HTMLImageElement | null) => void
+        open: (e: MouseEvent) => void
+      }) => (
         <Img
           src={pic.data}
           h={height ?? fallbackHeight}
@@ -837,7 +846,7 @@ const ImageInStorageGalleryItem = ({ storageKey, height }: { storageKey: string;
           fit="contain"
           radius="md"
           ref={ref}
-          onClick={open}
+          onClick={(e) => open(e.nativeEvent)}
           className="cursor-pointer"
         />
       )}

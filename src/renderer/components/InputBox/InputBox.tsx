@@ -465,7 +465,7 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
 
     const { addInputBoxHistory, getPreviousHistoryInput, getNextHistoryInput, resetHistoryIndex } = useInputBoxHistory()
 
-    const closeSelectModelErrorTipCb = useRef<NodeJS.Timeout>()
+    const closeSelectModelErrorTipCb = useRef<NodeJS.Timeout | undefined>(undefined)
     const handleSubmit = async (needGenerating = true) => {
       if (disableSubmit || generating || isSubmitting || isPreprocessing) {
         return

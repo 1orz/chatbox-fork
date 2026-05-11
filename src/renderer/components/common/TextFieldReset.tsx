@@ -20,17 +20,18 @@ export default function TextFieldReset(
       {...rest}
       value={value}
       onChange={(e) => onValueChange(e.target.value)}
-      InputProps={
-        defaultValue === props.value
-          ? {}
-          : {
-              endAdornment: (
-                <Button variant="text" onClick={handleReset} onMouseDown={handleMouseDown}>
-                  {t('Reset')}
-                </Button>
-              ),
-            }
-      }
+      slotProps={{
+        input:
+          defaultValue === props.value
+            ? {}
+            : {
+                endAdornment: (
+                  <Button variant="text" onClick={handleReset} onMouseDown={handleMouseDown}>
+                    {t('Reset')}
+                  </Button>
+                ),
+              },
+      }}
       helperText={props.helperText}
     />
   )

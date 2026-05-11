@@ -210,7 +210,7 @@ export const MobileModelSelector = forwardRef<HTMLDivElement, MobileModelSelecto
                             variant="mobile"
                           />
 
-                          <Collapse in={!isCollapsed}>
+                          <Collapse expanded={!isCollapsed}>
                             <Stack gap={4}>
                               {provider.models?.map((model: ProviderModelInfo) => {
                                 const isFavorited = isFavoritedModel(provider.id, model.modelId)

@@ -140,10 +140,12 @@ export default function Sidebar() {
           maxWidth: '75vw',
         },
       }}
-      SlideProps={language === 'ar' ? { direction: 'left' } : undefined}
-      PaperProps={
-        language === 'ar' ? { sx: { direction: 'rtl', overflowY: 'initial' } } : { sx: { overflowY: 'initial' } }
-      }
+      slotProps={{
+        transition:
+          language === 'ar' ? ({ direction: 'left' } as unknown as { direction: 'right' | 'left' | 'up' | 'down' }) : undefined,
+        paper:
+          language === 'ar' ? { sx: { direction: 'rtl', overflowY: 'initial' } } : { sx: { overflowY: 'initial' } },
+      }}
       disableSwipeToOpen={CHATBOX_BUILD_PLATFORM !== 'ios'} // 只在iOS设备上启用SwipeToOpen
     >
       <Stack

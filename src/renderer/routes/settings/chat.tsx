@@ -11,7 +11,6 @@ import { MessageLayoutSelector } from '@/components/common/MessageLayoutPreview'
 import { ScalableIcon } from '@/components/common/ScalableIcon'
 import SliderWithInput from '@/components/common/SliderWithInput'
 import { handleImageInputAndSave, ImageInStorage } from '@/components/Image'
-import storage from '@/storage'
 import { StorageKeyGenerator } from '@/storage/StoreStorage'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { add as addToast } from '@/stores/toastActions'
@@ -59,7 +58,6 @@ export function RouteComponent() {
                     file,
                     key,
                     () => setSettings({ userAvatarKey: key }),
-                    (k, v) => storage.setBlob(k, v)
                   )
                 }
               }}
@@ -98,7 +96,6 @@ export function RouteComponent() {
                     file,
                     key,
                     () => setSettings({ defaultAssistantAvatarKey: key }),
-                    (k, v) => storage.setBlob(k, v)
                   )
                 }
               }}
@@ -229,7 +226,6 @@ export function RouteComponent() {
                       file,
                       key,
                       () => setSettings({ backgroundImageKey: key }),
-                      (k, v) => storage.setBlob(k, v)
                     )
                   }
                 }}

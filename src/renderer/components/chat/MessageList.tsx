@@ -267,7 +267,7 @@ const MessageList = forwardRef<MessageListRef, MessageListProps>((props, ref) =>
   const [atTop, setAtTop] = useState(false)
 
   const [showScrollToPrev, setShowScrollToPrev] = useState(false)
-  const lastScrollTop = useRef<number>()
+  const lastScrollTop = useRef<number | undefined>(undefined)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
     return () => {

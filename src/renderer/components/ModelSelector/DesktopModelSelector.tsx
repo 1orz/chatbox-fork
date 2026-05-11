@@ -173,7 +173,7 @@ export const DesktopModelSelector = forwardRef<HTMLDivElement, DesktopModelSelec
             onClick={() => toggleProviderCollapse(provider.id)}
             className="-ml-xs -mr-xs pr-sm"
           />
-          <Collapse in={!isCollapsed}>
+          <Collapse expanded={!isCollapsed}>
             <div className="mb-xs">{options}</div>
           </Collapse>
         </div>
@@ -189,13 +189,18 @@ export const DesktopModelSelector = forwardRef<HTMLDivElement, DesktopModelSelec
       <Combobox store={combobox} width={350} withinPortal={true} {...comboboxProps} onOptionSubmit={handleOptionSubmit}>
         <Combobox.Target targetType="button">
           {isValidElement(children) ? (
-            cloneElement(children as ReactElement, {
-              onClick: (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
-                children.props?.onClick?.(e)
-                combobox.toggleDropdown()
-              },
-              ref,
-            })
+            cloneElement(
+              children as ReactElement<{ onClick?: (e: MouseEvent<HTMLButtonElement, MouseEvent>) => void }>,
+              {
+                onClick: (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                  ;(
+                    children as ReactElement<{ onClick?: (e: MouseEvent<HTMLButtonElement, MouseEvent>) => void }>
+                  ).props?.onClick?.(e)
+                  combobox.toggleDropdown()
+                },
+                ref,
+              } as unknown as Partial<{ onClick?: (e: MouseEvent<HTMLButtonElement, MouseEvent>) => void }>
+            )
           ) : (
             <button onClick={() => combobox.toggleDropdown()} className="border-none bg-transparent p-0 flex">
               {children}

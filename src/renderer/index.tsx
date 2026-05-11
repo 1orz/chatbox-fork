@@ -150,7 +150,7 @@ initializeApp()
     )
 
     if (platform.type === 'mobile') {
-      SplashScreen.hide()
+      await SplashScreen.hide()
     }
     const el = document.querySelector('.splash-screen')
     if (el) {
