@@ -30,6 +30,7 @@ import {
   normalizeOpenAIResponsesHostAndPath,
 } from '@shared/utils'
 import {
+  IconBolt,
   IconCircleCheck,
   IconDiscount2,
   IconExternalLink,
@@ -1039,6 +1040,20 @@ function ProviderSettings({ providerId }: { providerId: string }) {
               >
                 {t('Fetch')}
               </Button>
+
+              <Button
+                loading={bulkTesting}
+                disabled={!displayModels.length}
+                variant="light"
+                color="chatbox-gray"
+                c="chatbox-secondary"
+                size="compact-xs"
+                px="sm"
+                onClick={() => runBulkProbe(displayModels)}
+                leftSection={<ScalableIcon icon={IconBolt} size={12} />}
+              >
+                {t('Test All Models')}
+              </Button>
             </Flex>
           </Flex>
 
@@ -1050,8 +1065,6 @@ function ProviderSettings({ providerId }: { providerId: string }) {
             onDeleteModel={deleteModel}
             onTestModel={runProbe}
             testStates={probeStates}
-            onBulkTest={() => runBulkProbe(displayModels)}
-            bulkTesting={bulkTesting}
           />
         </Stack>
 
