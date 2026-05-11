@@ -81,6 +81,7 @@ export default class OpenAI extends AbstractAISDKModel {
   }
 
   public listModels() {
+    console.log('[OpenAI.listModels] firing', { apiHost: this.options.apiHost })
     return fetchRemoteModels(
       {
         apiHost: this.options.apiHost,

@@ -6,6 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'release/app/dist/renderer',
   android: {
     allowMixedContent: true,
+    webContentsDebuggingEnabled: true,
   },
   server: {
     androidScheme: 'https',

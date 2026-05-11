@@ -83,11 +83,14 @@ export function normalizeOpenAIResponsesHostAndPath(options: { apiHost?: string;
 
 export function normalizeClaudeHost(apiHost: string) {
   apiHost = apiHost.trim()
-  if (apiHost === 'https://api.anthropic.com') {
-    apiHost = `${apiHost}/v1`
-  }
   if (apiHost.endsWith('/')) {
     apiHost = apiHost.slice(0, apiHost.length - 1)
+  }
+  if (apiHost.endsWith('/messages')) {
+    apiHost = apiHost.slice(0, -'/messages'.length)
+  }
+  if (apiHost && !apiHost.endsWith('/v1')) {
+    apiHost = `${apiHost}/v1`
   }
   return {
     apiHost,

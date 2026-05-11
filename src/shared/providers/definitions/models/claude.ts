@@ -88,7 +88,9 @@ export default class Claude extends AbstractAISDKModel {
     type Response = {
       data: { id: string; type: string }[]
     }
-    const url = `${this.options.claudeApiHost}/models?limit=990`
+    const { apiHost } = normalizeClaudeHost(this.options.claudeApiHost)
+    const url = `${apiHost}/models?limit=990`
+    console.log('[Claude.listModels] firing', { url })
     const headers: Record<string, string> = {
       'anthropic-version': '2023-06-01',
       ...this.options.extraHeaders,
