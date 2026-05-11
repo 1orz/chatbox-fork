@@ -7,11 +7,12 @@ import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
 import { uiStore } from '@/stores/uiStore'
 
-// Colors mirror the MUI palette in src/renderer/hooks/useAppTheme.ts:
-// - dark mode background.default is '#242424'
-// - light mode background uses the default white
-const DARK_BG = '#242424'
-const LIGHT_BG = '#ffffff'
+// Status bar colors are intentionally OFFSET from the page body (which uses
+// --chatbox-background-primary: #ffffff / #242424). Matching the body makes the
+// bar visually disappear, especially in light mode. We use the `secondary` tone
+// instead so there's always a faint, deliberate separation.
+const DARK_BG = '#3b3b3b' // matches --chatbox-background-secondary in dark mode
+const LIGHT_BG = '#f1f3f5' // matches --chatbox-background-secondary in light mode
 
 async function applyStatusBar(realTheme: 'light' | 'dark') {
   try {

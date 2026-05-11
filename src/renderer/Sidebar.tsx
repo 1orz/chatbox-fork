@@ -307,13 +307,12 @@ export default function Sidebar() {
             )
 
             return isSmallScreen ? (
-              <Flex align="center">
+              <Flex align="center" justify="flex-end" gap="md">
                 {themeMenu}
                 <ActionIcon
                   variant="transparent"
                   color="chatbox-secondary"
                   size={24}
-                  ml="auto"
                   onClick={() => {
                     navigateToSettings()
                     setShowSidebar(false)
@@ -323,9 +322,8 @@ export default function Sidebar() {
                 </ActionIcon>
               </Flex>
             ) : (
-              <Flex align="center" gap="xs">
+              <Flex align="center" justify="flex-end" gap="xs">
                 {themeMenu}
-                <Box style={{ flex: 1 }} />
               </Flex>
             )
           })()}
