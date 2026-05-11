@@ -1,4 +1,4 @@
-import { Badge, Button, Flex, Loader, Stack, Text, TextInput, Tooltip } from '@mantine/core'
+import { Badge, Button, Code, CopyButton, Flex, Loader, Stack, Text, TextInput, Tooltip } from '@mantine/core'
 import type { ProviderModelInfo } from '@shared/types'
 import { formatNumber } from '@shared/utils'
 import {
@@ -17,11 +17,14 @@ import {
 import { capitalize } from 'lodash'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { AdaptiveModal } from './common/AdaptiveModal'
 import { ScalableIcon } from './common/ScalableIcon'
 
 export type ModelProbeState = {
   status: 'pending' | 'success' | 'error'
   error?: string
+  completedAt?: number
+  durationMs?: number
 }
 
 interface ModelListProps {
@@ -57,6 +60,7 @@ export function ModelList({
 }: ModelListProps) {
   const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState('')
+  const [detailFor, setDetailFor] = useState<{ modelId: string; result: ModelProbeState } | null>(null)
 
   const filteredModels = useMemo(() => {
     if (!searchQuery.trim()) return models
@@ -212,26 +216,18 @@ export function ModelList({
                       if (probe.status === 'pending') {
                         return <Loader size="xs" />
                       }
-                      if (probe.status === 'success') {
-                        return (
-                          <Badge color="green" size="xs" variant="light">
-                            OK
-                          </Badge>
-                        )
-                      }
-                      const errText = probe.error || (t('Error') as string) || 'Error'
-                      const truncated = errText.length > 60 ? `${errText.slice(0, 60)}…` : errText
+                      const color = probe.status === 'success' ? 'green' : 'red'
+                      const label = probe.status === 'success' ? 'OK' : (t('Error') as string)
                       return (
-                        <Tooltip
-                          label={truncated}
-                          multiline
-                          maw={320}
-                          events={{ hover: true, focus: true, touch: true }}
+                        <Badge
+                          color={color}
+                          size="xs"
+                          variant="light"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setDetailFor({ modelId: model.modelId, result: probe })}
                         >
-                          <Badge color="red" size="xs" variant="light" style={{ cursor: 'help' }}>
-                            {t('Error')}
-                          </Badge>
-                        </Tooltip>
+                          {label}
+                        </Badge>
                       )
                     })()}
 
@@ -309,6 +305,65 @@ export function ModelList({
           </Flex>
         )}
       </Stack>
+
+      <AdaptiveModal
+        opened={!!detailFor}
+        onClose={() => setDetailFor(null)}
+        title={detailFor ? `${t('Test Result')}: ${detailFor.modelId}` : ''}
+        centered
+        size="md"
+      >
+        {detailFor && <ProbeDetail result={detailFor.result} />}
+      </AdaptiveModal>
+    </Stack>
+  )
+}
+
+function ProbeDetail({ result }: { result: ModelProbeState }) {
+  const { t } = useTranslation()
+  return (
+    <Stack gap="sm">
+      <Flex gap="xs" align="center">
+        <Badge color={result.status === 'success' ? 'green' : 'red'} size="sm" variant="light">
+          {result.status === 'success' ? 'OK' : t('Error')}
+        </Badge>
+        {result.durationMs !== undefined && (
+          <Text size="xs" c="chatbox-tertiary">
+            {(result.durationMs / 1000).toFixed(2)}s
+          </Text>
+        )}
+        {result.completedAt && (
+          <Text size="xs" c="chatbox-tertiary">
+            {new Date(result.completedAt).toLocaleTimeString()}
+          </Text>
+        )}
+      </Flex>
+
+      {result.status === 'success' ? (
+        <Text size="sm" c="chatbox-secondary">
+          {t('Model responded successfully to a basic chat probe.')}
+        </Text>
+      ) : (
+        <>
+          <Text size="xs" fw={600} c="chatbox-tertiary">
+            {t('Error Details')}
+          </Text>
+          <Code block style={{ maxHeight: 320, overflow: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+            {result.error || t('Unknown error')}
+          </Code>
+          {result.error && (
+            <Flex justify="flex-end">
+              <CopyButton value={result.error}>
+                {({ copied, copy }) => (
+                  <Button size="xs" variant="subtle" onClick={copy}>
+                    {copied ? t('Copied') : t('Copy')}
+                  </Button>
+                )}
+              </CopyButton>
+            </Flex>
+          )}
+        </>
+      )}
     </Stack>
   )
 }

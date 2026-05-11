@@ -8,6 +8,10 @@ import { z } from 'zod'
 export type TestResult = {
   status: 'success' | 'error' | 'pending'
   error?: string
+  /** ms since epoch when this result was produced. Set on success/error transitions. */
+  completedAt?: number
+  /** Total wall-clock duration of the probe in ms. */
+  durationMs?: number
 }
 
 export type ModelTestState = {
@@ -84,19 +88,32 @@ export async function testModelCapabilities(options: TestModelOptions): Promise<
  */
 export async function probeModelAvailability(options: ProbeModelOptions): Promise<TestResult> {
   const { providerId, modelId, settings, configs, dependencies, timeoutMs = 15_000 } = options
+  const startedAt = Date.now()
   try {
-    const modelInstance = getModel({ ...settings, provider: providerId, modelId }, settings, configs, dependencies)
+    // Probes are single-shot: force retry=0 on the underlying apiRequest so a
+    // failing model fails fast (the default chat path keeps retry=3).
+    const probeDeps: typeof dependencies = {
+      ...dependencies,
+      request: {
+        ...dependencies.request,
+        apiRequest: (opts) => dependencies.request.apiRequest({ ...opts, retry: 0 }),
+        fetchWithOptions: (url, init, fopts) => dependencies.request.fetchWithOptions(url, init, { ...fopts, retry: 0 }),
+      },
+    }
+    const modelInstance = getModel({ ...settings, provider: providerId, modelId }, settings, configs, probeDeps)
     const probe = modelInstance.chat([{ role: 'user', content: 'Hi' }], { onResultChange: undefined })
     const timeout = new Promise<never>((_, reject) =>
       setTimeout(() => reject(new Error(`Probe timed out after ${Math.round(timeoutMs / 1000)}s`)), timeoutMs)
     )
     await Promise.race([probe, timeout])
-    return { status: 'success' }
+    return { status: 'success', completedAt: Date.now(), durationMs: Date.now() - startedAt }
   } catch (e: unknown) {
     const error = e as { responseBody?: string; message?: string }
     return {
       status: 'error',
       error: error?.responseBody || error?.message || String(e),
+      completedAt: Date.now(),
+      durationMs: Date.now() - startedAt,
     }
   }
 }
