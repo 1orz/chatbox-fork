@@ -51,7 +51,7 @@ function createMoonshotProvider(config: {
           useProxy: createConfig.providerSetting.useProxy || false,
           stream: createConfig.settings.stream,
           listModelsFallback: createConfig.providerSetting.models || provider.defaultSettings?.models,
-          useNativeOnMobile: createConfig.globalSettings.openaiUseNativeFetch,
+          useNativeOnMobile: createConfig.globalSettings.useNativeFetchOnMobile,
         },
         createConfig.dependencies
       )

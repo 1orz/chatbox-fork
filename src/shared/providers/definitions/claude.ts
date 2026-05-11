@@ -77,6 +77,7 @@ export const claudeProvider = defineProvider({
         // OAuth uses SDK's built-in authToken for Bearer auth instead of apiKey
         authToken: isOAuth ? config.effectiveApiKey : undefined,
         isOAuth,
+        useNativeOnMobile: config.globalSettings.useNativeFetchOnMobile,
       },
       config.dependencies
     )

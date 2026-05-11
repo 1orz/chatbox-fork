@@ -9,7 +9,6 @@ import type {
 } from '../../../shared/types'
 import {
   enrichModelsFromRegistry,
-  getDiscoveredModels,
   getProviderModelsFromRegistry,
   getRegistry,
 } from '../../packages/model-registry'
@@ -63,34 +62,24 @@ export default abstract class BaseConfig implements ModelSettingUtil {
     let safeProviderModels = Array.isArray(providerApiModels) ? providerApiModels : []
 
     // Fallback: 当 provider API 返回空时，使用 models.dev registry 的 curated model list
-    let usedRegistryFallback = false
     if (safeProviderModels.length === 0 && definition?.modelsDevProviderId && definition?.curatedModelIds) {
       const registryModels = getProviderModelsFromRegistry(this.provider)
       if (registryModels.length > 0) {
         // 只使用 curated models 作为 fallback（不包含所有 registry models）
         const curatedSet = new Set(definition.curatedModelIds.map((id) => id.toLowerCase()))
         safeProviderModels = registryModels.filter((m) => curatedSet.has(m.modelId.toLowerCase()))
-        usedRegistryFallback = true
       }
     }
 
     const remoteOptionGroups = [...safeRemoteModels, ...safeProviderModels]
     const mergedModels = this.mergeOptionGroups(localOptionGroups, remoteOptionGroups)
 
-    // 使用 models.dev registry 丰富模型元数据（同步，无网络调用）
-    const enrichedModels = enrichModelsFromRegistry(mergedModels, this.provider)
-
-    // 追加近期发布的 discovered models（不在 curated list 中的新 model）
-    // 仅当 provider API 成功返回时才追加（fallback 路径下不追加未经确认的模型）
-    if (!usedRegistryFallback && definition?.modelsDevProviderId && definition?.curatedModelIds) {
-      const existingIds = enrichedModels.map((m) => m.modelId)
-      const discovered = getDiscoveredModels(this.provider, definition.curatedModelIds, existingIds)
-      if (discovered.length > 0) {
-        enrichedModels.push(...discovered)
-      }
-    }
-
-    return enrichedModels
+    // models.dev registry is metadata-only: enrich context window / capabilities / pricing
+    // for models the provider API actually returned. We deliberately do NOT append models
+    // discovered only on models.dev — the API list is the source of truth for availability.
+    // The empty-API fallback above (registry → curated list) handles the "API returned nothing"
+    // case separately.
+    return enrichModelsFromRegistry(mergedModels, this.provider)
   }
 
   /**

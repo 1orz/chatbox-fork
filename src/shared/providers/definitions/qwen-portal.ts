@@ -58,7 +58,7 @@ export const qwenPortalProvider = defineProvider({
         customFetch:
           isOAuth && credentialManager ? createBearerOAuthFetch(config.dependencies, credentialManager) : undefined,
         listModelsFallback: config.providerSetting.models || qwenPortalProvider.defaultSettings?.models,
-        useNativeOnMobile: config.globalSettings.openaiUseNativeFetch,
+        useNativeOnMobile: config.globalSettings.useNativeFetchOnMobile,
       },
       config.dependencies
     )

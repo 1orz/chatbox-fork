@@ -448,15 +448,15 @@ export function RouteComponent() {
           />
           {CHATBOX_BUILD_PLATFORM !== 'web' && (
             <Switch
-              label={t('Use native HTTP for OpenAI family on mobile')}
-              checked={settings.openaiUseNativeFetch ?? false}
+              label={t('Use native HTTP on mobile')}
+              checked={settings.useNativeFetchOnMobile ?? false}
               description={t(
-                'When off (default), OpenAI / Azure / OpenAI-compatible providers use the WebView fetch. Turn on to route them through the native HTTP plugin (bypasses CORS but may not handle every request shape).'
+                'When off (default), requests routed through apiRequest use the WebView fetch (works for OpenAI / Azure / OpenAI-compatible chat, every provider’s model listing, etc.). Turn on to route them through the native HTTP plugin (bypasses CORS, may not handle every request shape). Anthropic / Gemini chat go through the AI SDK’s own fetch and are unaffected.'
               )}
               onChange={() =>
                 setSettings({
                   ...settings,
-                  openaiUseNativeFetch: !(settings.openaiUseNativeFetch ?? false),
+                  useNativeFetchOnMobile: !(settings.useNativeFetchOnMobile ?? false),
                 })
               }
             />

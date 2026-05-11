@@ -15,6 +15,8 @@ interface Options {
   topP?: number
   maxOutputTokens?: number
   stream?: boolean
+  /** When true, listModels routes through the native HTTP plugin on mobile. */
+  useNativeOnMobile?: boolean
 }
 
 export default class CustomClaude extends AbstractAISDKModel {
@@ -83,6 +85,7 @@ export default class CustomClaude extends AbstractAISDKModel {
         'anthropic-dangerous-direct-browser-access': 'true',
         'x-api-key': this.options.apiKey,
       },
+      useNativeOnMobile: this.options.useNativeOnMobile,
     })
     const json: Response = await res.json()
     if (!json.data) {

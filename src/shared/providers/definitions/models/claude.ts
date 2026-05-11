@@ -18,6 +18,8 @@ interface Options {
   customFetch?: typeof globalThis.fetch
   authToken?: string
   isOAuth?: boolean
+  /** When true, listModels routes through the native HTTP plugin on mobile. */
+  useNativeOnMobile?: boolean
 }
 
 export default class Claude extends AbstractAISDKModel {
@@ -104,6 +106,7 @@ export default class Claude extends AbstractAISDKModel {
       url: url,
       method: 'GET',
       headers,
+      useNativeOnMobile: this.options.useNativeOnMobile,
     })
     const json: Response = await res.json()
     if (!json.data) {

@@ -11,6 +11,7 @@ import {
   type SessionType,
 } from '@shared/types'
 import { createModelDependencies } from '@/adapters'
+import { settingsStore } from '@/stores/settingsStore'
 import BaseConfig from './base-config'
 import type { ModelSettingUtil } from './interface'
 
@@ -66,6 +67,7 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
   protected async listProviderModels(settings: ProviderSettings): Promise<ProviderModelInfo[]> {
     const model = settings.models?.[0] || { modelId: this.getDefaultModelId() }
     const dependencies = await createModelDependencies()
+    const useNativeOnMobile = settingsStore.getState().useNativeFetchOnMobile
 
     switch (this.customProviderType) {
       case ModelProviderType.Claude: {
@@ -75,6 +77,7 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
             apiKey: settings.apiKey!,
             model,
             temperature: 0,
+            useNativeOnMobile,
           },
           dependencies
         )
@@ -87,6 +90,7 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
             apiKey: settings.apiKey!,
             model,
             temperature: 0,
+            useNativeOnMobile,
           },
           dependencies
         )
@@ -101,6 +105,7 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
             model,
             temperature: 0,
             useProxy: settings.useProxy,
+            useNativeOnMobile,
           },
           dependencies
         )
@@ -115,6 +120,7 @@ export default class CustomProviderSettingUtil extends BaseConfig implements Mod
             model,
             temperature: 0,
             useProxy: settings.useProxy,
+            useNativeOnMobile,
           },
           dependencies
         )

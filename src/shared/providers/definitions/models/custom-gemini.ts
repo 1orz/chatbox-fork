@@ -24,6 +24,8 @@ interface Options {
   topP?: number
   maxOutputTokens?: number
   stream?: boolean
+  /** When true, listModels routes through the native HTTP plugin on mobile. */
+  useNativeOnMobile?: boolean
 }
 
 export default class CustomGemini extends AbstractAISDKModel {
@@ -175,6 +177,7 @@ export default class CustomGemini extends AbstractAISDKModel {
         url: `${apiHost}/models?key=${this.options.apiKey}`,
         method: 'GET',
         headers: {},
+        useNativeOnMobile: this.options.useNativeOnMobile,
       })
       const json: Response = await res.json()
 

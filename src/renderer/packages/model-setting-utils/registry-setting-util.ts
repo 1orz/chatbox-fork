@@ -3,6 +3,7 @@ import { getProviderDefinition } from '@shared/providers'
 import type { ModelProvider, ProviderBaseInfo, ProviderModelInfo, ProviderSettings, SessionType } from '@shared/types'
 import { createModelDependencies } from '@/adapters'
 import platform from '@/platform'
+import { settingsStore } from '@/stores/settingsStore'
 import BaseConfig from './base-config'
 import type { ModelSettingUtil } from './interface'
 
@@ -41,11 +42,16 @@ export default class RegistrySettingUtil extends BaseConfig implements ModelSett
     const dependencies = await createModelDependencies()
     const effectiveApiKey = resolveEffectiveApiKey(settings, platform.type)
 
+    // Use the real settings store so top-level flags (useNativeFetchOnMobile,
+    // injectDefaultMetadata, etc.) flow into the model instance — listModels
+    // would otherwise get an undefined stub and silently ignore them.
+    const currentSettings = settingsStore.getState()
     const modelInstance = definition.createModel({
       settings: { provider: this.provider, modelId: model.modelId },
-      globalSettings: { providers: { [this.provider]: settings } } as Parameters<
-        typeof definition.createModel
-      >[0]['globalSettings'],
+      globalSettings: {
+        ...currentSettings,
+        providers: { ...currentSettings.providers, [this.provider]: settings },
+      } as Parameters<typeof definition.createModel>[0]['globalSettings'],
       config: { uuid: '' },
       dependencies,
       providerSetting: settings,

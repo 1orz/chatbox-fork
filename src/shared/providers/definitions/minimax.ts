@@ -67,7 +67,7 @@ function createMiniMaxProvider(config: {
               ? createBearerOAuthFetch(createConfig.dependencies, credentialManager)
               : undefined,
           listModelsFallback: createConfig.providerSetting.models || provider.defaultSettings?.models,
-          useNativeOnMobile: createConfig.globalSettings.openaiUseNativeFetch,
+          useNativeOnMobile: createConfig.globalSettings.useNativeFetchOnMobile,
         },
         createConfig.dependencies
       )

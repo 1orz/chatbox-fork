@@ -63,6 +63,7 @@ export const geminiProvider = defineProvider({
         topP: config.settings.topP,
         maxOutputTokens: config.settings.maxTokens,
         stream: config.settings.stream,
+        useNativeOnMobile: config.globalSettings.useNativeFetchOnMobile,
       },
       config.dependencies
     )

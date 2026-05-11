@@ -95,7 +95,7 @@ export function settings(): Settings {
     autoCollapseCodeBlock: true,
     pasteLongTextAsAFile: true,
 
-    openaiUseNativeFetch: false,
+    useNativeFetchOnMobile: false,
 
     autoGenerateTitle: true,
 

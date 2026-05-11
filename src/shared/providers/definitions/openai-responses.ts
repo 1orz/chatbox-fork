@@ -60,7 +60,7 @@ export const openaiResponsesProvider = defineProvider({
         maxOutputTokens: config.settings.maxTokens,
         stream: config.settings.stream,
         useProxy: config.providerSetting.useProxy,
-        useNativeOnMobile: config.globalSettings.openaiUseNativeFetch,
+        useNativeOnMobile: config.globalSettings.useNativeFetchOnMobile,
         customFetch:
           isOAuth && credentialManager ? createOpenAIOAuthFetch(config.dependencies, credentialManager) : undefined,
         listModelsFallback: isOAuth

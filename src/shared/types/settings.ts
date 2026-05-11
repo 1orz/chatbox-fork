@@ -387,9 +387,12 @@ export const SettingsSchema = GlobalSessionSettingsSchema.extend({
   autoCollapseCodeBlock: z.boolean().default(true), // 是否自动折叠代码块
   pasteLongTextAsAFile: z.boolean().default(true), // 是否将长文本粘贴为文件
 
-  // 移动端 OpenAI 家族（OpenAI / Azure / OpenAI-Compatible）请求走 native HTTP（CapacitorHttp + 自定义 streaming）。
+  // 移动端把走 apiRequest 的请求路由到 native HTTP（CapacitorHttp + 自定义 streaming）
+  // 适用范围：openai 家族的 chat、所有 provider 的 listModels（fetch 按钮）、以及任何
+  // 通过 dependencies.request.apiRequest 发出的请求。Anthropic / Gemini 的 chat 走 AI SDK
+  // 内部的 fetch，不经过这里，不受影响。
   // 默认 false：走 WebView 内的 fetch（更兼容 multipart / 浏览器规则）；true：走 native（旁路 CORS）
-  openaiUseNativeFetch: z.boolean().default(false),
+  useNativeFetchOnMobile: z.boolean().default(false),
 
   autoGenerateTitle: z.boolean().default(true),
 
