@@ -189,7 +189,6 @@ export default function Sidebar() {
               } else if (val === 'task') {
                 const taskId = taskSessionStore.getState().currentTaskId
                 if (taskId && startupPage === 'session') {
-                  // @ts-expect-error /task/$taskId route removed during ChatboxAI strip
                   navigate({ to: '/task/$taskId', params: { taskId } })
                 } else {
                   // @ts-expect-error /task route removed during ChatboxAI strip

@@ -104,49 +104,50 @@ function Markdown(props: {
   const generatingCodeIndex = useMemo(() => (codeFences % 2 === 0 ? -1 : Math.floor(codeFences / 2)), [codeFences])
 
   return (
-    <ReactMarkdown
-      remarkPlugins={
-        enableLaTeXRendering
-          ? [remarkGfm, remarkMath, remarkBreaks, remarkAddCodeIndex]
-          : [remarkGfm, remarkBreaks, remarkAddCodeIndex]
-      }
-      rehypePlugins={[rehypeKatex]}
-      className={`break-words ${className || ''}`}
-      // react-markdown's default defaultUrlTransform will incorrectly encode query parameters in URLs (e.g. & becomes &amp;)
-      // Use sanitizeUrl here to avoid that and to prevent XSS attacks
-      urlTransform={(url) => sanitizeUrl(url)}
-      components={useMemo(
-        () => ({
-          // biome-ignore lint/suspicious/noExplicitAny: react-markdown code component props are loosely typed
-          code: (props: any) => {
-            const codeIndex = typeof props['data-code-index'] === 'number' ? props['data-code-index'] : -1
-            return (
-              <CodeRenderer
+    <div className={`break-words ${className || ''}`}>
+      <ReactMarkdown
+        remarkPlugins={
+          enableLaTeXRendering
+            ? [remarkGfm, remarkMath, remarkBreaks, remarkAddCodeIndex]
+            : [remarkGfm, remarkBreaks, remarkAddCodeIndex]
+        }
+        rehypePlugins={[rehypeKatex]}
+        // react-markdown's default defaultUrlTransform will incorrectly encode query parameters in URLs (e.g. & becomes &amp;)
+        // Use sanitizeUrl here to avoid that and to prevent XSS attacks
+        urlTransform={(url) => sanitizeUrl(url)}
+        components={useMemo(
+          () => ({
+            // biome-ignore lint/suspicious/noExplicitAny: react-markdown code component props are loosely typed
+            code: (props: any) => {
+              const codeIndex = typeof props['data-code-index'] === 'number' ? props['data-code-index'] : -1
+              return (
+                <CodeRenderer
+                  {...props}
+                  uniqueId={uniqueId ? `${uniqueId}-code-${codeIndex}` : undefined}
+                  hiddenCodeCopyButton={hiddenCodeCopyButton}
+                  enableMermaidRendering={enableMermaidRendering}
+                  generating={generating && generatingCodeIndex === codeIndex}
+                  forceColorScheme={forceColorScheme}
+                />
+              )
+            },
+            a: ({ node, ...props }) => (
+              <a
                 {...props}
-                uniqueId={uniqueId ? `${uniqueId}-code-${codeIndex}` : undefined}
-                hiddenCodeCopyButton={hiddenCodeCopyButton}
-                enableMermaidRendering={enableMermaidRendering}
-                generating={generating && generatingCodeIndex === codeIndex}
-                forceColorScheme={forceColorScheme}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
               />
-            )
-          },
-          a: ({ node, ...props }) => (
-            <a
-              {...props}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => {
-                e.stopPropagation()
-              }}
-            />
-          ),
-        }),
-        [uniqueId, hiddenCodeCopyButton, enableMermaidRendering, generating, generatingCodeIndex, forceColorScheme]
-      )}
-    >
-      {enableLaTeXRendering ? latex.processLaTeX(children) : children}
-    </ReactMarkdown>
+            ),
+          }),
+          [uniqueId, hiddenCodeCopyButton, enableMermaidRendering, generating, generatingCodeIndex, forceColorScheme]
+        )}
+      >
+        {enableLaTeXRendering ? latex.processLaTeX(children) : children}
+      </ReactMarkdown>
+    </div>
   )
 }
 

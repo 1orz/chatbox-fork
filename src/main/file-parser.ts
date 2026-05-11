@@ -69,9 +69,9 @@ async function concurrentMap<T, R>(
 export async function parseFile(filePath: string) {
   if (isOfficeFilePath(filePath)) {
     try {
-      const officeParser = await import('officeparser')
-      const data = await officeParser.default.parseOfficeAsync(filePath)
-      return data
+      const { parseOffice } = await import('officeparser')
+      const ast = await parseOffice(filePath)
+      return ast.toText()
     } catch (error) {
       log.error(error)
       throw error
@@ -111,74 +111,43 @@ export async function parseFile(filePath: string) {
 }
 
 export async function parseEpub(filePath: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const epub = new Epub(filePath)
+  const epub = new Epub(filePath)
+  try {
+    await epub.parse()
+  } catch (error) {
+    log.error('EPUB parsing error:', error)
+    throw error
+  }
 
-    epub.on('error', (error) => {
-      log.error('EPUB parsing error:', error)
-      reject(error)
-    })
-
-    epub.on('end', async () => {
-      try {
-        const metadata = epub.metadata as { title?: string; creator?: string; language?: string }
-        log.info('EPUB metadata:', {
-          title: metadata.title,
-          creator: metadata.creator,
-          language: metadata.language,
-          chapters: epub.flow.length,
-        })
-
-        // Helper function to process a single chapter
-        const processChapter = async (chapter: { id: string }): Promise<string | null> => {
-          try {
-            const chapterText = await new Promise<string>((resolveChapter, rejectChapter) => {
-              epub.getChapter(chapter.id, (error, text) => {
-                if (error) {
-                  log.error(`Error reading chapter ${chapter.id}:`, error)
-                  rejectChapter(error)
-                } else {
-                  resolveChapter(text || '')
-                }
-              })
-            })
-
-            // Remove HTML tags and extract plain text
-            let plainText = chapterText.replace(/<[^>]*>/g, '') // Remove HTML tags
-
-            // Decode HTML entities (including hex)
-            plainText = decodeHtmlEntities(plainText)
-              .replace(/\s+/g, ' ') // Replace multiple whitespaces with single space
-              .trim()
-
-            return plainText || null
-          } catch (chapterError) {
-            log.warn(`Failed to read chapter ${chapter.id}, skipping:`, chapterError)
-            return null // Return null for failed chapters to continue processing
-          }
-        }
-
-        // Extract text from all chapters using concurrent processing
-        log.info(`Starting concurrent processing of ${epub.flow.length} chapters with concurrency: 8`)
-
-        const chapterResults = await concurrentMap(epub.flow as { id: string }[], processChapter, 8)
-        const chapterTexts = chapterResults.filter((text: string | null) => text !== null) as string[]
-        log.info(`Successfully processed ${chapterTexts.length}/${epub.flow.length} chapters`)
-
-        const fullText = chapterTexts.join('\n\n')
-
-        if (!fullText) {
-          throw new Error('No readable text content found in EPUB file')
-        }
-
-        log.info(`Successfully extracted ${fullText.length} characters from ${chapterTexts.length} chapters`)
-        resolve(fullText)
-      } catch (error) {
-        log.error('Error extracting EPUB content:', error)
-        reject(error)
-      }
-    })
-
-    epub.parse()
+  const metadata = epub.metadata as { title?: string; creator?: string; language?: string }
+  log.info('EPUB metadata:', {
+    title: metadata.title,
+    creator: metadata.creator,
+    language: metadata.language,
+    chapters: epub.flow.length,
   })
+
+  const processChapter = async (chapter: { id: string }): Promise<string | null> => {
+    try {
+      const chapterText = await epub.getChapter(chapter.id)
+      let plainText = chapterText.replace(/<[^>]*>/g, '')
+      plainText = decodeHtmlEntities(plainText).replace(/\s+/g, ' ').trim()
+      return plainText || null
+    } catch (chapterError) {
+      log.warn(`Failed to read chapter ${chapter.id}, skipping:`, chapterError)
+      return null
+    }
+  }
+
+  log.info(`Starting concurrent processing of ${epub.flow.length} chapters with concurrency: 8`)
+  const chapterResults = await concurrentMap(epub.flow as { id: string }[], processChapter, 8)
+  const chapterTexts = chapterResults.filter((text: string | null) => text !== null) as string[]
+  log.info(`Successfully processed ${chapterTexts.length}/${epub.flow.length} chapters`)
+
+  const fullText = chapterTexts.join('\n\n')
+  if (!fullText) {
+    throw new Error('No readable text content found in EPUB file')
+  }
+  log.info(`Successfully extracted ${fullText.length} characters from ${chapterTexts.length} chapters`)
+  return fullText
 }
