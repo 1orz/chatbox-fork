@@ -60,6 +60,7 @@ import { useOAuthProviders } from '@/hooks/useOAuthProviders'
 import { enrichModelsFromRegistry, forceRefreshRegistry, useModelRegistryVersion } from '@/packages/model-registry'
 import { getModelSettingUtil } from '@/packages/model-setting-utils'
 import platform from '@/platform'
+import { isImageOnlyModel } from '@/routes/image-creator/-components/constants'
 import { useLanguage, useProviderSettings, useSettingsStore } from '@/stores/settingsStore'
 import { add as addToast } from '@/stores/toastActions'
 import { type ModelTestState, probeModelAvailability, testModelCapabilities } from '@/utils/model-tester'
@@ -469,8 +470,9 @@ function ProviderSettings({ providerId }: { providerId: string }) {
   }
 
   type ProbeState = {
-  status: 'queued' | 'pending' | 'success' | 'error'
+  status: 'queued' | 'pending' | 'success' | 'error' | 'skipped'
   error?: string
+  skipReason?: string
   completedAt?: number
   durationMs?: number
 }
@@ -478,6 +480,20 @@ function ProviderSettings({ providerId }: { providerId: string }) {
   const [bulkTesting, setBulkTesting] = useState(false)
 
   const runProbe = async (modelId: string) => {
+    // Image-only models don't speak chat completions; the chat probe would always
+    // fail with provider-specific errors. Mark them skipped instead of pretending.
+    const lookup = displayModels.find((m) => m.modelId === modelId) || fetchedModels?.find((m) => m.modelId === modelId)
+    if (lookup && isImageOnlyModel(lookup)) {
+      setProbeStates((prev) => ({
+        ...prev,
+        [modelId]: {
+          status: 'skipped',
+          skipReason: 'Image-only model — use the image generation page to verify it works.',
+          completedAt: Date.now(),
+        },
+      }))
+      return
+    }
     setProbeStates((prev) => ({ ...prev, [modelId]: { status: 'pending' } }))
     try {
       const configs = await platform.getConfig()
@@ -495,18 +511,33 @@ function ProviderSettings({ providerId }: { providerId: string }) {
     }
   }
 
-  const runBulkProbe = async (models: { modelId: string }[]) => {
+  const runBulkProbe = async (
+    models: { modelId: string; type?: string; outputModalities?: string[] }[]
+  ) => {
     if (!models.length) return
     setBulkTesting(true)
     try {
       const configs = await platform.getConfig()
       const dependencies = await createModelDependencies()
-      // Everything starts as `queued` (shows … in the UI). Workers flip each
-      // item to `pending` (spinner) right before they start the probe.
-      setProbeStates((prev) => ({
-        ...prev,
-        ...Object.fromEntries(models.map((m) => [m.modelId, { status: 'queued' as const }])),
-      }))
+      // Image-only models get marked 'skipped' up front. Everyone else starts
+      // as `queued` so users see immediate feedback in the UI.
+      setProbeStates((prev) => {
+        const next: Record<string, ProbeState> = { ...prev }
+        for (const m of models) {
+          if (isImageOnlyModel(m)) {
+            next[m.modelId] = {
+              status: 'skipped',
+              skipReason: 'Image-only model — use the image generation page to verify it works.',
+              completedAt: Date.now(),
+            }
+          } else {
+            next[m.modelId] = { status: 'queued' }
+          }
+        }
+        return next
+      })
+
+      const probable = models.filter((m) => !isImageOnlyModel(m))
 
       // True N-at-a-time worker pool: each worker drains from a shared index,
       // so slow probes don't block faster ones from starting.
@@ -532,11 +563,11 @@ function ProviderSettings({ providerId }: { providerId: string }) {
       const worker = async () => {
         while (true) {
           const i = nextIndex++
-          if (i >= models.length) return
-          await runOne(models[i])
+          if (i >= probable.length) return
+          await runOne(probable[i])
         }
       }
-      await Promise.all(Array.from({ length: Math.min(concurrency, models.length) }, worker))
+      await Promise.all(Array.from({ length: Math.min(concurrency, probable.length) }, worker))
     } finally {
       setBulkTesting(false)
     }

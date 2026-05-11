@@ -23,10 +23,19 @@ export function transformModelEntry(entry: ModelsDevModelEntry): ModelMetadata {
     capabilities.push('vision')
   }
 
-  // Determine type based on model name/family heuristics
+  const inputModalities = entry.modalities?.input
+  const outputModalities = entry.modalities?.output
+
+  // Type derivation: prefer modality data when present (gpt-image-2 etc. are pure
+  // image-output models even though their id contains no `embed`/`rerank` token),
+  // then fall back to name-based heuristics.
   let type: ModelMetadata['type'] = 'chat'
   const idLower = entry.id.toLowerCase()
-  if (idLower.includes('embed')) {
+  const outputsImageOnly =
+    !!outputModalities && outputModalities.includes('image') && !outputModalities.includes('text')
+  if (outputsImageOnly) {
+    type = 'image'
+  } else if (idLower.includes('embed')) {
     type = 'embedding'
   } else if (idLower.includes('rerank')) {
     type = 'rerank'
@@ -44,6 +53,8 @@ export function transformModelEntry(entry: ModelsDevModelEntry): ModelMetadata {
     family: entry.family,
     releaseDate: entry.release_date,
     status: entry.status,
+    inputModalities,
+    outputModalities,
   }
 }
 

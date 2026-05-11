@@ -8,22 +8,10 @@ interface ImageModel {
   displayName: string
 }
 
-// model 白名单，与 provider models 取交集，保证只显示支持的模型
-const CHATBOXAI_IMAGE_MODEL_IDS = [
-  'gemini-2.5-flash-image',
-  'gemini-3-pro-image-preview',
-  'gemini-3-pro-image',
-  'gemini-3.1-flash-image-preview',
-  'gemini-3.1-flash-image',
-]
-const OPENAI_IMAGE_MODEL_IDS = ['gpt-image-1', 'gpt-image-1.5']
-const GEMINI_IMAGE_MODEL_IDS = [
-  'gemini-2.5-flash-image',
-  'gemini-3-pro-image-preview',
-  'gemini-3-pro-image',
-  'gemini-3.1-flash-image-preview',
-  'gemini-3.1-flash-image',
-]
+import {
+  isGeminiImageModel,
+  isOpenAIImageModel,
+} from '@/routes/image-creator/-components/constants'
 
 export const CHATBOXAI_DEFAULT_IMAGE_MODEL: ImageModel = {
   modelId: '',
@@ -41,21 +29,33 @@ const IMAGE_MODEL_FALLBACK_NAMES: Record<string, string> = {
   'gemini-3.1-flash-image': 'Nano Banana 2',
 }
 
-function getAvailableImageModels(provider: ProviderInfo, imageModelIds: string[]): ImageModel[] {
+function getAvailableImageModels(
+  provider: ProviderInfo,
+  predicate: (m: { modelId: string; type?: string; outputModalities?: string[] }) => boolean
+): ImageModel[] {
   const providerModels = provider.models || provider.defaultSettings?.models || []
   const defaultModels = provider.defaultSettings?.models || []
-  return imageModelIds
-    .map((modelId) => {
-      // Check user's model list first (preserves nickname), then fall back to defaults (picks up newly added models)
-      const model =
-        providerModels.find((m) => m.modelId === modelId) || defaultModels.find((m) => m.modelId === modelId)
-      if (!model) return null
-      return {
-        modelId,
-        displayName: model.nickname || IMAGE_MODEL_FALLBACK_NAMES[modelId] || modelId,
-      }
-    })
-    .filter((m): m is ImageModel => m !== null)
+  // Union by modelId: user-added models first (preserves nickname / type enrichment),
+  // then defaults that weren't already added (so newly published image models show up
+  // automatically once models.dev or the provider API marks them as image-output).
+  const seen = new Set<string>()
+  const merged: { modelId: string; nickname?: string }[] = []
+  for (const m of providerModels) {
+    if (predicate(m) && !seen.has(m.modelId)) {
+      seen.add(m.modelId)
+      merged.push(m)
+    }
+  }
+  for (const m of defaultModels) {
+    if (predicate(m) && !seen.has(m.modelId)) {
+      seen.add(m.modelId)
+      merged.push(m)
+    }
+  }
+  return merged.map((m) => ({
+    modelId: m.modelId,
+    displayName: m.nickname || IMAGE_MODEL_FALLBACK_NAMES[m.modelId] || m.modelId,
+  }))
 }
 
 export type ImageModelSelectProps = PropsWithChildren<
@@ -73,13 +73,13 @@ export const ImageModelSelect = forwardRef<HTMLButtonElement, ImageModelSelectPr
       if (!provider) {
         return []
       }
-      return getAvailableImageModels(provider, CHATBOXAI_IMAGE_MODEL_IDS)
+      return getAvailableImageModels(provider, isGeminiImageModel)
     }, [providers])
 
     const geminiProvider = useMemo(() => {
       const provider = providers.find((p) => p.id === ModelProviderEnum.Gemini)
       if (!provider) return null
-      const imageModels = getAvailableImageModels(provider, GEMINI_IMAGE_MODEL_IDS)
+      const imageModels = getAvailableImageModels(provider, isGeminiImageModel)
       return imageModels.length > 0 ? { provider, imageModels } : null
     }, [providers])
 
@@ -88,7 +88,7 @@ export const ImageModelSelect = forwardRef<HTMLButtonElement, ImageModelSelectPr
         .filter((p) => [ModelProviderEnum.OpenAI, ModelProviderEnum.Azure].includes(p.id as ModelProviderEnum))
         .map((provider) => ({
           provider,
-          imageModels: getAvailableImageModels(provider, OPENAI_IMAGE_MODEL_IDS),
+          imageModels: getAvailableImageModels(provider, isOpenAIImageModel),
         }))
         .filter((item) => item.imageModels.length > 0)
     }, [providers])
@@ -98,7 +98,7 @@ export const ImageModelSelect = forwardRef<HTMLButtonElement, ImageModelSelectPr
         .filter((p) => p.isCustom && p.type === ModelProviderType.Gemini)
         .map((provider) => ({
           provider,
-          imageModels: getAvailableImageModels(provider, GEMINI_IMAGE_MODEL_IDS),
+          imageModels: getAvailableImageModels(provider, isGeminiImageModel),
         }))
         .filter((item) => item.imageModels.length > 0)
     }, [providers])

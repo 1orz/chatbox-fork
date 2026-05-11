@@ -900,6 +900,8 @@
   "Test failed": "测试失败",
   "Test Model": "测试模型",
   "Queued": "排队中",
+  "Skipped": "已跳过",
+  "This model was skipped.": "该模型已跳过测试。",
   "Test Result": "测试结果",
   "Test Results": "测试结果",
   "Model responded successfully to a basic chat probe.": "模型对基础对话探针响应正常。",

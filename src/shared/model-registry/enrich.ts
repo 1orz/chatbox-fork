@@ -89,5 +89,7 @@ export function enrichModelFromRegistry<T extends { modelId: string; [key: strin
     maxOutput: meta.maxOutput > 0 ? meta.maxOutput : model.maxOutput,
     nickname: model.nickname || meta.name,
     type: model.type || meta.type,
+    inputModalities: meta.inputModalities ?? model.inputModalities,
+    outputModalities: meta.outputModalities ?? model.outputModalities,
   }
 }

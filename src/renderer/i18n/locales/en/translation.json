@@ -806,6 +806,8 @@
   "Test failed": "Test failed",
   "Test Model": "Test Model",
   "Queued": "Queued",
+  "Skipped": "Skipped",
+  "This model was skipped.": "This model was skipped.",
   "Test Result": "Test Result",
   "Test Results": "Test Results",
   "Model responded successfully to a basic chat probe.": "Model responded successfully to a basic chat probe.",

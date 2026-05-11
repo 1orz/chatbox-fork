@@ -45,12 +45,12 @@ import {
 import { queryClient } from '@/stores/queryClient'
 import * as toastActions from '@/stores/toastActions'
 import {
-  GEMINI_IMAGE_MODEL_IDS,
   getRatioOptionsForModel,
   HISTORY_PANEL_WIDTH,
   IMAGE_MODEL_FALLBACK_NAMES,
+  isGeminiImageModel,
+  isOpenAIImageModel,
   MAX_REFERENCE_IMAGES,
-  OPENAI_IMAGE_MODEL_IDS,
 } from './-components/constants'
 import { EmptyState } from './-components/EmptyState'
 import { GeneratedImagesGallery } from './-components/GeneratedImagesGallery'
@@ -428,19 +428,15 @@ function ImageCreatorPage() {
   }, [])
 
   const getAvailableImageModels = (
-    providerModels: { modelId: string; nickname?: string }[],
-    imageModelIds: string[]
+    providerModels: { modelId: string; nickname?: string; type?: string; outputModalities?: string[] }[],
+    predicate: (m: { modelId: string; type?: string; outputModalities?: string[] }) => boolean
   ) => {
-    return imageModelIds
-      .map((modelId) => {
-        const model = providerModels.find((m) => m.modelId === modelId)
-        if (!model) return null
-        return {
-          modelId,
-          displayName: model.nickname || IMAGE_MODEL_FALLBACK_NAMES[modelId] || modelId,
-        }
-      })
-      .filter((m): m is { modelId: string; displayName: string } => m !== null)
+    return providerModels
+      .filter((m) => predicate(m))
+      .map((m) => ({
+        modelId: m.modelId,
+        displayName: m.nickname || IMAGE_MODEL_FALLBACK_NAMES[m.modelId] || m.modelId,
+      }))
   }
 
   const imageModelGroups = useMemo(() => {
@@ -449,7 +445,7 @@ function ImageCreatorPage() {
     const geminiProvider = providers.find((p) => p.id === ModelProviderEnum.Gemini)
     if (geminiProvider) {
       const providerModels = geminiProvider.models || geminiProvider.defaultSettings?.models || []
-      const models = getAvailableImageModels(providerModels, GEMINI_IMAGE_MODEL_IDS)
+      const models = getAvailableImageModels(providerModels, isGeminiImageModel)
       if (models.length > 0) {
         groups.push({ label: 'Google Gemini', providerId: ModelProviderEnum.Gemini, models })
       }
@@ -459,7 +455,7 @@ function ImageCreatorPage() {
       .filter((p) => p.isCustom && p.type === ModelProviderType.Gemini)
       .forEach((provider) => {
         const providerModels = provider.models || provider.defaultSettings?.models || []
-        const models = getAvailableImageModels(providerModels, GEMINI_IMAGE_MODEL_IDS)
+        const models = getAvailableImageModels(providerModels, isGeminiImageModel)
         if (models.length > 0) {
           groups.push({ label: provider.name, providerId: provider.id, models })
         }
@@ -469,7 +465,7 @@ function ImageCreatorPage() {
       .filter((p) => [ModelProviderEnum.OpenAI, ModelProviderEnum.Azure].includes(p.id as ModelProviderEnum))
       .forEach((provider) => {
         const providerModels = provider.models || provider.defaultSettings?.models || []
-        const models = getAvailableImageModels(providerModels, OPENAI_IMAGE_MODEL_IDS)
+        const models = getAvailableImageModels(providerModels, isOpenAIImageModel)
         if (models.length > 0) {
           groups.push({ label: provider.name, providerId: provider.id, models })
         }

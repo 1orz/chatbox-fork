@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Button, Flex, Image, NavLink, SegmentedControl, Stack, Text, Tooltip } from '@mantine/core'
+import { ActionIcon, Box, Button, Flex, Image, Menu, NavLink, SegmentedControl, Stack, Text, Tooltip } from '@mantine/core'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 import { Theme } from '@shared/types'
 import {
@@ -257,79 +257,80 @@ export default function Sidebar() {
             )}
           </Stack>
 
-          <SegmentedControl
-            value={String(theme)}
-            onChange={(val) => {
-              const next = Number(val) as Theme
-              settingsStore.setState((draft) => {
-                draft.theme = next
-              })
-            }}
-            data={[
-              {
-                value: String(Theme.System),
-                label: (
-                  <Tooltip label={t('Auto')} openDelay={500} withArrow>
-                    <Flex align="center" justify="center">
-                      <ScalableIcon icon={IconBrightnessAuto} size={16} />
-                    </Flex>
+          {(() => {
+            const currentThemeIcon =
+              theme === Theme.Dark ? IconMoon : theme === Theme.Light ? IconSun : IconBrightnessAuto
+            const currentThemeLabel =
+              theme === Theme.Dark ? t('Dark') : theme === Theme.Light ? t('Light') : t('Auto')
+            const themeMenu = (
+              <Menu shadow="md" width={140} position="top-start">
+                <Menu.Target>
+                  <Tooltip label={currentThemeLabel as string} openDelay={500} withArrow>
+                    <ActionIcon variant="transparent" color="chatbox-secondary" size={24}>
+                      <ScalableIcon icon={currentThemeIcon} size={20} />
+                    </ActionIcon>
                   </Tooltip>
-                ),
-              },
-              {
-                value: String(Theme.Light),
-                label: (
-                  <Tooltip label={t('Light')} openDelay={500} withArrow>
-                    <Flex align="center" justify="center">
-                      <ScalableIcon icon={IconSun} size={16} />
-                    </Flex>
-                  </Tooltip>
-                ),
-              },
-              {
-                value: String(Theme.Dark),
-                label: (
-                  <Tooltip label={t('Dark')} openDelay={500} withArrow>
-                    <Flex align="center" justify="center">
-                      <ScalableIcon icon={IconMoon} size={16} />
-                    </Flex>
-                  </Tooltip>
-                ),
-              },
-            ]}
-            size="xs"
-            fullWidth
-            mb="xs"
-          />
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item
+                    leftSection={<ScalableIcon icon={IconBrightnessAuto} size={16} />}
+                    onClick={() =>
+                      settingsStore.setState((draft) => {
+                        draft.theme = Theme.System
+                      })
+                    }
+                  >
+                    {t('Auto')}
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<ScalableIcon icon={IconSun} size={16} />}
+                    onClick={() =>
+                      settingsStore.setState((draft) => {
+                        draft.theme = Theme.Light
+                      })
+                    }
+                  >
+                    {t('Light')}
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<ScalableIcon icon={IconMoon} size={16} />}
+                    onClick={() =>
+                      settingsStore.setState((draft) => {
+                        draft.theme = Theme.Dark
+                      })
+                    }
+                  >
+                    {t('Dark')}
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            )
 
-          {isSmallScreen ? (
-            <Flex gap="md" align="center">
-              <ActionIcon
-                variant="transparent"
-                color="chatbox-secondary"
-                size={24}
-                onClick={() => {
-                  navigateToSettings()
-                  setShowSidebar(false)
-                }}
-              >
-                <ScalableIcon icon={IconSettingsFilled} size={20} />
-              </ActionIcon>
+            return isSmallScreen ? (
+              <Flex align="center">
+                {themeMenu}
+                <ActionIcon
+                  variant="transparent"
+                  color="chatbox-secondary"
+                  size={24}
+                  ml="auto"
+                  onClick={() => {
+                    navigateToSettings()
+                    setShowSidebar(false)
+                  }}
+                >
+                  <ScalableIcon icon={IconSettingsFilled} size={20} />
+                </ActionIcon>
+              </Flex>
+            ) : (
+              <Flex align="center" gap="xs">
+                {themeMenu}
+                <Box style={{ flex: 1 }} />
+              </Flex>
+            )
+          })()}
 
-              {/* <Text
-                c="chatbox-tertiary"
-                size="sm"
-                ml="auto"
-                className="cursor-pointer"
-                onClick={() => {
-                  navigate({ to: '/about' })
-                  setShowSidebar(false)
-                }}
-              >
-                {`${t('About')} ${/\d/.test(versionHook.version) ? `(${versionHook.version})` : ''}`}
-              </Text> */}
-            </Flex>
-          ) : (
+          {isSmallScreen ? null : (
             <>
               <NavLink
                 c="chatbox-secondary"

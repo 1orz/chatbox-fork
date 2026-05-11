@@ -6,9 +6,12 @@ import { tool } from 'ai'
 import { z } from 'zod'
 
 export type TestResult = {
-  /** queued = waiting in the bulk worker pool; pending = actively running; success/error = settled. */
-  status: 'queued' | 'pending' | 'success' | 'error'
+  /** queued = waiting in the bulk worker pool; pending = actively running;
+   *  success/error = settled; skipped = not probed (e.g. image-only model, chat probe doesn't apply). */
+  status: 'queued' | 'pending' | 'success' | 'error' | 'skipped'
   error?: string
+  /** For skipped results: human-readable reason. */
+  skipReason?: string
   /** ms since epoch when this result was produced. Set on success/error transitions. */
   completedAt?: number
   /** Total wall-clock duration of the probe in ms. */

@@ -21,8 +21,9 @@ import { AdaptiveModal } from './common/AdaptiveModal'
 import { ScalableIcon } from './common/ScalableIcon'
 
 export type ModelProbeState = {
-  status: 'queued' | 'pending' | 'success' | 'error'
+  status: 'queued' | 'pending' | 'success' | 'error' | 'skipped'
   error?: string
+  skipReason?: string
   completedAt?: number
   durationMs?: number
 }
@@ -225,6 +226,19 @@ export function ModelList({
                       if (probe.status === 'pending') {
                         return <Loader size="xs" />
                       }
+                      if (probe.status === 'skipped') {
+                        return (
+                          <Badge
+                            color="gray"
+                            size="xs"
+                            variant="light"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setDetailFor({ modelId: model.modelId, result: probe })}
+                          >
+                            {t('Skipped')}
+                          </Badge>
+                        )
+                      }
                       const color = probe.status === 'success' ? 'green' : 'red'
                       const label = probe.status === 'success' ? 'OK' : (t('Error') as string)
                       return (
@@ -336,10 +350,28 @@ function ProbeDetail({ result }: { result: ModelProbeState }) {
   return (
     <Stack gap="sm">
       <Flex gap="xs" align="center">
-        <Badge color={result.status === 'success' ? 'green' : 'red'} size="sm" variant="light">
-          {result.status === 'success' ? 'OK' : t('Error')}
+        <Badge
+          color={
+            result.status === 'success'
+              ? 'green'
+              : result.status === 'error'
+                ? 'red'
+                : result.status === 'skipped'
+                  ? 'gray'
+                  : 'blue'
+          }
+          size="sm"
+          variant="light"
+        >
+          {result.status === 'success'
+            ? 'OK'
+            : result.status === 'error'
+              ? t('Error')
+              : result.status === 'skipped'
+                ? t('Skipped')
+                : result.status}
         </Badge>
-        {result.durationMs !== undefined && (
+        {result.durationMs !== undefined && result.status !== 'skipped' && (
           <Text size="xs" c="chatbox-tertiary">
             {(result.durationMs / 1000).toFixed(2)}s
           </Text>
@@ -351,7 +383,11 @@ function ProbeDetail({ result }: { result: ModelProbeState }) {
         )}
       </Flex>
 
-      {result.status === 'success' ? (
+      {result.status === 'skipped' ? (
+        <Text size="sm" c="chatbox-secondary">
+          {result.skipReason || t('This model was skipped.')}
+        </Text>
+      ) : result.status === 'success' ? (
         <Text size="sm" c="chatbox-secondary">
           {t('Model responded successfully to a basic chat probe.')}
         </Text>

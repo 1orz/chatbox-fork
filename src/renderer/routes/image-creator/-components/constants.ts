@@ -6,26 +6,42 @@ export const IMAGE_MODEL_FALLBACK_NAMES: Record<string, string> = {
   '': 'GPT Image',
   'gpt-image-1': 'GPT Image 1',
   'gpt-image-1.5': 'GPT Image 1.5',
+  'gpt-image-2': 'GPT Image 2',
   'gemini-2.5-flash-image': 'Nano Banana',
   'gemini-3-pro-image-preview': 'Nano Banana Pro',
   'gemini-3-pro-image': 'Nano Banana Pro',
 }
 
-export const CHATBOXAI_IMAGE_MODEL_IDS = [
-  'gemini-2.5-flash-image',
-  'gemini-3-pro-image-preview',
-  'gemini-3-pro-image',
-  'gemini-3.1-flash-image-preview',
-  'gemini-3.1-flash-image',
-]
-export const OPENAI_IMAGE_MODEL_IDS = ['gpt-image-1', 'gpt-image-1.5']
-export const GEMINI_IMAGE_MODEL_IDS = [
-  'gemini-2.5-flash-image',
-  'gemini-3-pro-image-preview',
-  'gemini-3-pro-image',
-  'gemini-3.1-flash-image-preview',
-  'gemini-3.1-flash-image',
-]
+// Image-model detection. Primary source: models.dev modality info, surfaced via
+// ProviderModelInfo.type === 'image' / outputModalities = ['image']. We accept a
+// minimal model-shape since this is called over various provider model lists.
+// Fallback regex helps when a brand-new model id hasn't shown up in models.dev yet.
+const OPENAI_IMAGE_PATTERN = /^(gpt-image|dall[.\s-]?e)\b/i
+const GEMINI_IMAGE_PATTERN = /(gemini[\w.-]*-image|imagen)\b/i
+
+export type ImageModelLike = {
+  modelId: string
+  type?: string
+  outputModalities?: string[]
+}
+
+function isImageOutput(m: ImageModelLike): boolean {
+  if (m.type === 'image') return true
+  if (m.outputModalities) {
+    return m.outputModalities.includes('image') && !m.outputModalities.includes('text')
+  }
+  return false
+}
+
+export function isOpenAIImageModel(m: ImageModelLike): boolean {
+  return isImageOutput(m) || OPENAI_IMAGE_PATTERN.test(m.modelId)
+}
+export function isGeminiImageModel(m: ImageModelLike): boolean {
+  return isImageOutput(m) || GEMINI_IMAGE_PATTERN.test(m.modelId)
+}
+export function isImageOnlyModel(m: ImageModelLike): boolean {
+  return isImageOutput(m) || OPENAI_IMAGE_PATTERN.test(m.modelId) || GEMINI_IMAGE_PATTERN.test(m.modelId)
+}
 
 type ImageModelFamily = 'gpt' | 'gemini' | 'default'
 

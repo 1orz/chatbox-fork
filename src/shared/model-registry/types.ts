@@ -48,7 +48,7 @@ export interface ModelsDevResponse {
 export interface ModelMetadata {
   modelId: string
   name?: string
-  type: 'chat' | 'embedding' | 'rerank'
+  type: 'chat' | 'embedding' | 'rerank' | 'image'
   capabilities: ('vision' | 'reasoning' | 'tool_use' | 'web_search')[]
   contextWindow: number
   maxOutput: number
@@ -57,6 +57,10 @@ export interface ModelMetadata {
   family?: string
   releaseDate?: string
   status?: string
+  /** Output modalities (e.g., ['text'] or ['image']). Set when models.dev exposes it. */
+  outputModalities?: string[]
+  /** Input modalities (e.g., ['text', 'image']). */
+  inputModalities?: string[]
 }
 
 /** Map of modelId -> metadata for a single provider */
