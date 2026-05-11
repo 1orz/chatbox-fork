@@ -26,7 +26,10 @@ export type TestModelOptions = {
   onStateChange?: (state: ModelTestState) => void
 }
 
-export type ProbeModelOptions = Omit<TestModelOptions, 'onStateChange'>
+export type ProbeModelOptions = Omit<TestModelOptions, 'onStateChange'> & {
+  /** Per-probe timeout in ms. Defaults to 15s. Returns a `timeout` error result if exceeded. */
+  timeoutMs?: number
+}
 
 const TEST_IMAGE_BASE64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg=='
@@ -80,10 +83,14 @@ export async function testModelCapabilities(options: TestModelOptions): Promise<
  * many models without overwhelming the provider.
  */
 export async function probeModelAvailability(options: ProbeModelOptions): Promise<TestResult> {
-  const { providerId, modelId, settings, configs, dependencies } = options
+  const { providerId, modelId, settings, configs, dependencies, timeoutMs = 15_000 } = options
   try {
     const modelInstance = getModel({ ...settings, provider: providerId, modelId }, settings, configs, dependencies)
-    await modelInstance.chat([{ role: 'user', content: 'Hi' }], { onResultChange: undefined })
+    const probe = modelInstance.chat([{ role: 'user', content: 'Hi' }], { onResultChange: undefined })
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Probe timed out after ${Math.round(timeoutMs / 1000)}s`)), timeoutMs)
+    )
+    await Promise.race([probe, timeout])
     return { status: 'success' }
   } catch (e: unknown) {
     const error = e as { responseBody?: string; message?: string }

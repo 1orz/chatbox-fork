@@ -495,37 +495,40 @@ function ProviderSettings({ providerId }: { providerId: string }) {
     try {
       const configs = await platform.getConfig()
       const dependencies = await createModelDependencies()
+      // Mark everything pending up-front so users see immediate feedback even for queued items.
       setProbeStates((prev) => ({
         ...prev,
         ...Object.fromEntries(models.map((m) => [m.modelId, { status: 'pending' as const }])),
       }))
-      const concurrency = 6
-      for (let i = 0; i < models.length; i += concurrency) {
-        const chunk = models.slice(i, i + concurrency)
-        const results = await Promise.allSettled(
-          chunk.map((m) =>
-            probeModelAvailability({
-              providerId,
-              modelId: m.modelId,
-              settings,
-              configs,
-              dependencies,
-            })
-          )
-        )
-        setProbeStates((prev) => {
-          const next = { ...prev }
-          results.forEach((r, idx) => {
-            const id = chunk[idx].modelId
-            if (r.status === 'fulfilled') {
-              next[id] = r.value
-            } else {
-              next[id] = { status: 'error', error: String(r.reason) }
-            }
+
+      // True N-at-a-time worker pool: each worker drains from a shared index,
+      // so slow probes don't block the next chunk's start.
+      const concurrency = 3
+      const timeoutMs = 15_000
+      let nextIndex = 0
+      const runOne = async (m: { modelId: string }) => {
+        try {
+          const result = await probeModelAvailability({
+            providerId,
+            modelId: m.modelId,
+            settings,
+            configs,
+            dependencies,
+            timeoutMs,
           })
-          return next
-        })
+          setProbeStates((prev) => ({ ...prev, [m.modelId]: result }))
+        } catch (e) {
+          setProbeStates((prev) => ({ ...prev, [m.modelId]: { status: 'error', error: String(e) } }))
+        }
       }
+      const worker = async () => {
+        while (true) {
+          const i = nextIndex++
+          if (i >= models.length) return
+          await runOne(models[i])
+        }
+      }
+      await Promise.all(Array.from({ length: Math.min(concurrency, models.length) }, worker))
     } finally {
       setBulkTesting(false)
     }
