@@ -168,10 +168,6 @@ export async function getModelManifest(_params: {
   return { groupName: '', models: [] }
 }
 
-export async function reportContent(_params: { id: string; type: string; details: string }): Promise<void> {
-  // no-op
-}
-
 export async function getProviderModelsInfo(_params: {
   modelIds: string[]
 }): Promise<Record<string, ProviderModelInfo | null>> {

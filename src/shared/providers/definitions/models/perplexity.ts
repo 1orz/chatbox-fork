@@ -11,6 +11,7 @@ interface Options {
   topP?: number
   maxOutputTokens?: number
   stream?: boolean
+  useNativeOnMobile?: boolean
 }
 
 export default class Perplexity extends AbstractAISDKModel {

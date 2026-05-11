@@ -387,6 +387,10 @@ export const SettingsSchema = GlobalSessionSettingsSchema.extend({
   autoCollapseCodeBlock: z.boolean().default(true), // 是否自动折叠代码块
   pasteLongTextAsAFile: z.boolean().default(true), // 是否将长文本粘贴为文件
 
+  // 移动端 OpenAI 家族（OpenAI / Azure / OpenAI-Compatible）请求走 native HTTP（CapacitorHttp + 自定义 streaming）。
+  // 默认 false：走 WebView 内的 fetch（更兼容 multipart / 浏览器规则）；true：走 native（旁路 CORS）
+  openaiUseNativeFetch: z.boolean().default(false),
+
   autoGenerateTitle: z.boolean().default(true),
 
   autoCompaction: z.boolean().default(true),

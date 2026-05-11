@@ -15,6 +15,7 @@ import storage from '@/storage'
 import { StorageKeyGenerator } from '@/storage/StoreStorage'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { add as addToast } from '@/stores/toastActions'
+import { CHATBOX_BUILD_PLATFORM } from '@/variables'
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -445,6 +446,21 @@ export function RouteComponent() {
               })
             }
           />
+          {CHATBOX_BUILD_PLATFORM !== 'web' && (
+            <Switch
+              label={t('Use native HTTP for OpenAI family on mobile')}
+              checked={settings.openaiUseNativeFetch ?? false}
+              description={t(
+                'When off (default), OpenAI / Azure / OpenAI-compatible providers use the WebView fetch. Turn on to route them through the native HTTP plugin (bypasses CORS but may not handle every request shape).'
+              )}
+              onChange={() =>
+                setSettings({
+                  ...settings,
+                  openaiUseNativeFetch: !(settings.openaiUseNativeFetch ?? false),
+                })
+              }
+            />
+          )}
         </Stack>
       </Stack>
 

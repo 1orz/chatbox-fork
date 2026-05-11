@@ -58,6 +58,7 @@ export default class Ollama extends OpenAICompatible {
         maxOutputTokens: options.maxOutputTokens,
         stream: options.stream,
         useProxy: options.useProxy,
+        useNativeOnMobile: options.useNativeOnMobile,
       },
       dependencies
     )

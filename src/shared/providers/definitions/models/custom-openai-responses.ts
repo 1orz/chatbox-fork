@@ -18,6 +18,7 @@ interface Options {
   maxOutputTokens?: number
   stream?: boolean
   useProxy?: boolean
+  useNativeOnMobile?: boolean
 }
 
 type FetchFunction = typeof globalThis.fetch
@@ -68,7 +69,10 @@ export default class CustomOpenAIResponses extends AbstractAISDKModel {
   protected getChatModel(options: CallChatCompletionOptions) {
     const { apiHost, apiPath } = this.options
     const provider = this.getProvider(options, (_input, init) =>
-      createFetchWithProxy(this.options.useProxy, this.dependencies)(`${apiHost}${apiPath}`, init)
+      createFetchWithProxy(this.options.useProxy, this.dependencies, this.options.useNativeOnMobile)(
+        `${apiHost}${apiPath}`,
+        init
+      )
     )
     return wrapLanguageModel({
       model: provider.responses(this.options.model.modelId),
@@ -82,6 +86,7 @@ export default class CustomOpenAIResponses extends AbstractAISDKModel {
         apiHost: this.options.apiHost,
         apiKey: this.options.apiKey,
         useProxy: this.options.useProxy,
+        useNativeOnMobile: this.options.useNativeOnMobile,
       },
       this.dependencies
     )

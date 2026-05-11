@@ -18,6 +18,7 @@ export default class ChatGLM extends OpenAICompatible {
         topP: options.topP,
         maxOutputTokens: options.maxOutputTokens,
         stream: options.stream,
+        useNativeOnMobile: options.useNativeOnMobile,
       },
       dependencies
     )

@@ -16,6 +16,9 @@ export interface OpenAICompatibleSettings {
   useProxy?: boolean
   maxOutputTokens?: number
   stream?: boolean
+  // false → on mobile, route requests through the WebView fetch instead of native HTTP.
+  // Default `true` keeps existing behaviour for callers that don't opt in.
+  useNativeOnMobile?: boolean
 }
 
 export default abstract class OpenAICompatible extends AbstractAISDKModel implements ModelInterface {
@@ -55,7 +58,7 @@ export default abstract class OpenAICompatible extends AbstractAISDKModel implem
       name: this.name,
       apiKey: this.options.apiKey,
       baseURL: this.options.apiHost,
-      fetch: createFetchWithProxy(this.options.useProxy, this.dependencies),
+      fetch: createFetchWithProxy(this.options.useProxy, this.dependencies, this.options.useNativeOnMobile),
     })
   }
 
@@ -73,6 +76,7 @@ export default abstract class OpenAICompatible extends AbstractAISDKModel implem
         apiHost: this.options.apiHost,
         apiKey: this.options.apiKey,
         useProxy: this.options.useProxy,
+        useNativeOnMobile: this.options.useNativeOnMobile,
       },
       this.dependencies
     ).catch((err) => {
@@ -116,7 +120,7 @@ interface ListModelsResponse {
 }
 
 export async function fetchRemoteModels(
-  params: { apiHost: string; apiKey: string; useProxy?: boolean },
+  params: { apiHost: string; apiKey: string; useProxy?: boolean; useNativeOnMobile?: boolean },
   dependencies: ModelDependencies
 ) {
   const response = await dependencies.request.apiRequest({
@@ -126,6 +130,7 @@ export async function fetchRemoteModels(
       Authorization: `Bearer ${params.apiKey}`,
     },
     useProxy: params.useProxy,
+    useNativeOnMobile: params.useNativeOnMobile,
   })
   const json: ListModelsResponse = await response.json()
   if (!json.data) {

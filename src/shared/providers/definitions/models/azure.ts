@@ -4,6 +4,7 @@ import AbstractAISDKModel from '../../../models/abstract-ai-sdk'
 import type { ProviderModelInfo } from '../../../types'
 import type { ModelDependencies } from '../../../types/adapters'
 import { normalizeAzureEndpoint } from '../../../utils/llm_utils'
+import { createFetchWithProxy } from '../../../models/utils/fetch-proxy'
 
 interface Options {
   azureEndpoint: string
@@ -22,6 +23,7 @@ interface Options {
 
   injectDefaultMetadata: boolean
   stream?: boolean
+  useNativeOnMobile?: boolean
 }
 
 export default class AzureOpenAI extends AbstractAISDKModel {
@@ -40,6 +42,7 @@ export default class AzureOpenAI extends AbstractAISDKModel {
       apiKey: this.options.azureApikey,
       baseURL: normalizeAzureEndpoint(this.options.azureEndpoint).endpoint,
       useDeploymentBasedUrls: false,
+      fetch: createFetchWithProxy(false, this.dependencies, this.options.useNativeOnMobile),
     })
   }
 

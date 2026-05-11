@@ -879,6 +879,8 @@
   "Upon import, changes will take effect immediately and existing data will be overwritten": "Upon import, changes will take effect immediately and existing data will be overwritten",
   "Use as Reference": "Use as Reference",
   "Use Chatbox AI service": "Use Chatbox AI service",
+  "Use native HTTP for OpenAI family on mobile": "Use native HTTP for OpenAI family on mobile",
+  "When off (default), OpenAI / Azure / OpenAI-compatible providers use the WebView fetch. Turn on to route them through the native HTTP plugin (bypasses CORS but may not handle every request shape).": "When off (default), OpenAI / Azure / OpenAI-compatible providers use the WebView fetch. Turn on to route them through the native HTTP plugin (bypasses CORS but may not handle every request shape).",
   "Use server parsing": "Use server parsing",
   "Use this Copilot": "Use this Copilot",
   "Used to extract text feature vectors, add in Settings - Provider - Model List": "Used to extract text feature vectors, add in Settings - Provider - Model List",

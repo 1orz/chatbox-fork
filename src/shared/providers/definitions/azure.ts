@@ -29,6 +29,7 @@ export const azureProvider = defineProvider({
         imageGenerateNum: config.settings.imageGenerateNum || 1,
         injectDefaultMetadata: config.globalSettings.injectDefaultMetadata,
         stream: config.settings.stream,
+        useNativeOnMobile: config.globalSettings.openaiUseNativeFetch,
       },
       config.dependencies
     )

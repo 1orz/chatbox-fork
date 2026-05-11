@@ -47,12 +47,14 @@ export async function createModelDependencies(): Promise<ModelDependencies> {
             signal: options.signal,
             retry: options.retry,
             useProxy: options.useProxy,
+            useNativeOnMobile: options.useNativeOnMobile,
           })
         } else {
           return apiRequest.get(options.url, options.headers || {}, {
             signal: options.signal,
             retry: options.retry,
             useProxy: options.useProxy,
+            useNativeOnMobile: options.useNativeOnMobile,
           })
         }
       },

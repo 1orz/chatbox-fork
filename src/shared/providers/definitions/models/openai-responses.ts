@@ -18,6 +18,7 @@ interface Options {
   maxOutputTokens?: number
   stream?: boolean
   useProxy?: boolean
+  useNativeOnMobile?: boolean
   customFetch?: typeof globalThis.fetch
   listModelsFallback?: ProviderModelInfo[]
   /** Skip remote model fetching and use listModelsFallback directly (e.g. OAuth tokens that can't access /models) */
@@ -87,7 +88,11 @@ export default class OpenAIResponses extends AbstractAISDKModel {
     const provider = this.getProvider(
       options,
       this.options.customFetch ||
-        ((_input, init) => createFetchWithProxy(this.options.useProxy, this.dependencies)(`${apiHost}${apiPath}`, init))
+        ((_input, init) =>
+          createFetchWithProxy(this.options.useProxy, this.dependencies, this.options.useNativeOnMobile)(
+            `${apiHost}${apiPath}`,
+            init
+          ))
     )
     return wrapLanguageModel({
       model: provider.responses(this.options.model.modelId),
@@ -108,6 +113,7 @@ export default class OpenAIResponses extends AbstractAISDKModel {
         apiHost: this.options.apiHost,
         apiKey: this.options.apiKey,
         useProxy: this.options.useProxy,
+        useNativeOnMobile: this.options.useNativeOnMobile,
         customFetch: this.options.customFetch,
       },
       this.dependencies

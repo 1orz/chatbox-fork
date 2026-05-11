@@ -42,6 +42,7 @@ export const qwenProvider = defineProvider({
         useProxy: config.providerSetting.useProxy || false,
         stream: config.settings.stream,
         listModelsFallback: config.providerSetting.models || qwenProvider.defaultSettings?.models,
+        useNativeOnMobile: config.globalSettings.openaiUseNativeFetch,
       },
       config.dependencies
     )

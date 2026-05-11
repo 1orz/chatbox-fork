@@ -27,6 +27,7 @@ export const perplexityProvider = defineProvider({
         topP: config.settings.topP,
         maxOutputTokens: config.settings.maxTokens,
         stream: config.settings.stream,
+        useNativeOnMobile: config.globalSettings.openaiUseNativeFetch,
       },
       config.dependencies
     )

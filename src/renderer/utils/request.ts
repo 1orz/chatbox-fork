@@ -9,6 +9,9 @@ interface RequestOptions {
   signal?: AbortSignal
   retry?: number
   useProxy?: boolean
+  // false → bypass native HTTP on mobile, use the WebView fetch. Default true keeps
+  // the existing mobile-always-native behaviour for non-opted-in callers.
+  useNativeOnMobile?: boolean
 }
 
 async function retryRequest<T>(fn: () => Promise<T>, retry: number, url: string): Promise<T> {
@@ -44,12 +47,12 @@ function buildHeaders(options: RequestOptions, _url: string): Headers {
 }
 
 async function doRequest(url: string, options: RequestOptions): Promise<Response> {
-  const { signal, retry = 3, body, method } = options
+  const { signal, retry = 3, body, method, useNativeOnMobile = true } = options
   const requestUrl = url
   const headers = buildHeaders(options, url)
 
   const makeRequest = async () => {
-    if (platform.type === 'mobile') {
+    if (platform.type === 'mobile' && useNativeOnMobile) {
       return handleMobileRequest(requestUrl, method, headers, body, signal)
     }
 

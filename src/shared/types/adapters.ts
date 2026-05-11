@@ -8,6 +8,10 @@ export interface ApiRequestOptions {
   useProxy?: boolean
   signal?: AbortSignal
   retry?: number
+  // When false, forces the renderer-side `apiRequest` to bypass CapacitorHttp / native streaming
+  // on mobile and use the WebView's regular fetch instead. Default `true` preserves the legacy
+  // mobile-always-native behaviour for callers that don't pass this flag.
+  useNativeOnMobile?: boolean
 }
 
 export interface StorageAdapter {

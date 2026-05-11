@@ -12,6 +12,7 @@ interface Options {
   topP?: number
   maxOutputTokens?: number
   stream?: boolean
+  useNativeOnMobile?: boolean
 }
 
 export default class OpenRouter extends AbstractAISDKModel {

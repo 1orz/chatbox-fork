@@ -12,6 +12,7 @@ interface Options {
   topP?: number
   maxOutputTokens?: number
   stream?: boolean
+  useNativeOnMobile?: boolean
 }
 
 const Host = 'https://ark.cn-beijing.volces.com'

@@ -97,6 +97,7 @@ export const openaiProvider = defineProvider({
           maxOutputTokens: config.settings.maxTokens,
           stream: config.settings.stream,
           useProxy: false,
+          useNativeOnMobile: config.globalSettings.openaiUseNativeFetch,
           customFetch: oauthFetch,
           listModelsFallback: config.providerSetting.models || openaiProvider.defaultSettings?.models,
           skipRemoteModelList: true,
@@ -118,6 +119,7 @@ export const openaiProvider = defineProvider({
         injectDefaultMetadata: config.globalSettings.injectDefaultMetadata,
         useProxy: false,
         stream: config.settings.stream,
+        useNativeOnMobile: config.globalSettings.openaiUseNativeFetch,
       },
       config.dependencies
     )

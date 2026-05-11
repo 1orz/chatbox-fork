@@ -279,8 +279,6 @@ function Root() {
       <PictureDialog />
       {/* 似乎是从后端拉一个弹窗的配置 */}
       <RemoteDialogWindow />
-      {/* 手机端举报内容 */}
-      {/* <ReportContentDialog /> */}
       {/* 搜索 */}
       <SearchDialog />
       {/* 没有配置模型时的欢迎弹窗 */}

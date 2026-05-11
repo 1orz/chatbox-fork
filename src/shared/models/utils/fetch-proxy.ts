@@ -4,7 +4,11 @@ import type { ModelDependencies } from '../../types/adapters'
  * Creates a fetch function that uses proxy when enabled,
  * or falls back to apiRequest for mobile CORS handling
  */
-export function createFetchWithProxy(useProxy: boolean | undefined, dependencies: ModelDependencies) {
+export function createFetchWithProxy(
+  useProxy: boolean | undefined,
+  dependencies: ModelDependencies,
+  useNativeOnMobile?: boolean
+) {
   return async (url: RequestInfo | URL, init?: RequestInit) => {
     const method = init?.method || 'GET'
     const headers = (init?.headers as Record<string, string>) || {}
@@ -17,6 +21,7 @@ export function createFetchWithProxy(useProxy: boolean | undefined, dependencies
         body: init?.body,
         signal: init?.signal || undefined,
         useProxy,
+        useNativeOnMobile,
       })
       return response
     } else {
@@ -26,6 +31,7 @@ export function createFetchWithProxy(useProxy: boolean | undefined, dependencies
         headers,
         signal: init?.signal || undefined,
         useProxy,
+        useNativeOnMobile,
       })
       return response
     }

@@ -19,6 +19,7 @@ interface Options {
   injectDefaultMetadata: boolean
   useProxy: boolean
   stream?: boolean
+  useNativeOnMobile?: boolean
 }
 
 export default class OpenAI extends AbstractAISDKModel {
@@ -39,7 +40,7 @@ export default class OpenAI extends AbstractAISDKModel {
     return createOpenAI({
       apiKey: this.options.apiKey,
       baseURL: this.options.apiHost,
-      fetch: createFetchWithProxy(this.options.useProxy, this.dependencies),
+      fetch: createFetchWithProxy(this.options.useProxy, this.dependencies, this.options.useNativeOnMobile),
       headers: this.options.apiHost.includes('openrouter.ai')
         ? {
             'HTTP-Referer': 'https://github.com/1orz/chatbox-fork',
@@ -87,6 +88,7 @@ export default class OpenAI extends AbstractAISDKModel {
         apiHost: this.options.apiHost,
         apiKey: this.options.apiKey,
         useProxy: this.options.useProxy,
+        useNativeOnMobile: this.options.useNativeOnMobile,
       },
       this.dependencies
     )

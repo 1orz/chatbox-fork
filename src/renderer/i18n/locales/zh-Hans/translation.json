@@ -996,6 +996,8 @@
   "Upon import, changes will take effect immediately and existing data will be overwritten": "导入后将直接生效，原有数据将被覆盖",
   "Use as Reference": "作为参考图",
   "Use Chatbox AI service": "使用 Chatbox AI 一站式服务",
+  "Use native HTTP for OpenAI family on mobile": "移动端 OpenAI 家族走原生 HTTP",
+  "When off (default), OpenAI / Azure / OpenAI-compatible providers use the WebView fetch. Turn on to route them through the native HTTP plugin (bypasses CORS but may not handle every request shape).": "关闭（默认）时，OpenAI / Azure / OpenAI-Compatible 走 WebView 的 fetch；开启后走 native HTTP 插件（绕过 CORS，但部分请求形态可能不兼容）。",
   "Use proxy to resolve CORS and other network issues": "使用代理解决 CORS 和其他网络问题",
   "Use server parsing": "使用Chatbox AI 解析服务",
   "Use this Copilot": "使用这个搭档",
