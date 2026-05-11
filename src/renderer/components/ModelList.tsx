@@ -21,7 +21,7 @@ import { AdaptiveModal } from './common/AdaptiveModal'
 import { ScalableIcon } from './common/ScalableIcon'
 
 export type ModelProbeState = {
-  status: 'pending' | 'success' | 'error'
+  status: 'queued' | 'pending' | 'success' | 'error'
   error?: string
   completedAt?: number
   durationMs?: number
@@ -213,6 +213,15 @@ export function ModelList({
                   {testStates?.[model.modelId] &&
                     (() => {
                       const probe = testStates[model.modelId]
+                      if (probe.status === 'queued') {
+                        return (
+                          <Tooltip label={t('Queued')} events={{ hover: true, focus: true, touch: true }}>
+                            <Text component="span" size="xs" c="chatbox-tertiary" style={{ letterSpacing: 1 }}>
+                              …
+                            </Text>
+                          </Tooltip>
+                        )
+                      }
                       if (probe.status === 'pending') {
                         return <Loader size="xs" />
                       }
@@ -239,7 +248,10 @@ export function ModelList({
                       h="auto"
                       size="xs"
                       bd={0}
-                      disabled={testStates?.[model.modelId]?.status === 'pending'}
+                      disabled={
+                        testStates?.[model.modelId]?.status === 'pending' ||
+                        testStates?.[model.modelId]?.status === 'queued'
+                      }
                       onClick={() => onTestModel(model.modelId)}
                     >
                       <ScalableIcon icon={IconPlayerPlay} size={20} />

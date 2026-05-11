@@ -6,7 +6,8 @@ import { tool } from 'ai'
 import { z } from 'zod'
 
 export type TestResult = {
-  status: 'success' | 'error' | 'pending'
+  /** queued = waiting in the bulk worker pool; pending = actively running; success/error = settled. */
+  status: 'queued' | 'pending' | 'success' | 'error'
   error?: string
   /** ms since epoch when this result was produced. Set on success/error transitions. */
   completedAt?: number

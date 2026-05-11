@@ -468,7 +468,12 @@ function ProviderSettings({ providerId }: { providerId: string }) {
     }
   }
 
-  type ProbeState = { status: 'pending' | 'success' | 'error'; error?: string }
+  type ProbeState = {
+  status: 'queued' | 'pending' | 'success' | 'error'
+  error?: string
+  completedAt?: number
+  durationMs?: number
+}
   const [probeStates, setProbeStates] = useState<Record<string, ProbeState>>({})
   const [bulkTesting, setBulkTesting] = useState(false)
 
@@ -496,18 +501,20 @@ function ProviderSettings({ providerId }: { providerId: string }) {
     try {
       const configs = await platform.getConfig()
       const dependencies = await createModelDependencies()
-      // Mark everything pending up-front so users see immediate feedback even for queued items.
+      // Everything starts as `queued` (shows … in the UI). Workers flip each
+      // item to `pending` (spinner) right before they start the probe.
       setProbeStates((prev) => ({
         ...prev,
-        ...Object.fromEntries(models.map((m) => [m.modelId, { status: 'pending' as const }])),
+        ...Object.fromEntries(models.map((m) => [m.modelId, { status: 'queued' as const }])),
       }))
 
       // True N-at-a-time worker pool: each worker drains from a shared index,
-      // so slow probes don't block the next chunk's start.
+      // so slow probes don't block faster ones from starting.
       const concurrency = 3
       const timeoutMs = 15_000
       let nextIndex = 0
       const runOne = async (m: { modelId: string }) => {
+        setProbeStates((prev) => ({ ...prev, [m.modelId]: { status: 'pending' } }))
         try {
           const result = await probeModelAvailability({
             providerId,
