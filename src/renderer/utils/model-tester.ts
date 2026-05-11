@@ -101,7 +101,7 @@ export async function probeModelAvailability(options: ProbeModelOptions): Promis
       },
     }
     const modelInstance = getModel({ ...settings, provider: providerId, modelId }, settings, configs, probeDeps)
-    const probe = modelInstance.chat([{ role: 'user', content: 'Hi' }], { onResultChange: undefined })
+    const probe = modelInstance.chat([{ role: 'user', content: 'Hi' }], { onResultChange: undefined, noRetry: true })
     const timeout = new Promise<never>((_, reject) =>
       setTimeout(() => reject(new Error(`Probe timed out after ${Math.round(timeoutMs / 1000)}s`)), timeoutMs)
     )

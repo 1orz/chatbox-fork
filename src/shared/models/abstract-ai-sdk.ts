@@ -193,33 +193,35 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
       return undefined
     }
 
-    const model = createRetryable({
-      model: baseModel,
-      retries: [retryable5xx],
-      onError: (context) => {
-        if (isErrorAttempt(context.current)) {
-          const { error } = context.current
-          const _errorMessage = error instanceof Error ? error.message : String(error)
-        }
-      },
-      onRetry: (context) => {
-        const attemptNumber = context.attempts.length + 1
-        const lastError = context.attempts[context.attempts.length - 1]
-        const errorMessage =
-          lastError && 'error' in lastError
-            ? lastError.error instanceof Error
-              ? lastError.error.message
-              : String(lastError.error)
-            : 'Unknown error'
+    const model = options.noRetry
+      ? baseModel
+      : createRetryable({
+          model: baseModel,
+          retries: [retryable5xx],
+          onError: (context) => {
+            if (isErrorAttempt(context.current)) {
+              const { error } = context.current
+              const _errorMessage = error instanceof Error ? error.message : String(error)
+            }
+          },
+          onRetry: (context) => {
+            const attemptNumber = context.attempts.length + 1
+            const lastError = context.attempts[context.attempts.length - 1]
+            const errorMessage =
+              lastError && 'error' in lastError
+                ? lastError.error instanceof Error
+                  ? lastError.error.message
+                  : String(lastError.error)
+                : 'Unknown error'
 
-        statusQueue.push({
-          type: 'retrying',
-          attempt: attemptNumber,
-          maxAttempts: RETRY_CONFIG.MAX_ATTEMPTS,
-          error: errorMessage,
+            statusQueue.push({
+              type: 'retrying',
+              attempt: attemptNumber,
+              maxAttempts: RETRY_CONFIG.MAX_ATTEMPTS,
+              error: errorMessage,
+            })
+          },
         })
-      },
-    })
 
     const result = streamText({
       model,
@@ -227,6 +229,8 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
       stopWhen: stepCountIs(options.maxSteps || Number.MAX_SAFE_INTEGER),
       tools: options.tools as T | undefined,
       abortSignal: options.signal,
+      // AI SDK's own retry is separate from ai-retry; clamp it too when probing.
+      ...(options.noRetry ? { maxRetries: 0 } : {}),
       ...callSettings,
     })
 
@@ -606,6 +610,8 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
       stopWhen: stepCountIs(options.maxSteps || Number.MAX_SAFE_INTEGER),
       tools: options.tools,
       abortSignal: options.signal,
+      // AI SDK's own retry layer is separate from ai-retry; clamp it too when probing.
+      ...(options.noRetry ? { maxRetries: 0 } : {}),
       ...callSettings,
     })
 
@@ -681,33 +687,35 @@ export default abstract class AbstractAISDKModel implements ModelInterface {
       return undefined
     }
 
-    const model = createRetryable({
-      model: baseModel,
-      retries: [retryable5xx],
-      onError: (context) => {
-        if (isErrorAttempt(context.current)) {
-          const { error } = context.current
-          const _errorMessage = error instanceof Error ? error.message : String(error)
-        }
-      },
-      onRetry: (context) => {
-        const attemptNumber = context.attempts.length + 1
-        const lastError = context.attempts[context.attempts.length - 1]
-        const errorMessage =
-          lastError && 'error' in lastError
-            ? lastError.error instanceof Error
-              ? lastError.error.message
-              : String(lastError.error)
-            : 'Unknown error'
+    const model = options.noRetry
+      ? baseModel
+      : createRetryable({
+          model: baseModel,
+          retries: [retryable5xx],
+          onError: (context) => {
+            if (isErrorAttempt(context.current)) {
+              const { error } = context.current
+              const _errorMessage = error instanceof Error ? error.message : String(error)
+            }
+          },
+          onRetry: (context) => {
+            const attemptNumber = context.attempts.length + 1
+            const lastError = context.attempts[context.attempts.length - 1]
+            const errorMessage =
+              lastError && 'error' in lastError
+                ? lastError.error instanceof Error
+                  ? lastError.error.message
+                  : String(lastError.error)
+                : 'Unknown error'
 
-        options.onStatusChange?.({
-          type: 'retrying',
-          attempt: attemptNumber,
-          maxAttempts: RETRY_CONFIG.MAX_ATTEMPTS,
-          error: errorMessage,
+            options.onStatusChange?.({
+              type: 'retrying',
+              attempt: attemptNumber,
+              maxAttempts: RETRY_CONFIG.MAX_ATTEMPTS,
+              error: errorMessage,
+            })
+          },
         })
-      },
-    })
 
     try {
       const result = await this.handleStreamingCompletion(model, coreMessages, options, callSettings)

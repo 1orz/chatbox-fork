@@ -35,6 +35,8 @@ export const CallChatCompletionOptionsSchema = z.object({
   onResultChange: z.custom<OnResultChange>().optional(),
   tools: z.custom<ToolSet>().optional(),
   providerOptions: ProviderOptionsSchema.optional(),
+  /** When true, skip the AI-SDK retry wrapper so the call attempts exactly once. */
+  noRetry: z.boolean().optional(),
 })
 
 export interface CallChatCompletionOptions<Tools extends ToolSet = ToolSet> {
@@ -45,6 +47,8 @@ export interface CallChatCompletionOptions<Tools extends ToolSet = ToolSet> {
   tools?: Tools
   providerOptions?: ProviderOptions
   maxSteps?: number
+  /** When true, skip the AI-SDK retry wrapper so the call attempts exactly once. */
+  noRetry?: boolean
 }
 
 export interface ResultChange {
@@ -67,6 +71,8 @@ export interface ChatStreamOptions {
   tools?: ToolSet
   providerOptions?: ProviderOptions
   maxSteps?: number
+  /** When true, skip the AI-SDK retry wrapper so the call attempts exactly once. */
+  noRetry?: boolean
 }
 
 export type ModelStatus = MessageStatus
