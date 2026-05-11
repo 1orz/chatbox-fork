@@ -1,4 +1,5 @@
 import { Menu, type MenuItemProps, type MenuProps, Stack, Text, useMantineTheme } from '@mantine/core'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { IconCheck, type IconProps } from '@tabler/icons-react'
 import { type FC, type MouseEventHandler, type ReactElement, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -109,7 +110,13 @@ const MobileActionMenu: FC<ActionMenuProps> = ({ children, items, title }) => {
       <Drawer.Trigger asChild>{children}</Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-chatbox-background-mask-overlay" />
-        <Drawer.Content className="flex flex-col h-fit fixed bottom-0 left-0 right-0 outline-none">
+        <Drawer.Content
+          aria-describedby={undefined}
+          className="flex flex-col h-fit fixed bottom-0 left-0 right-0 outline-none"
+        >
+          <VisuallyHidden asChild>
+            <Drawer.Title>{title || 'Menu'}</Drawer.Title>
+          </VisuallyHidden>
           <div className="bg-chatbox-background-primary rounded-t-lg">
             <Drawer.Handle />
             {title && (
@@ -177,7 +184,13 @@ const MobileDoubleCheckMenuItem: FC<{
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-chatbox-background-mask-overlay" />
-        <Drawer.Content className="flex flex-col h-fit fixed bottom-0 left-0 right-0 outline-none">
+        <Drawer.Content
+          aria-describedby={undefined}
+          className="flex flex-col h-fit fixed bottom-0 left-0 right-0 outline-none"
+        >
+          <VisuallyHidden asChild>
+            <Drawer.Title>{doubleCheckText}</Drawer.Title>
+          </VisuallyHidden>
           <div className="bg-chatbox-background-primary rounded-t-lg">
             <Drawer.Handle />
             <Stack className="px-2" gap={0}>

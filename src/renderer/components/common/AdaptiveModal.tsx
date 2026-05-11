@@ -1,5 +1,6 @@
 import type { ModalProps as MantineModalProps } from '@mantine/core'
 import { Button, type ButtonProps, Flex, Stack, Text } from '@mantine/core'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import type { HTMLAttributes, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Drawer } from 'vaul'
@@ -19,7 +20,17 @@ export function AdaptiveModal({ opened, onClose, children, title, ...props }: Ad
       <Drawer.Root open={opened} onOpenChange={(open) => !open && onClose()} noBodyStyles repositionInputs={false}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-chatbox-background-mask-overlay" />
-          <Drawer.Content className="flex flex-col h-fit fixed bottom-0 left-0 right-0 outline-none bg-chatbox-background-primary rounded-t-lg">
+          <Drawer.Content
+            // Newer Radix Dialog (vaul's underlying primitive) hard-warns when
+            // Content has no accessible name/description. Provide a fallback
+            // hidden title (shown one renders normally inside Stack below) and
+            // suppress the description requirement.
+            aria-describedby={undefined}
+            className="flex flex-col h-fit fixed bottom-0 left-0 right-0 outline-none bg-chatbox-background-primary rounded-t-lg"
+          >
+            <VisuallyHidden asChild>
+              <Drawer.Title>{typeof title === 'string' ? title : 'Dialog'}</Drawer.Title>
+            </VisuallyHidden>
             <Drawer.Handle />
             <Stack gap="md" p="sm" className="max-h-[85vh] overflow-y-auto">
               {title && typeof title === 'string' && (
