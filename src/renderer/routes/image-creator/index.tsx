@@ -547,15 +547,15 @@ function ImageCreatorPage() {
                   {currentRecord.generatedImages.length > 0 && (
                     <Flex justify="center" w="100%">
                       <GeneratedImagesGallery
-                        images={currentRecord.generatedImages}
-                        onUseAsReference={(urlOrKey) => handleUseAsReference(urlOrKey, currentRecord.id)}
+                        storageKeys={currentRecord.generatedImages}
+                        onUseAsReference={(storageKey) => handleUseAsReference(storageKey, currentRecord.id)}
                       />
                     </Flex>
                   )}
 
                   <PromptDisplay
                     prompt={currentRecord.prompt}
-                    model={currentRecord.model}
+                    modelDisplayName={modelDisplayName}
                     referenceImageCount={currentRecord.referenceImages.length}
                   />
 
