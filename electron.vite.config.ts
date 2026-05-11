@@ -254,6 +254,9 @@ export default defineConfig(({ mode }) => {
           : isProduction ? 'hidden' : true,
         minify: isProduction ? 'esbuild' : false,
         rollupOptions: {
+          // electron-vite 5 + vite 8 no longer auto-infer the renderer entry HTML;
+          // point it at the existing src/renderer/index.html.
+          input: path.resolve(__dirname, 'src/renderer/index.html'),
           output: {
             entryFileNames: 'js/[name].[hash].js',
             chunkFileNames: 'js/[name].[hash].js',

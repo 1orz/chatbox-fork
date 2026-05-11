@@ -8,7 +8,10 @@ import iconv from 'iconv-lite'
 import { isEmpty } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { getLogger } from '../util'
-import { shellEnv } from './shell-env'
+// vite 8 / rolldown bundler is strict about file extensions; the .cjs sibling
+// has a matching .d.ts so type-checking still resolves.
+// @ts-expect-error: explicit .cjs import for bundler resolution
+import { shellEnv } from './shell-env.cjs'
 
 async function enhanceEnv(configEnv?: Record<string, string>) {
   let env = await shellEnv().catch((err) => {

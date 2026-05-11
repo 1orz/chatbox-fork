@@ -1,7 +1,8 @@
+// Tailwind 4 ships its PostCSS plugin as @tailwindcss/postcss and inlines nesting
+// (no more `tailwindcss/nesting` subpath).
 module.exports = {
   plugins: {
-    'tailwindcss/nesting': {},
-    tailwindcss: {},
+    '@tailwindcss/postcss': {},
     autoprefixer: {},
     'postcss-preset-mantine': {},
     'postcss-simple-vars': {
