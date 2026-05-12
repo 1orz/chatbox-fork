@@ -1,6 +1,7 @@
 import type { DebouncedFunc } from 'lodash'
 import debounce from 'lodash/debounce'
 import { v4 as uuidv4 } from 'uuid'
+import { getFilePath } from '@/utils/file-path'
 import BaseStorage from './BaseStorage'
 
 export enum StorageKey {
@@ -27,7 +28,7 @@ export const StorageKeyGenerator = {
     return `file:${sessionId}:${msgId}:${uuidv4()}`
   },
   fileUniqKey(file: File) {
-    return `file:${file.path || file.name}-${file.size}-${file.lastModified}`
+    return `file:${getFilePath(file) || file.name}-${file.size}-${file.lastModified}`
   },
   linkUniqKey(url: string) {
     return `link:${url}`

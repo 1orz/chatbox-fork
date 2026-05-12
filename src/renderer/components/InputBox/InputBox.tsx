@@ -79,6 +79,7 @@ import { settingsStore, useSettingsStore } from '@/stores/settingsStore'
 import { useUIStore } from '@/stores/uiStore'
 import { delay } from '@/utils'
 import { featureFlags } from '@/utils/feature-flags'
+import { getFilePath } from '@/utils/file-path'
 import { trackEvent } from '@/utils/track'
 import {
   type KnowledgeBase,
@@ -1006,8 +1007,9 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
                       }}
                       onDelete={() => {
                         // Cancel any ongoing MinerU parsing for this file
-                        if (file.path && platform.cancelMineruParse) {
-                          platform.cancelMineruParse(file.path).catch(() => {
+                        const filePath = getFilePath(file)
+                        if (filePath && platform.cancelMineruParse) {
+                          platform.cancelMineruParse(filePath).catch(() => {
                             // Ignore cancellation errors
                           })
                         }

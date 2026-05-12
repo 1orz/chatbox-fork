@@ -218,8 +218,11 @@ export default defineConfig(({ mode }) => {
         TanStackRouterVite({
           target: 'react',
           autoCodeSplitting: true,
-          routesDirectory: './src/renderer/routes',
-          generatedRouteTree: './src/renderer/routeTree.gen.ts',
+          // electron-vite 5 sets the renderer Vite root to `src/renderer/`. Relative
+          // paths here would be resolved against that root, producing the bogus
+          // `src/renderer/src/renderer/routes`. Pin to project root explicitly.
+          routesDirectory: path.resolve(__dirname, 'src/renderer/routes'),
+          generatedRouteTree: path.resolve(__dirname, 'src/renderer/routeTree.gen.ts'),
         }),
         react({}),
         dvhToVh(),
@@ -306,7 +309,7 @@ export default defineConfig(({ mode }) => {
         modules: {
           generateScopedName: '[name]__[local]___[hash:base64:5]',
         },
-        postcss: './postcss.config.cjs',
+        postcss: './postcss.config.js',
       },
       server: {
         port: Number(process.env.DEV_PORT) || 1212,
@@ -324,7 +327,7 @@ export default defineConfig(({ mode }) => {
       },
       optimizeDeps: {
         include: ['mermaid'],
-        esbuildOptions: {
+        rolldownOptions: {
           target: 'es2015',
         },
       },

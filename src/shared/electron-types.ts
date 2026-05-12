@@ -7,4 +7,7 @@ export interface ElectronIPC {
   onUpdateDownloaded: (callback: () => void) => () => void
   addMcpStdioTransportEventListener: (transportId: string, event: string, callback?: (...args: any[]) => void) => void
   onNavigate: (callback: (path: string) => void) => () => void
+  // Electron 32+ removed File.path on drag/drop File objects. Renderers now ask
+  // the preload for the absolute path explicitly via webUtils.getPathForFile.
+  getPathForFile: (file: File) => string
 }

@@ -39,6 +39,7 @@ import { useKnowledgeBaseFiles, useKnowledgeBaseFilesActions, useKnowledgeBaseFi
 import { useChunksPreview } from '@/hooks/useChunksPreview'
 import platform from '@/platform'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { getFilePath } from '@/utils/file-path'
 import ChunksPreviewModal from './ChunksPreviewModal'
 
 interface KnowledgeBaseDocumentsProps {
@@ -136,7 +137,7 @@ const KnowledgeBaseDocuments: React.FC<KnowledgeBaseDocumentsProps> = ({ knowled
 
     return {
       name: file.name,
-      path: file.path,
+      path: getFilePath(file),
       type: mimeType,
       size: file.size,
     }
