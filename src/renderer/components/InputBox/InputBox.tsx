@@ -1255,52 +1255,64 @@ const InputBox = forwardRef<InputBoxRef, InputBoxProps>(
 
                 {/* Model Selector */}
                 <Box className="min-w-0 flex-1 justify-end max-w-[200px]">
-                  <Tooltip
-                    label={
-                      <Flex align="center" c="white" gap="xxs" min-w-0>
-                        <ScalableIcon icon={IconAlertCircle} size={12} className="text-inherit" />
-                        <Text span size="xxs" c="white">
-                          {t('Please select a model')}
-                        </Text>
-                      </Flex>
-                    }
-                    color="dark"
-                    opened={showSelectModelErrorTip}
-                    withArrow
-                  >
-                    <ModelSelector
-                      onSelect={onSelectModel}
-                      selectedProviderId={model?.provider}
-                      selectedModelId={model?.modelId}
-                      position="top-end"
-                      transitionProps={{
-                        transition: 'fade-up',
-                        duration: 200,
-                      }}
-                    >
-                      <UnstyledButton
-                        className={cn(
-                          'flex min-w-0 max-w-full items-center gap-1 px-2 py-1 rounded-lg hover:bg-[var(--chatbox-background-tertiary)] transition-colors',
-                          !model && 'animate-pulse bg-blue-500/20'
-                        )}
+                  {(() => {
+                    const selector = (
+                      <ModelSelector
+                        onSelect={onSelectModel}
+                        selectedProviderId={model?.provider}
+                        selectedModelId={model?.modelId}
+                        position="top-end"
+                        transitionProps={{
+                          transition: 'fade-up',
+                          duration: 200,
+                        }}
                       >
-                        {!!model && <ProviderImageIcon size={18} provider={model.provider} />}
-                        <Text
-                          size="sm"
+                        <UnstyledButton
                           className={cn(
-                            'min-w-0 flex-1 truncate text-[var(--chatbox-tint-secondary)]',
-                            isSmallScreen ? 'max-w-[100px]' : 'max-w-[160px]'
+                            'flex min-w-0 max-w-full items-center gap-1 px-2 py-1 rounded-lg hover:bg-[var(--chatbox-background-tertiary)] transition-colors',
+                            !model && 'animate-pulse bg-blue-500/20'
                           )}
                         >
-                          {modelSelectorDisplayText}
-                        </Text>
-                        <IconChevronRight
-                          size={14}
-                          className="text-[var(--chatbox-tint-tertiary)] rotate-90 flex-shrink-0"
-                        />
-                      </UnstyledButton>
-                    </ModelSelector>
-                  </Tooltip>
+                          {!!model && <ProviderImageIcon size={18} provider={model.provider} />}
+                          <Text
+                            size="sm"
+                            className={cn(
+                              'min-w-0 flex-1 truncate text-[var(--chatbox-tint-secondary)]',
+                              isSmallScreen ? 'max-w-[100px]' : 'max-w-[160px]'
+                            )}
+                          >
+                            {modelSelectorDisplayText}
+                          </Text>
+                          <IconChevronRight
+                            size={14}
+                            className="text-[var(--chatbox-tint-tertiary)] rotate-90 flex-shrink-0"
+                          />
+                        </UnstyledButton>
+                      </ModelSelector>
+                    )
+                    // Only wrap in Tooltip when the error tip should show — Mantine 9
+                    // Tooltip clones the target with pointer/touch listeners that, on
+                    // mobile + Radix Drawer.Trigger asChild chain, swallow the tap and
+                    // the model selector never opens.
+                    if (!showSelectModelErrorTip) return selector
+                    return (
+                      <Tooltip
+                        label={
+                          <Flex align="center" c="white" gap="xxs" min-w-0>
+                            <ScalableIcon icon={IconAlertCircle} size={12} className="text-inherit" />
+                            <Text span size="xxs" c="white">
+                              {t('Please select a model')}
+                            </Text>
+                          </Flex>
+                        }
+                        color="dark"
+                        opened={showSelectModelErrorTip}
+                        withArrow
+                      >
+                        {selector}
+                      </Tooltip>
+                    )
+                  })()}
                 </Box>
               </Flex>
             </Flex>
