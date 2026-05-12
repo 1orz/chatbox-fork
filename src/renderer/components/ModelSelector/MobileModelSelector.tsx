@@ -131,7 +131,25 @@ export const MobileModelSelector = forwardRef<HTMLDivElement, MobileModelSelecto
 
     return (
       <Drawer.Root open={open} onOpenChange={setOpen} noBodyStyles>
-        <Drawer.Trigger asChild>{children}</Drawer.Trigger>
+        {/* Skip Drawer.Trigger asChild — under React 19 the Slot cloneElement
+         * chain into Mantine's polymorphic UnstyledButton can drop the onClick
+         * that should open the drawer (the user's tap reaches the button but
+         * never propagates to Radix). A plain span with controlled state
+         * sidesteps the issue. */}
+        <span
+          role="button"
+          tabIndex={0}
+          onClick={() => setOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setOpen(true)
+            }
+          }}
+          style={{ display: 'inline-flex', cursor: 'pointer' }}
+        >
+          {children}
+        </span>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-chatbox-background-mask-overlay" />
           <Drawer.Content
